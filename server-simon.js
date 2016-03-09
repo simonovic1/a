@@ -17,6 +17,7 @@ app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
 app.get('/simon1', index.simonFja1);
+
 app.get('/simon2', index.simonFja2);
 
 server.listen(app.get('port'), function(){
