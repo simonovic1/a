@@ -1,10 +1,14 @@
 var express = require('express')
   , index = require('./routes/simon')
+  , login = require('./routes/login_check')
   , http = require('http');
   //, path = require('path');
 
 var app = express();
 var server = http.createServer(app);
+
+//constants
+var userNameCookieName = "username";
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -17,8 +21,27 @@ app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
 app.get('/simon1', index.simonFja1);
-
 app.get('/simon2', index.simonFja2);
+
+
+app.get('/checkLogin', function(req, res) {
+	console.log("Login check");
+	var toRet = login.check(req.query.username, req.query.password);
+	console.log("Login check finished");
+	console.log(toRet);
+
+	//set cookie to client
+	res.cookie(userNameCookieName, req.query.username, {maxAge: 1000 * 60, httpOnly:true});
+	res.writeHead(200, { 
+		'Content-Type': 'application/json', 
+		"Access-Control-Allow-Origin":"*",
+		});
+	
+	res.write(JSON.stringify(toRet));
+	res.end();
+	
+	
+});
 
 server.listen(app.get('port'), function(){
   console.log('cs-book server listening on port ' + app.get('port'));

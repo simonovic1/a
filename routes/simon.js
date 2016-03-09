@@ -5,6 +5,6 @@ module.exports = {
 	},
 	
 	simonFja2: function(req, res){
-		  res.send(200);
+		  res.render('login');
 	}
 };
