@@ -1,0 +1,91 @@
+html {
+    font-size: .7vw;
+    min-height: 100%;
+}
+
+body {
+    background: url('../images/background/bg-lgIn.jpg');
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    -moz-background-size: 100% 100%;
+    -o-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+
+.panel-body {
+    background: rgba(200, 200, 200, 0.3)
+}
+
+.panel {
+    background: none;
+    overflow: overlay
+}
+
+.panel-yellow {
+    background: rgba(200, 200, 200, 0.7);
+    border: none
+}
+
+.logIn-frame {
+    position: absolute;
+    width: 100%;
+    top: 5%
+}
+
+.panel-heading {
+    font-family: 'Lobster', cursive;
+    font-size: 3rem;
+    background: rgba(220, 220, 220, 0.5);
+    border-bottom: 2px solid #fff;
+    text-shadow: 5px 5px 5px rgba(5, 5, 5, 0.3)
+}
+
+.form-actions {
+    background: rgba(220, 220, 220, 0.7)
+}
+
+.btn-form-submit {
+    position: relative;
+    height: auto;
+    float: right;
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+    font-size: 2rem;
+    border: none;
+    font-family: 'Pacifico', cursive;
+    padding: 10px;
+		
+	
+}
+
+.control-label {
+    color: #000;
+    font-size: 1.5rem;
+    margin: 10px 0
+}
+
+.mbn {
+    margin-left: 5px
+}
+
+.pal {
+    height: 500px
+}
+
+.btn-logIn-frame {
+    height: auto;
+}
+
+.check-box-in-form {
+    color: #fff
+}
+
+option.head {
+		selected:selected;
+		display:none;
+		disabled:disabled;
+		
+}
