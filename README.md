@@ -2,4 +2,4 @@
 
 # csbook
 
-## Projekat iz Naprednog softverskog inženjerstva
+Projekat iz Naprednog softverskog inženjerstva
