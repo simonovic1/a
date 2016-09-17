@@ -1,7 +1,8 @@
 var express = require('express')
+  , http = require('http')
   , index = require('./routes/simon')
   , login = require('./routes/login_check')
-  , http = require('http');
+  , db4j = require('./routes/db4j');
   //, path = require('path');
 
 var app = express();
@@ -20,6 +21,7 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
+
 app.get('/simon1', index.simonFja1);
 app.get('/simon2', index.simonFja2);
 
@@ -32,47 +34,19 @@ app.get('/checkLogin', function(req, res) {
 
 	//set cookie to client
 	res.cookie(userNameCookieName, req.query.username, {maxAge: 1000 * 60, httpOnly:true});
-	res.writeHead(200, { 
-		'Content-Type': 'application/json', 
+	res.writeHead(200, {
+		'Content-Type': 'application/json',
 		"Access-Control-Allow-Origin":"*",
 		});
-	
+
 	res.write(JSON.stringify(toRet));
 	res.end();
-	
-	
+
+
 });
+app.get('/checkIfProfileExists', db4j.checkIfProfileExists)
+app.get('/signUp', index.signUp);
 
 server.listen(app.get('port'), function(){
   console.log('cs-book server listening on port ' + app.get('port'));
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
