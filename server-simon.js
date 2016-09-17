@@ -44,8 +44,9 @@ app.get('/checkLogin', function(req, res) {
 
 
 });
-app.get('/checkIfProfileExists', db4j.checkIfProfileExists)
+app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/signUp', index.signUp);
+app.get('/createUser', db4j.createProfile);
 
 server.listen(app.get('port'), function(){
   console.log('cs-book server listening on port ' + app.get('port'));

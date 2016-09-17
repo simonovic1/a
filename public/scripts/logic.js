@@ -37,11 +37,12 @@ function CreateUserAccount(){
 		type: 'GET',
 		url: 'http://localhost:3000/createUser',
 		dataType: 'json',
-		data: { 'username': name.value, 'password': pass.value, 'indexNo': indexNo.value, 'firstName' : firstName.value, 'lastName': lastName.value, 'file' : file},
+		data: { 'username': name.value, 'password': pass.value, 'indexNumber': indexNo.value, 'firstName' : firstName.value, 'lastName': lastName.value, 'picture' : file},
 		success: function(data){
 			if(data == true)
 			{
-				window.location = "NewsFeedPage.html";
+				console.log("Going to newsFeed");
+				window.location = "newsFeed";
 			}
 			else
 				alert("User is not created");
@@ -58,11 +59,11 @@ function checkIfProfileExists(name,pass){
 		success: function(data){
 			if(data == true)
 			{
-			    window.location = "NewsFeedPage.html";
+			    window.location = "newsFeed";
 			}
 			else if(data == false)
 			{
-				 window.location = "signup.html";
+				 window.location = "signup";
 			}
 			else
 				alert("Wrong username/password combination");
