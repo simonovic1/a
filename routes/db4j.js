@@ -1,21 +1,22 @@
 var neo4j = require('neo4j');
 
 //var db = new neo4j.GraphDatabase('http://neo4j:neo4j@localhost:7474');
-var db = new neo4j.GraphDatabase('http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkjfjnbmnagbkehhfjddnl.dbs.graphenedb.com:24789/db/data/');
+var db = new neo4j.GraphDatabase("http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkjfjnbmnagbkehhfjddnl.dbs.graphenedb.com:24789");
 
 module.exports = {
 
   checkIfProfileExists: function(req, res){
-    console.log(db);
-  	db.cypher({
+
+    db.cypher({
   		query: 'MATCH (u:User {username: {username}, password:{password}}) RETURN u',
   		params: {
-  			username: req.username,
-  			password: req.password,
+  			username: req.query.username,
+  			password: req.query.password,
   		},
   	}, function (err, results) {
   		if (err) throw err;
-  		var result = results[0];
+
+      var result = results[0];
   		if (!result) {
   			console.log('No user found.');
   			res.writeHead(200, {

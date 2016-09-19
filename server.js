@@ -1,6 +1,8 @@
 var express = require('express')
   , http    = require('http')
   , fs      = require('fs')
+  //, curl    = require('curlrequest') // TODO: if there's no way authentication.dll is working properly
+
   // csbook routes
   , index   = require('./routes/index')
   , login   = require('./routes/login')

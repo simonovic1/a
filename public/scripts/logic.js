@@ -8,7 +8,7 @@ function checkIfExists() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/checkLogin',
+		url: 'http://localhost:3000/loginCheck',
 		dataType: 'json',
 		data: { 'username': name.value, 'password': pass.value},
 		success: function(data){
