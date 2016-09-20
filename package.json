@@ -8,6 +8,7 @@
   "dependencies": {
     "edge": "^5.0.0",
     "express": "3.2.6",
-    "jade": "*"
+    "jade": "*",
+    "neo4j": "2.0.0-RC2"
   }
 }
