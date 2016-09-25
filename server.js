@@ -98,6 +98,8 @@ app.get('/totalUpvotes', db4j.totalUpvotes);
 
 app.get('/totalDownvotes', db4j.totalDownvotes);
 
+app.get('/getTimetableInfo', db4j.getTimetableInfo);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });
