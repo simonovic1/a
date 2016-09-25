@@ -312,7 +312,7 @@ userUnsubscribe : function(req,res){
 		}
 	});
 },
-	getAllFollowedCourses : function(req,res){
+	getTimetableInfo: function(req,res){
 
 	db.cypher({
 		query: 'MATCH (User {username:{username}})-[r:FOLLOW]->(c:Course) RETURN c',
@@ -337,7 +337,47 @@ userUnsubscribe : function(req,res){
 
 			for(var i =0; i< results.length; i++)
 			{
-				courses.push(results[i]['c']);
+				var obj = new Object();
+				obj.name = results[i]['c']['properties']['name'];
+				var lectTime = results[i]['c']['properties']['lectureTimeStart'].split(":");
+				obj.lectureDay = results[i]['c']['properties']['lectureDay'];
+				obj.lectureHour  = parseInt(lectTime[0]);
+				obj.lectureMinute  = parseInt(lectTime[1]);
+				obj.lectureDuration = results[i]['c']['properties']['lectureDuration'];
+				obj.lectureClassrom = results[i]['c']['properties']['lectureClassroom'];
+
+				obj.lectureGroupDay = [];
+				obj.lectureGroupHour = [];
+				obj.lectureGroupMinute = [];
+				obj.lectureGroupDuration = [];
+				obj.lectureGroupClassroom = [];
+				for(var j = 0; j < results[i]['c']['properties']['lectureGroupTimeStart'].length; j++)
+				{
+					var lectGroupTime = results[i]['c']['properties']['lectureGroupTimeStart'][j].split(":");
+					obj.lectureGroupDay.push(results[i]['c']['properties']['lectureGroupDay'][j]);
+					obj.lectureGroupHour.push(parseInt(lectGroupTime[0]));
+					obj.lectureGroupMinute.push(parseInt(lectGroupTime[1]));
+					obj.lectureGroupDuration.push(results[i]['c']['properties']['lectureGroupDuration'][j]);
+					obj.lectureGroupClassroom.push(results[i]['c']['properties']['lectureGroupClassroom'][j]);
+				}
+
+				obj.laboratoryDay = [];
+				obj.laboratoryHour = [];
+				obj.laboratoryMinute = [];
+				obj.laboratoryDuration = [];
+				obj.laboratoryClassroom = [];
+				for(var j = 0; j < results[i]['c']['properties']['laboratoryTimeStart'].length; j++)
+				{
+					var laboratoryTime = results[i]['c']['properties']['laboratoryTimeStart'][j].split(":");
+					obj.laboratoryDay.push(results[i]['c']['properties']['laboratoryDay'][j]);
+					obj.laboratoryHour.push(parseInt(laboratoryTime[0]));
+					obj.laboratoryMinute.push(parseInt(laboratoryTime[1]));
+					obj.laboratoryDuration.push(results[i]['c']['properties']['laboratoryDuration'][j]);
+					obj.laboratoryClassroom.push(results[i]['c']['properties']['laboratoryClassroom'][j]);
+				}
+
+				//var jsonString= JSON.stringify(obj);
+				courses.push(obj);
 			}
 
 			res.writeHead(200, {
@@ -816,6 +856,44 @@ totalUpvotes : function(req, res){
 			res.end();
 		}
 	});
-}
+},
+	getAllFollowedCourses : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[r:FOLLOW]->(c:Course) RETURN c',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No courses found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var courses = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					courses.push(results[i]['c']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(courses, null, 4));
+				res.end();
+			}
+		});
+	}
 
 };
