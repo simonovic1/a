@@ -1,6 +1,3 @@
-var uName = "User";
-
-
 function checkIfExists() {
 
 	var name = document.getElementById("inputName");
@@ -8,7 +5,7 @@ function checkIfExists() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/loginCheck',
+		url: '/loginCheck',
 		dataType: 'json',
 		data: { 'username': name.value, 'password': pass.value},
 		success: function(data){
@@ -32,7 +29,7 @@ function CreateUserAccount() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/createProfile',
+		url: '/createProfile',
 		dataType: 'json',
 		data: { 'username': name.value, 'password': pass.value, 'indexNumber': indexNo.value, 'firstName' : firstName.value, 'lastName': lastName.value, 'picture' : dropzone.files.file.name},
 		success: function(data){
@@ -50,7 +47,7 @@ function CreateUserAccount() {
 function checkIfProfileExists(name,pass) {
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/checkIfProfileExists',
+		url: '/checkIfProfileExists',
 		dataType: 'json',
 		data: { 'username': name.value, 'password': pass.value},
 		success: function(data){

@@ -29,6 +29,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', index.landing);
 app.get('/signUp', index.signUp);
+app.get('/coursePage', index.coursePage);
 
 app.get('/loginCheck', function(req, res) {
 	console.log("Started login");
