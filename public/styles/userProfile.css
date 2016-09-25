@@ -1,0 +1,30 @@
+
+#hiddenProfile{
+	display: none;
+}
+
+#hiddenProfile:hover{
+	display: block;
+}
+
+#profile:hover + div{
+	display: block;
+}
+
+.profile-content{
+	background-color: #ffffff;
+}
+
+.profile-image{
+	object-position: center;
+	width: 80px;
+	height: auto;
+	border-radius: 50%;
+	overlay: hidden;
+}
+
+.profile-overlay{
+	border:solid;
+	border-radius: 10px;
+	border-color: #428bca;
+}

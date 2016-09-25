@@ -13,5 +13,9 @@ module.exports = {
 
   signUp: function(req, res){
 		  res.render('signUp');
+	},
+	
+	userProfile: function(req, res){
+		res.render('userProfile')
 	}
 };

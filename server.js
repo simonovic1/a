@@ -29,12 +29,12 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', index.landing);
 app.get('/signUp', index.signUp);
+app.get('/userProfile', index.userProfile)
 
 app.get('/loginCheck', function(req, res) {
-	console.log("Started login");
+	console.log("Started login check");
 	var toRet = login.check(req.query.username, req.query.password);
-	console.log("Finished login");
-	console.log(toRet);
+	console.log("Finished login check, "+ toRet);
 
 	//set cookie to client
 	res.cookie(userNameCookieName, req.query.username, {maxAge: 1000 * 60, httpOnly:true});
@@ -51,10 +51,10 @@ app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {
-  console.log(req.files.file.name);
-
+  
   fs.readFile(req.files.file.path, function (err, data) {
-    var new_path = __dirname + "/users/pictures/" + req.files.file.name;
+    var new_path = __dirname + "public/users/pictures/" + req.files.file.name;
+	console.log(new_path);
     fs.writeFile(new_path, data, function (err) {
       res.redirect("back");
     });
