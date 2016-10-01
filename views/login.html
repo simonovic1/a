@@ -2,97 +2,89 @@
 <html lang="en">
 
 <head>
-    <title>CSBook</title>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <!--    Fonts -->
-    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700">
-    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,700,300">
-    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
-    <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-    <!--    Styles-->
-    <!--Loading bootstrap css-->
-    <!--<link type="text/css" rel="stylesheet" href="style/bootstrap.min.css">-->
-    <!--Loading font css-->
-    <!--<link type="text/css" rel="stylesheet" href="style/font-awesome.min.css">-->
-    <!--   Custom Styles-->
-    <!--<link type="text/css" rel="stylesheet" href="style/logIn.css"> -->
+    <title>CSBook SignUp</title>
+
+    <!-- Custom Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
 </head>
 
-<body>
-
-
-
-
-    <div class="row logIn-frame">
-        <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1">
-            <div class="panel panel-yellow">
-                <div class="panel-heading">
-                    Login
+<body id="page-top" class="animated fadeIn">
+    <header>
+        <div class="row">
+            <div class="signin-header">
+                <div class="container text-center">
+                    <section class="logo">
+                        <h1 class="animated slideInUp">CSBook</h1>
+                    </section>
                 </div>
-                <div class="panel-body pan">
-                    <form action="#" class="form-horizontal">
-                        <div class="form-body pal">
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <div class="input-icon right">
-                                        <input id="inputName" type="text" placeholder="Name" class="form-control" onkeypress="searchKeyPress(event);"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <div class="input-icon right">
-                                        <input id="inputPassword" type="password" placeholder="Password" class="form-control" onkeypress="searchKeyPress(event);" />
-                                    </div>
-									<span class="help-block mbn"><a href="logInUser.html"><small>Don't have account?</small> </a></span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 check-box-in-form">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input tabindex="5" type="checkbox" />&nbsp; Keep me logged in</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-actions pal btn-logIn-frame">
-                            <div class="form-group mbn" >
-                                <div class="col-lg-3 col-lg-offset-9  col-md-4 col-md-offset-8" >
-                                    <a href="#" onclick="checkIfExists()" id="LoginBtn" class="btn btn-primary btn-form-submit">Login</a>&nbsp;&nbsp;
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                    <!--END OF INPUT FORM-->
-
-                </div>
-
-                <!--END PANEL BODY-->
             </div>
-            <!--END OF PANEL-->
-
-
-			<div>
-				<a href="signUpCompany.html" class="btn btn-primary btn-form-submit col-sm-12 col-xs-12 col-md-12 col-lg-12" style="with:100%">Login as Company</a>
-			</div>
-
         </div>
 
+        <div class="row header-content">
+            <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 header-content-inner">
+                <span class="line-thru"></span>
 
-    </div>
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-envelope"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                    </div>
+                </div>
 
-    <!--END OF LogIn FRAME-->
-  <!--  <script src="script/jquery-1.11.3.min.js"></script>
-	<script src="script/jquery.cookie.js" type="text/javascript"></script>
-    <script src="script/bootstrap.min.js"></script>
-	<script src="logic.js"></script> -->
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="terms-text">
+                            <p><a>Forgot your password?</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="terms-text">
+                        </div>
+                    </div>
+                </div>
+
+                <span class="line-thru"></span>
+            </div>
+        </div>
+    </header>
+
 </body>
 
 </html>

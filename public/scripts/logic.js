@@ -42,6 +42,8 @@ function CreateUserAccount() {
 				localStorage.setItem("Ime", firstName);
 				localStorage.setItem("Prezime", lastName);
 				localStorage.setItem("Index", indexNo);
+				localStorage.setItem("Username", name);
+				localStorage.setItem("imgUrl", dropzone.files.file.name);
 				window.location = "newsFeed";
 			}
 			else
@@ -61,6 +63,7 @@ function checkIfProfileExists(name,pass) {
 			{
 				//TODO 
 				//Dodati logiku za stavljanje u localStorage ime,prezime i brIndexa.
+				SetUpLocalStorageSettings(name);
 			    window.location = "newsFeed";
 			}
 			else if(data == false)
@@ -73,7 +76,30 @@ function checkIfProfileExists(name,pass) {
 	});
 }
 
-
+function SetUpLocalStorageSettings(username){
+	$.ajax({
+		type: 'GET',
+		url: 'http://localhost:3000/getUserByUsername',
+		dataType: 'json',
+		data: { 'username': name},
+		success: function(data){
+			if(data){
+				//citamo data.user.
+				/*
+				localStorage.setItem("Ime", firstName);
+				localStorage.setItem("Prezime", lastName);
+				localStorage.setItem("Index", indexNo);
+				localStorage.setItem("Username", name);
+				localStorage.setItem("imgUrl", dropzone.files.file.name);
+				*/
+			}
+			else{
+				alert("Couldn't load profile info.")
+				window.location = "";
+			}
+		}
+	});
+}
 
 
 
