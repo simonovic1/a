@@ -11,7 +11,38 @@
 		<link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
 		<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
 	</head>
+
 	<body>
+
+		<!-- Modal -->
+	  <div class="modal fade" id="user-schedule-modal" tabindex="-1" role="dialog" aria-labelledby="user-schedule-modal-label" aria-hidden="true">
+	    <div class="modal-dialog modal-lg" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	          </button>
+	          <h4 class="modal-title" id="user-schedule-modal-label">Raspored</h4>
+	        </div> <!-- modal-header -->
+
+	        <div class="modal-body">
+	          <div id="schedule"></div>
+	        </div> <!-- modal-body -->
+
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-secondary" onclick="toggleLecture()">Predavanja</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleExcercise()">Računske Vežbe</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleLabExcercise()">Laboratorijske Vežbe</button>
+
+	          <button type="button" class="btn btn-primary" data-dismiss="modal">Zatvori</button>
+	          <!-- TODO: if we are going to edit through the schedule  -->
+	          <!-- <button type="button" class="btn btn-primary">Zapamti Promene</button> -->
+
+	        </div> <!-- modal-footer -->
+	      </div> <!-- modal-content -->
+	    </div> <!-- modal-dialog -->
+	  </div> <!-- modal -->
+
 	<br/>
 	<div class="col-md-3 col-sm-3 col-xs-3">
 		<div class="col-sm-12 col-md-12 col-xs-12 profile-content" id="profile">
@@ -29,7 +60,7 @@
 				<div class="col-sm-12 col-md-12 col-xs-12">
 					<br class="col-sm-12 col-md-12 col-xs-12"/>
 				</div>
-				<a href="#" class="btn btn-primary disabled col-sm-12 col-md-12 col-xs-12">Raspored</a>
+				<a href="#" class="btn btn-primary disabled col-sm-12 col-md-12 col-xs-12" data-toggle="modal" data-target="#user-schedule-modal">Raspored</a>
 				<div class="col-sm-12 col-md-12 col-xs-12">
 					<br class="col-sm-12 col-md-12 col-xs-12"/>
 				</div>
@@ -39,7 +70,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 	</div>
 	<body>
 </html>

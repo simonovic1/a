@@ -8,7 +8,6 @@ module.exports = {
 	},
 
   signUp: function(req, res){
-<<<<<<< HEAD
 		res.render('signUp', { title: 'CSBook Sign Up' });
 	},
 
