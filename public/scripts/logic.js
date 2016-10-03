@@ -1,6 +1,3 @@
-var uName = "User";
-
-
 function checkIfExists() {
 
 	var name = document.getElementById("inputName").value;

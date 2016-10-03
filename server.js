@@ -62,6 +62,44 @@ app.post('/pictureUpload', function(req, res) {
 
 })
 
+app.get('/getUserByUsername', db4j.getUserByUsername);
+
+app.get('/getAllCourses', db4j.getAllCourses);
+
+app.get('/getCourseByName', db4j.getCourseByName);
+
+app.get('/userFollow', db4j.userFollow);
+
+app.get('/userUnfollow', db4j.userUnfollow);
+
+app.get('/userSubscribe', db4j.userSubscribe);
+
+app.get('/userUnsubscribe',db4j.userUnsubscribe);
+
+app.get('/getAllFollowedCourses', db4j.getAllFollowedCourses);
+
+app.get('/getAllSubscribedCourses', db4j.getAllSubscribedCourses);
+
+app.get('/IsFollowing', db4j.checkIfUserIsFollowingCourse);
+
+app.get('/Subscribed', db4j.checkIfUserSubscribedToCourse);
+
+app.get('/createReview', db4j.createReview);
+
+app.get('/checkIfUserPostedReview', db4j.checkIfUserPostedReview);
+
+app.get('/upvoteReview', db4j.upvoteReview);
+
+app.get('/downvoteReview', db4j.downvoteReview);
+
+app.get('/checkIfUserVoted', db4j.checkIfUserVoted);
+
+app.get('/totalUpvotes', db4j.totalUpvotes);
+
+app.get('/totalDownvotes', db4j.totalDownvotes);
+
+app.get('/getTimetableInfo', db4j.getTimetableInfo);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });

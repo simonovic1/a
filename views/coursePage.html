@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>twojs schedule</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--    Fonts -->
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700">
+    <link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,700,300">
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#user-schedule-modal">
+    Open Schedule
+  </button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="user-schedule-modal" tabindex="-1" role="dialog" aria-labelledby="user-schedule-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="user-schedule-modal-label">Raspored</h4>
+        </div> <!-- modal-header -->
+
+        <div class="modal-body">
+          <div id="schedule"></div>
+        </div> <!-- modal-body -->
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="toggleLecture()">Predavanja</button>
+          <button type="button" class="btn btn-secondary" onclick="toggleExcercise()">Računske Vežbe</button>
+          <button type="button" class="btn btn-secondary" onclick="toggleLabExcercise()">Laboratorijske Vežbe</button>
+
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Zatvori</button>
+          <!-- TODO: if we are going to edit through the schedule  -->
+          <!-- <button type="button" class="btn btn-primary">Zapamti Promene</button> -->
+
+        </div> <!-- modal-footer -->
+      </div> <!-- modal-content -->
+    </div> <!-- modal-dialog -->
+  </div> <!-- modal -->
+
+</body>
+
+</html>
