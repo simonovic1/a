@@ -29,7 +29,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', index.landing);
 app.get('/signUp', index.signUp);
-app.get('/userProfile', index.userProfile)
+app.get('/newsFeed', index.newsFeed);
 
 app.get('/loginCheck', function(req, res) {
 	console.log("Started login check");
@@ -51,7 +51,7 @@ app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {
-  
+
   fs.readFile(req.files.file.path, function (err, data) {
     var new_path = __dirname + "public/users/pictures/" + req.files.file.name;
 	console.log(new_path);

@@ -8,7 +8,7 @@ function checkIfExists() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/loginCheck',
+		url: '/loginCheck',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass},
 		success: function(data){
@@ -32,7 +32,7 @@ function CreateUserAccount() {
 
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/createProfile',
+		url: '/createProfile',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass, 'indexNumber': indexNo, 'firstName' : firstName, 'lastName': lastName, 'picture' : dropzone.files.file.name},
 		success: function(data){
@@ -55,20 +55,20 @@ function CreateUserAccount() {
 function checkIfProfileExists(name,pass) {
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/checkIfProfileExists',
+		url: '/checkIfProfileExists',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass},
 		success: function(data){
 			if(data == true)
 			{
-				//TODO 
+				//TODO
 				//Dodati logiku za stavljanje u localStorage ime,prezime i brIndexa.
 				SetUpLocalStorageSettings(name);
 			    window.location = "newsFeed";
 			}
 			else if(data == false)
 			{
-				 window.location = "signup";
+				 window.location = "signUp";
 			}
 			else
 				alert("Wrong username/password combination");
@@ -79,11 +79,12 @@ function checkIfProfileExists(name,pass) {
 function SetUpLocalStorageSettings(username){
 	$.ajax({
 		type: 'GET',
-		url: 'http://localhost:3000/getUserByUsername',
+		url: '/getUserByUsername',
 		dataType: 'json',
 		data: { 'username': name},
 		success: function(data){
 			if(data){
+				console.log(data);
 				//citamo data.user.
 				/*
 				localStorage.setItem("Ime", firstName);
@@ -130,7 +131,7 @@ function loadUserProfile(){
 	document.getElementById("profileNameSurname").innerHTML = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	var index = localStorage.getItem("Index");
 	document.getElementById("profileIndex").innerHTML = index;
-	
+
 	var imgUrl = "users/pictures/" + index + ".jpg";
 	var imgUrl2 = "users/pictures/" + index + ".png";
 	var imgUrl3 = "users/pictures/noProfile.jpg";
@@ -140,7 +141,7 @@ function loadUserProfile(){
 		document.getElementById("profileImage").src = imgUrl2;
 	else
 		document.getElementById("profileImage").src = imgUrl3;
-	
+
 }
 
 //Proverava da li slika (ili bilo koji fajl) postoji na datom URL-uName
