@@ -58,10 +58,7 @@ function checkIfProfileExists(name,pass) {
 		success: function(data){
 			if(data == true)
 			{
-				//TODO
-				//Dodati logiku za stavljanje u localStorage ime,prezime i brIndexa.
 				SetUpLocalStorageSettings(name);
-			    window.location = "newsFeed";
 			}
 			else if(data == false)
 			{
@@ -78,18 +75,17 @@ function SetUpLocalStorageSettings(username){
 		type: 'GET',
 		url: '/getUserByUsername',
 		dataType: 'json',
-		data: { 'username': name},
+		data: { 'username': username },
 		success: function(data){
 			if(data){
-				console.log(data);
-				//citamo data.user.
-				/*
-				localStorage.setItem("Ime", firstName);
-				localStorage.setItem("Prezime", lastName);
-				localStorage.setItem("Index", indexNo);
-				localStorage.setItem("Username", name);
-				localStorage.setItem("imgUrl", dropzone.files.file.name);
-				*/
+				user_data = data["properties"];
+
+				localStorage.setItem("Ime", user_data.firstName);
+				localStorage.setItem("Prezime", user_data.lastName);
+				localStorage.setItem("Index", user_data.indexNumber);
+				localStorage.setItem("Username", username);
+				//localStorage.setItem("imgUrl", dropzone.files.file.name);
+				window.location = "newsFeed";
 			}
 			else{
 				alert("Couldn't load profile info.")

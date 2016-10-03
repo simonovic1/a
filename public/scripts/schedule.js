@@ -64,17 +64,6 @@ init_schedule = function() {
 
     hour_labels = false;
   }
-  // Groups can take an array of shapes and/or groups.
-  //var schedule_group = two.makeGroup(circle, rect);
-
-  // And have translation, rotation, scale like all shapes.
-  //schedule_group.translation.set(two.width / 2, two.height / 2);
-  //schedule_group.rotation = Math.PI;
-  //schedule_group.scale = 0.75;
-
-  // You can also set the same properties a shape have.
-  //schedule_group.linewidth = 7;
-
 
   // DEBUG
   /*
@@ -106,7 +95,11 @@ init_schedule = function() {
   if (schedule_data)
     fill_schedule(schedule_data);
   else
-    fill_schedule_query('localStorage.username'); // or something like this
+  {
+    var username = localStorage.getItem('Username');
+    if (username)
+      fill_schedule_query(username); // or something like this
+  }
 }
 
 add_field = function(field_index) {
@@ -185,8 +178,6 @@ add_class = function(class_index, duration, class_name, field_color = lecture_fi
   $('#user-schedule-modal').data('bs.modal').handleUpdate(); // also just in case
 }
 
-// TODO: if we cannot wrap the text inside provided box
-//       we need to set smaller font size and try to draw it again
 /**
  * @param canvas : The canvas object where to draw .
  *                 This object is usually obtained by doing:
@@ -308,7 +299,7 @@ centered_word_wrap = function(canvas, x, y, w, h, text) {
 fill_schedule_query = function(username) {
 
   // DEBUG
-  username = 'djolej@elfak.rs';
+  //username = 'djolej@elfak.rs';
 
   fill_schedule = function(data) {
     //var courses = JSON.parse(data);

@@ -88,7 +88,7 @@ module.exports = {
 		if (err) throw err;
 		var result = results[0];
 		if (!result) {
-			console.log('Error creating user');
+			console.log('Error getting user');
 
 			res.writeHead(200, {
 				'Content-Type': 'application/json',
