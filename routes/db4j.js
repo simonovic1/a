@@ -3,7 +3,7 @@ var neo4j = require('neo4j');
 //var db = new neo4j.GraphDatabase('http://neo4j:neo4j@localhost:7474');
 var db = new neo4j.GraphDatabase("http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkjfjnbmnagbkehhfjddnl.dbs.graphenedb.com:24789");
 
-module.exports = {
+var thisModule = module.exports = {
 
   checkIfProfileExists: function(req, res){
 
@@ -894,6 +894,185 @@ totalUpvotes : function(req, res){
 				res.end();
 			}
 		});
-	}
+	},
+	userPostedPost : function(req,res){
 
+		db.cypher({
+			query: 'MATCH (p:Post),(u:User{indexNumber: {indexNo}}) WHERE ID(p)={id} CREATE (u)-[:POSTED_POST]->(p)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasPost({postID : req.postID, courseName: req.courseName, tags: req.tags},res);
+			}
+		});
+	},
+	createPost : function(req,res){
+
+	db.cypher({
+		query: 'CREATE (p:Post {picture: {picture}, username: {username}, date: {date}, text: {text}, tags: {tags}}) RETURN ID(p)',
+		params: {
+			picture : req.query.picture,
+			username : req.query.username,
+			date : req.query.date,
+			text: req.query.text,
+			tags: req.query.tags,
+		},
+	}, function (err, results) {
+		if (err) throw err;
+
+		if (!results) {
+			console.log('Error creating post');
+
+			res.writeHead(200, {
+				'Content-Type': 'application/json',
+				"Access-Control-Allow-Origin":"*",
+			});
+
+			res.write(JSON.stringify(false));
+			res.end();
+		} else {
+			var id = results[0]['ID(p)'];
+			thisModule.userPostedPost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+		}
+	});
+},
+	courseHasPost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post),(c:Course{name: {courseName}}) WHERE ID(p)={id} CREATE (c)-[:HAS_POST]->(p)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTag({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTag : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(t)'];
+				thisModule.postHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+
+	postHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[:HAS_TAG]->(t)',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+	getAllPosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post) return p',
+			params: {
+
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+				
+			}
+		});
+	}
 };

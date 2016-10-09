@@ -100,6 +100,10 @@ app.get('/totalDownvotes', db4j.totalDownvotes);
 
 app.get('/getTimetableInfo', db4j.getTimetableInfo);
 
+app.get('/createPost', db4j.createPost);
+
+app.get('/getAllPosts', db4j.getAllPosts);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });
