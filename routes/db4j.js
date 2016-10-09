@@ -895,6 +895,37 @@ totalUpvotes : function(req, res){
 			}
 		});
 	},
+	createPost : function(req,res){
+
+	db.cypher({
+		query: 'CREATE (p:Post {picture: {picture}, username: {username}, date: {date}, time: {time}, text: {text}, tags: {tags}}) RETURN ID(p)',
+		params: {
+			picture : req.query.picture,
+			username : req.query.username,
+			date : req.query.date,
+			time : req.query.time,
+			text: req.query.text,
+			tags: req.query.tags,
+		},
+	}, function (err, results) {
+		if (err) throw err;
+
+		if (!results) {
+			console.log('Error creating post');
+
+			res.writeHead(200, {
+				'Content-Type': 'application/json',
+				"Access-Control-Allow-Origin":"*",
+			});
+
+			res.write(JSON.stringify(false));
+			res.end();
+		} else {
+			var id = results[0]['ID(p)'];
+			thisModule.userPostedPost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+		}
+	});
+},
 	userPostedPost : function(req,res){
 
 		db.cypher({
@@ -921,36 +952,6 @@ totalUpvotes : function(req, res){
 			}
 		});
 	},
-	createPost : function(req,res){
-
-	db.cypher({
-		query: 'CREATE (p:Post {picture: {picture}, username: {username}, date: {date}, text: {text}, tags: {tags}}) RETURN ID(p)',
-		params: {
-			picture : req.query.picture,
-			username : req.query.username,
-			date : req.query.date,
-			text: req.query.text,
-			tags: req.query.tags,
-		},
-	}, function (err, results) {
-		if (err) throw err;
-
-		if (!results) {
-			console.log('Error creating post');
-
-			res.writeHead(200, {
-				'Content-Type': 'application/json',
-				"Access-Control-Allow-Origin":"*",
-			});
-
-			res.write(JSON.stringify(false));
-			res.end();
-		} else {
-			var id = results[0]['ID(p)'];
-			thisModule.userPostedPost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
-		}
-	});
-},
 	courseHasPost : function(req,res){
 
 		db.cypher({
@@ -1009,7 +1010,6 @@ totalUpvotes : function(req, res){
 			}
 		});
 	},
-
 	postHasTag : function(req,res){
 
 		db.cypher({
@@ -1072,6 +1072,190 @@ totalUpvotes : function(req, res){
 				res.write(JSON.stringify(posts, null, 4));
 				res.end();
 				
+			}
+		});
+	},
+
+	createEvent : function(req,res){
+
+		db.cypher({
+			query: 'CREATE (e:Event {picture: {picture}, username: {username}, date: {date}, time: {time}, eventDate: {eventDate},' +
+			'eventTime: {eventTime},title: {title}, tags: {tags}}) RETURN ID(e)',
+			params: {
+				picture : req.query.picture,
+				username : req.query.username,
+				date : req.query.date,
+				time : req.query.time,
+				eventDate : req.query.eventDate,
+				eventTime : req.query.eventTime,
+				title: req.query.title,
+				tags: req.query.tags,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(e)'];
+				thisModule.userPostedEvent({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+			}
+		});
+	},
+	userPostedEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event),(u:User{indexNumber: {indexNo}}) WHERE ID(e)={id} CREATE (u)-[:POSTED_EVENT]->(e)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasEvent({postID : req.postID, courseName: req.courseName, tags: req.tags},res);
+			}
+		});
+	},
+	courseHasEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event),(c:Course{name: {courseName}}) WHERE ID(e)={id} CREATE (c)-[:HAS_EVENT]->(e)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTagForEvent({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTagForEvent : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(t)'];
+				thisModule.eventHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+	eventHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event),(t:Tag) WHERE ID(e)={postID} AND ID(t)={tagID} CREATE (e)-[:HAS_TAG]->(t)',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error event has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+	getAllEvents : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event) return e',
+			params: {
+
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error get all event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+
 			}
 		});
 	}

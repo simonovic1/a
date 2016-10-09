@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d991a2dc-bb16-48a0-8e40-6a4599993170" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/db4j.js" afterPath="$PROJECT_DIR$/routes/db4j.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
     </list>
@@ -28,8 +27,8 @@
       <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="104" column="40" selection-start-line="104" selection-start-column="40" selection-end-line="104" selection-end-column="40" />
+            <state relative-caret-position="320">
+              <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -68,13 +67,17 @@
       <file leaf-file-name="db4j.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/db4j.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="641">
-              <caret line="1070" column="0" selection-start-line="1070" selection-start-column="0" selection-end-line="1070" selection-end-column="0" />
+            <state relative-caret-position="308">
+              <caret line="1262" column="0" selection-start-line="1262" selection-start-column="0" selection-end-line="1262" selection-end-column="0" />
               <folding>
                 <element signature="e#15894#16461#0" expanded="false" />
                 <element signature="e#16502#17193#0" expanded="false" />
                 <element signature="e#19369#20073#0" expanded="false" />
                 <element signature="e#20117#20865#0" expanded="false" />
+                <element signature="e#20898#21699#0" expanded="false" />
+                <element signature="e#21736#22341#0" expanded="false" />
+                <element signature="e#22377#23094#0" expanded="false" />
+                <element signature="e#23126#23651#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -279,12 +282,12 @@
       <workItem from="1474723620624" duration="5149000" />
       <workItem from="1474809256594" duration="3945000" />
       <workItem from="1475696357156" duration="20000" />
-      <workItem from="1476006075312" duration="8330000" />
+      <workItem from="1476006075312" duration="11807000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17444000" />
+    <option name="totallyTimeSpent" value="20921000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
@@ -299,7 +302,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36377952" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36220473" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -325,24 +328,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/routes/db4j.js</url>
-          <line>948</line>
+          <line>1191</line>
           <properties />
-          <option name="timeStamp" value="1" />
+          <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/routes/db4j.js</url>
-          <line>919</line>
+          <line>1107</line>
           <properties />
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/routes/db4j.js</url>
-          <line>902</line>
-          <properties />
-          <option name="timeStamp" value="8" />
+          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="16" />
+      <option name="time" value="21" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="NodeJSConfigurationType">
@@ -449,6 +446,10 @@
             <element signature="e#16502#17193#0" expanded="false" />
             <element signature="e#19369#20073#0" expanded="false" />
             <element signature="e#20117#20865#0" expanded="false" />
+            <element signature="e#20898#21699#0" expanded="false" />
+            <element signature="e#21736#22341#0" expanded="false" />
+            <element signature="e#22377#23094#0" expanded="false" />
+            <element signature="e#23126#23651#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -500,21 +501,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/db4j.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="641">
-          <caret line="1070" column="0" selection-start-line="1070" selection-start-column="0" selection-end-line="1070" selection-end-column="0" />
+        <state relative-caret-position="308">
+          <caret line="1262" column="0" selection-start-line="1262" selection-start-column="0" selection-end-line="1262" selection-end-column="0" />
           <folding>
             <element signature="e#15894#16461#0" expanded="false" />
             <element signature="e#16502#17193#0" expanded="false" />
             <element signature="e#19369#20073#0" expanded="false" />
             <element signature="e#20117#20865#0" expanded="false" />
+            <element signature="e#20898#21699#0" expanded="false" />
+            <element signature="e#21736#22341#0" expanded="false" />
+            <element signature="e#22377#23094#0" expanded="false" />
+            <element signature="e#23126#23651#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="104" column="40" selection-start-line="104" selection-start-column="40" selection-end-line="104" selection-end-column="40" />
+        <state relative-caret-position="320">
+          <caret line="107" column="0" selection-start-line="107" selection-start-column="0" selection-end-line="107" selection-end-column="0" />
           <folding />
         </state>
       </provider>
