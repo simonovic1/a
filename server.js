@@ -108,6 +108,10 @@ app.get('/createEvent', db4j.createEvent);
 
 app.get('/getAllEvents', db4j.getAllEvents);
 
+app.get('/createPoll', db4j.createPoll);
+
+app.get('/getAllPolls', db4j.getAllPolls);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });
