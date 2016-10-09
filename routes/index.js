@@ -11,7 +11,10 @@ module.exports = {
       //        - if there isn't, send it to login page
 	},
 
-  signUp: function(req, res){
-		  res.render('signUp');
+    signUp: function(req, res){
+		  res.render('signUp')
+	},
+	coursePosts: function(req, res){
+		  res.render('coursePosts');
 	}
 };
