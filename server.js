@@ -51,9 +51,10 @@ app.get('/createProfile', db4j.createProfile);
 app.post('/pictureUpload', function(req, res) {
 
   fs.readFile(req.files.file.path, function (err, data) {
-    var new_path = __dirname + "public/users/pictures/" + req.files.file.name;
+    var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
 	console.log(new_path);
     fs.writeFile(new_path, data, function (err) {
+		console.log(err);
       res.redirect("back");
     });
   });

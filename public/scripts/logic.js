@@ -26,6 +26,8 @@ function CreateUserAccount() {
 	var firstName = document.getElementById("inputFirstName").value;
 	var lastName = document.getElementById("inputLastName").value;
 	var dropzone = document.getElementById("inputPicture");
+	
+	
 
 	$.ajax({
 		type: 'GET',
@@ -84,7 +86,7 @@ function SetUpLocalStorageSettings(username){
 				localStorage.setItem("Prezime", user_data.lastName);
 				localStorage.setItem("Index", user_data.indexNumber);
 				localStorage.setItem("Username", username);
-				//localStorage.setItem("imgUrl", dropzone.files.file.name);
+				localStorage.setItem("imgUrl", user_data.picture);
 				window.location = "newsFeed";
 			}
 			else{
@@ -124,9 +126,11 @@ function loadUserProfile(){
 	document.getElementById("profileNameSurname").innerHTML = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	var index = localStorage.getItem("Index");
 	document.getElementById("profileIndex").innerHTML = index;
+	
+	var img = localStorage.getItem("imgUrl");
 
-	var imgUrl = "users/pictures/" + index + ".jpg";
-	var imgUrl2 = "users/pictures/" + index + ".png";
+	var imgUrl = "users/pictures/" + img + ".jpg";
+	var imgUrl2 = "users/pictures/" + img + ".png";
 	var imgUrl3 = "users/pictures/noProfile.jpg";
 	if(imageExists(imgUrl))
 		document.getElementById("profileImage").src = imgUrl;
@@ -148,6 +152,18 @@ function imageExists(image_url){
 
     return http.status != 404;
 
+}
+
+function changeProfilePicture(){
+	var pic = document.getElementById("inputPicture");
+	var username = localStorage.getItem("Username");
+	
+	//todo: call changing user picture url from given username.
+}
+
+function signOut(){
+	localStorage.clear();
+	window.location = "/#";
 }
 
 /* !!user Profile logic!! */
