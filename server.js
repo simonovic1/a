@@ -26,8 +26,9 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/', index.landing);
-app.get('/signUp', index.signUp);
-app.get('/newsFeed', index.newsFeed);
+app.get('/signUp', index.signUp); 
+app.get('/newsFeed', index.newsFeed); 
+app.get('/coursePosts', index.coursePosts); 
 
 app.get('/loginCheck', function(req, res) {
 	console.log("Started login check");
@@ -98,6 +99,18 @@ app.get('/totalUpvotes', db4j.totalUpvotes);
 app.get('/totalDownvotes', db4j.totalDownvotes);
 
 app.get('/getTimetableInfo', db4j.getTimetableInfo);
+
+app.get('/createPost', db4j.createPost);
+
+app.get('/getAllPosts', db4j.getAllPosts);
+
+app.get('/createEvent', db4j.createEvent);
+
+app.get('/getAllEvents', db4j.getAllEvents);
+
+app.get('/createPoll', db4j.createPoll);
+
+app.get('/getAllPolls', db4j.getAllPolls);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

@@ -6,12 +6,16 @@ module.exports = {
       //        - if there is, send the user to their newsfeed page
       //        - if there isn't, send it to login page
 	},
-
-  signUp: function(req, res){
+ 
+  	signUp: function(req, res){
 		res.render('signUp', { title: 'CSBook Sign Up' });
 	},
 
 	newsFeed: function(req, res){
-		res.render('newsFeed', { title: 'CSBook' });
+		res.render('newsFeed', { title: 'CSBook' }); 
+	},
+
+	coursePosts: function(req, res){
+		  res.render('coursePosts'); 
 	}
 };

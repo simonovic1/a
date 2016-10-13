@@ -3,7 +3,7 @@ var neo4j = require('neo4j');
 //var db = new neo4j.GraphDatabase('http://neo4j:neo4j@localhost:7474');
 var db = new neo4j.GraphDatabase("http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkjfjnbmnagbkehhfjddnl.dbs.graphenedb.com:24789");
 
-module.exports = {
+var thisModule = module.exports = {
 
   checkIfProfileExists: function(req, res){
 
@@ -894,6 +894,622 @@ totalUpvotes : function(req, res){
 				res.end();
 			}
 		});
-	}
+	},
+	createPost : function(req,res){
 
+	db.cypher({
+		query: 'CREATE (p:Post {picture: {picture}, username: {username}, date: {date}, time: {time}, text: {text}, tags: {tags}}) RETURN ID(p)',
+		params: {
+			picture : req.query.picture,
+			username : req.query.username,
+			date : req.query.date,
+			time : req.query.time,
+			text: req.query.text,
+			tags: req.query.tags,
+		},
+	}, function (err, results) {
+		if (err) throw err;
+
+		if (!results) {
+			console.log('Error creating post');
+
+			res.writeHead(200, {
+				'Content-Type': 'application/json',
+				"Access-Control-Allow-Origin":"*",
+			});
+
+			res.write(JSON.stringify(false));
+			res.end();
+		} else {
+			var id = results[0]['ID(p)'];
+			thisModule.userPostedPost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+		}
+	});
+},
+	userPostedPost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post),(u:User{indexNumber: {indexNo}}) WHERE ID(p)={id} CREATE (u)-[:POSTED_POST]->(p)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasPost({postID : req.postID, courseName: req.courseName, tags: req.tags},res);
+			}
+		});
+	},
+	courseHasPost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post),(c:Course{name: {courseName}}) WHERE ID(p)={id} CREATE (c)-[:HAS_POST]->(p)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTag({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTag : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(t)'];
+				thisModule.postHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+	postHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[:HAS_TAG]->(t)',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+	getAllPosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post) return p',
+			params: {
+
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+				
+			}
+		});
+	},
+
+	createEvent : function(req,res){
+
+		db.cypher({
+			query: 'CREATE (e:Event {picture: {picture}, username: {username}, date: {date}, time: {time}, eventDate: {eventDate},' +
+			'eventTime: {eventTime},title: {title}, tags: {tags}}) RETURN ID(e)',
+			params: {
+				picture : req.query.picture,
+				username : req.query.username,
+				date : req.query.date,
+				time : req.query.time,
+				eventDate : req.query.eventDate,
+				eventTime : req.query.eventTime,
+				title: req.query.title,
+				tags: req.query.tags,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(e)'];
+				thisModule.userPostedEvent({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+			}
+		});
+	},
+	userPostedEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event),(u:User{indexNumber: {indexNo}}) WHERE ID(e)={id} CREATE (u)-[:POSTED_EVENT]->(e)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasEvent({postID : req.postID, courseName: req.courseName, tags: req.tags},res);
+			}
+		});
+	},
+	courseHasEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event),(c:Course{name: {courseName}}) WHERE ID(e)={id} CREATE (c)-[:HAS_EVENT]->(e)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTagForEvent({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTagForEvent : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(t)'];
+				thisModule.eventHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+	eventHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event),(t:Tag) WHERE ID(e)={postID} AND ID(t)={tagID} CREATE (e)-[:HAS_TAG]->(t)',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error event has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+	getAllEvents : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event) return e',
+			params: {
+
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error get all event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+
+			}
+		});
+	},
+
+	createPoll : function(req,res){
+
+		db.cypher({
+			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
+			params: {
+				picture : req.query.picture,
+				username : req.query.username,
+				date : req.query.date,
+				time : req.query.time,
+				text: req.query.text,
+				tags: req.query.tags,
+				optionNum: req.query.options.length,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating poll');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(p)'];
+				thisModule.userPostedPoll({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags, options: req.query.options},res);
+			}
+		});
+	},
+	userPostedPoll : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll),(u:User{indexNumber: {indexNo}}) WHERE ID(p)={id} CREATE (u)-[:POSTED_POLL]->(p)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted poll');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasPoll({postID : req.postID, courseName: req.courseName, tags: req.tags, options: req.options},res);
+			}
+		});
+	},
+	courseHasPoll : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll),(c:Course{name: {courseName}}) WHERE ID(p)={id} CREATE (c)-[:HAS_POLL]->(p)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has poll');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTagForPoll({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+				for(var i =0; i < req.options.length; i++)
+				{
+					thisModule.createOptionForPoll({postID : req.postID, option: req.options[i]},res);
+				}
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTagForPoll : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(t)'];
+				thisModule.pollHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+	pollHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[:HAS_TAG]->(t)',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error event has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+	createOptionForPoll : function(req,res){
+
+		db.cypher({
+			query: 'CREATE (o:Option {name: {option}, votes: 0}) RETURN ID(o)',
+			params: {
+				option : req.option,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(o)'];
+				thisModule.pollHasOption({postID : req.postID, optionID: id},res);
+			}
+		});
+	},
+	pollHasOption : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll),(o:Option) WHERE ID(p)={postID} AND ID(o)={optionID} CREATE (p)-[:HAS_OPTION]->(o)',
+			params: {
+				postID : req.postID,
+				optionID : req.optionID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error pool has option');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+	getAllPolls : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll),(o:Option) WHERE (p)-[:HAS_OPTION]->(o) RETURN p,o',
+			params: {
+
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error get all polls');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+					res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+
+			}
+		});
+	}
 };
