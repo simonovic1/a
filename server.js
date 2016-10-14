@@ -4,7 +4,7 @@ var express = require('express')
 
   // csbook routes
   , index   = require('./routes/index')
-  , login   = require('./routes/login')
+  //, login   = require('./routes/login')
   , db4j    = require('./routes/db4j');
 
 var app = express();
@@ -30,7 +30,11 @@ app.get('/signUp', index.signUp);
 app.get('/newsFeed', index.newsFeed); 
 app.get('/coursePosts', index.coursePosts); 
 
-app.get('/loginCheck', function(req, res) {
+//new newsfeed-page added by Simon
+app.get('/newsfeed-page', index.newsfeed); 
+
+
+/*app.get('/loginCheck', function(req, res) {
 	console.log("Started login check");
 	var toRet = login.check(req.query.username, req.query.password);
 	console.log("Finished login check, "+ toRet);
@@ -44,13 +48,12 @@ app.get('/loginCheck', function(req, res) {
 
 	res.write(JSON.stringify(toRet));
 	res.end();
-});
+});*/
 
 app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {
-
   fs.readFile(req.files.file.path, function (err, data) {
     var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
 	console.log(new_path);
