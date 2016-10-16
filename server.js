@@ -4,7 +4,7 @@ var express = require('express')
 
   // csbook routes
   , index   = require('./routes/index')
-  //, login   = require('./routes/login')
+  , login   = require('./routes/login')
   , db4j    = require('./routes/db4j');
 
 var app = express();
@@ -34,7 +34,7 @@ app.get('/coursePosts', index.coursePosts);
 app.get('/newsfeed-page', index.newsfeed); 
 
 
-/*app.get('/loginCheck', function(req, res) {
+app.get('/loginCheck', function(req, res) {
 	console.log("Started login check");
 	var toRet = login.check(req.query.username, req.query.password);
 	console.log("Finished login check, "+ toRet);
@@ -48,7 +48,7 @@ app.get('/newsfeed-page', index.newsfeed);
 
 	res.write(JSON.stringify(toRet));
 	res.end();
-});*/
+});
 
 app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
