@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="/styles/newsfeed-page.css">
   <link rel="stylesheet" href="/styles/timeline.css">
    <link rel="stylesheet" href="/styles/courses-sidebar.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="/scripts/jquery-2.2.0.min.js"></script>
+  <script src="/scripts/bootstrap.min.js"></script>
    <script src="scripts/courses-sidebar.js"></script>
 </head>
 <body>
@@ -74,7 +74,7 @@
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="home">
-              <div class="timeline-centered">
+              <!--<div class="timeline-centered">
                 <article class="timeline-entry">
                   <div class="timeline-entry-inner">
                     <div class="timeline-icon bg-success">
@@ -97,7 +97,303 @@
                    </div>
                   </div>
                 </article>
-              </div>              
+              </div>-->
+			     <div class="btn-group" style="margin-bottom:10px" >
+  <a  class="btn btn-info">Novi post...</a>
+  <a  class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+  <ul class="dropdown-menu">
+    <li><a  class="activebtn-link" data-toggle="modal"data-target="#status-modal">Status</a></li>
+    <li><a  class="activebtn-link" data-toggle="modal"data-target="#poll-modal">Anketa</a></li>
+    <li><a  class="activebtn-link" data-toggle="modal"data-target="#event-modal">Događaj</a></li>
+  </ul>
+</div>
+<div style="margin-bottom:10px">
+<button class="btn btn-info" onclick="addPosts();">Dummy status</button>
+<button class="btn btn-info" onclick="addVotings();">Dummy poll</button>
+<button class="btn btn-info" onclick="addEvents();">Dummy event</button>
+</div>
+
+<!-- post -->
+<div class="post">
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+	<div class="heading-table">
+		<div class="panel-image"><img src="images/user.png"/></div>		
+		<h3 class="panel-title">Janko Jankovic</h3>
+		<div class="panel-date">9/29/2016</div>
+	</div>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+  <div class="panel-footer">
+	<span class="label label-info">Tag1</span>
+	<span class="label label-info">Tag2</span>
+	<span class="label label-info">Tag3</span>
+  </div>
+  </div>
+</div>
+<!-- end post -->
+
+
+<!-- pool -->
+<div class="post">
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+	<div class="heading-table">
+		<div class="panel-image"><img src="images/user.png"/></div>		
+		<h3 class="panel-title">Janko Jankovic</h3>
+		<div class="panel-date">9/29/2016</div>
+	</div>
+  </div>
+  <div class="panel-body">
+    Panel content
+  </div>
+  
+  <div class="voting">
+  
+  
+  <!-- vote-item -->
+  <div class="vote-item">
+  <div class="vote-name col-lg-1">
+	Sreda
+	</div>
+  <div class="vote-progress">
+	<div class="progress progress-striped">
+	<div class="progress-bar progress-bar-info" style="width: 20%"></div>
+  </div>
+  </div>
+  <div class="vote-percent">
+  <span>20%</span>
+  </div>
+  <div class="vote-button">
+	<button  class="btn btn-info btn-xs">+</button>
+  </div>
+  </div>
+  <!-- end vote-item -->
+  
+  
+    <!-- vote-item -->
+  <div class="vote-item">
+  <div class="vote-name col-lg-1">
+	Cetvrtak
+	</div>
+  <div class="vote-progress">
+	<div class="progress progress-striped">
+	<div class="progress-bar progress-bar-info" style="width: 30%"></div>
+  </div>
+  </div>
+  <div class="vote-percent">
+  <span>30%</span>
+  </div>
+  <div class="vote-button ">
+	<button class="btn btn-info btn-xs">+</button>
+  </div>
+  </div>
+  <!-- end vote-item -->
+ 
+  </div>
+  
+   <div class="panel-footer">
+	<span class="label label-info">Tag1</span>
+	<span class="label label-info">Tag2</span>
+	<span class="label label-info">Tag3</span>
+  </div>
+  
+  </div>
+  
+ 
+</div>
+<!-- end pool -->
+
+
+
+<!-- post -->
+<div class="post">
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+	<div class="heading-table">
+		<!-- <div class="panel-image"><img src="images/user.png"/></div>		 -->
+		<h3 class="panel-title">Kolokvijum</h3>
+		<!-- <div class="panel-date">9/29/2016</div> -->
+	</div>
+  </div>
+  <div class="panel-body">
+	<div>
+	Naziv: NSI
+	</div>
+	<div>
+	Datum: 05.10.2016.
+	</div>
+  </div>
+  <div class="panel-footer">
+	<span class="label label-info">Tag1</span>
+	<span class="label label-info">Tag2</span>
+	<span class="label label-info">Tag3</span>
+  </div>
+  </div>
+</div>
+<!-- end post -->
+
+</div>
+
+	<div class="modal"id="event-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj događaj</h4>
+	</div>
+
+	<div class="modal-body">
+	 <div class="form-group">
+	
+	
+     <div class="control-group">
+	 <div>
+					<label for="select-event">Tip događaja</label><div>
+					<select id="select-event"  placeholder="Izaberi ili unesi tip događaja...">
+			
+					</select>
+				</div>
+			
+		</div>
+	<div class="form-group">
+		<label for="event-text"class="control-label">Opis</label>
+		<textarea class="form-control"rows="3"id="event-text"></textarea>
+		
+	</div>
+<div class="form-group">
+		 <label for="event-deadline"class="control-label">Datum</label>
+		  <div class='input-group' >
+                    <input type='text' class="form-control" id='event-deadline'/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+		
+	</div>
+	<div class="control-group">
+					<div><label for="event-tags">Tagovi</label></div>
+					<input type="text" id="event-tags"  value="">
+				</div>
+				
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewEvent()">Dodaj događaj</button>
+		<button type="reset" class="btn btn-default"data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+			</div>
+			</div>
+			</div>
+			</div>
+			</div>
+			
+			
+			<div class="modal"id="poll-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj anketu</h4>
+	</div>
+
+	<div class="modal-body" >
+	
+	<div class="form-group">
+		<label for="poll-text"class="control-label">Pitanje</label>
+		<input class="form-control"rows="3"id="poll-text"></textarea>
+		
+	</div>
+
+	<div class="form-group">
+		 <div id="addDelButtons">
+		 <label for="poll-options"class="control-label">Opcije</label>
+		<span class="glyphicon glyphicon-plus" aria-hidden="true" id="btnAdd"></span>
+		<span class="glyphicon glyphicon-minus" aria-hidden="true" id= "btnDel"></span>
+	
+            </div>
+ 
+		
+		<div id = "poll-options" class="accordion-body"> 
+              <div id="entry1" class="clonedInput"> 
+                <fieldset>
+                    <input class="input_answeroption form-control" type="text" name="answer_option" id="ID1_option" value="" style = "margin-bottom:10px">
+                </fieldset>
+            </div>
+  			
+	</div>
+	</div>
+	<div class="form-group">
+		 <label for="poll-deadline"class="control-label">Rok za glasanje</label>
+		  <div class='input-group' >
+                    <input type='text' class="form-control" id='poll-deadline'/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar  glyphicon-nonescaped"></span>
+                    </span>
+                </div>
+		
+	</div>
+<div class="control-group">
+					<div><label for="poll-tags">Tagovi</label></div>
+					<input type="text" id="poll-tags"  value="">
+				</div>
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewPoll()">Dodaj anketu</button>
+		<button type="reset" class="btn btn-default"data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+		
+			</div>
+			</div>
+				</div>
+		
+			
+			<div class="modal"id="status-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj status</h4>
+	</div>
+
+	<div class="modal-body">
+	
+	<div class="form-group">
+		<label for="status-text"class="control-label">Tekst</label>
+		<textarea class="form-control"rows="3"id="status-text"></textarea>
+		
+	</div>
+<div class="control-group">
+					<div><label for="status-tags">Tagovi</label></div>
+					<input type="text" id="status-tags"  value="">
+				</div>
+
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewStatus()">Dodaj status</button>
+		<button type="reset" class="btn btn-default"data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+			</div>
+			</div>        
             </div>
             <div class="tab-pane fade" id="profile">
               <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p><br><br><br><br><br><br><br><br><br><br><br><br><br>
