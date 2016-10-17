@@ -11,6 +11,36 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
+
+  <!-- Modal -->
+	  <div class="modal fade" id="user-schedule-modal" tabindex="-1" role="dialog" aria-labelledby="user-schedule-modal-label" aria-hidden="true">
+	    <div class="modal-dialog modal-lg" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	          </button>
+	          <h4 class="modal-title" id="user-schedule-modal-label">Raspored</h4>
+	        </div> <!-- modal-header -->
+
+	        <div class="modal-body">
+	          <div id="schedule"></div>
+	        </div> <!-- modal-body -->
+
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-secondary" onclick="toggleLecture()">Predavanja</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleExcercise()">Računske Vežbe</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleLabExcercise()">Laboratorijske Vežbe</button>
+
+	          <button type="button" class="btn btn-primary" data-dismiss="modal">Zatvori</button>
+	          <!-- TODO: if we are going to edit through the schedule  -->
+	          <!-- <button type="button" class="btn btn-primary">Zapamti Promene</button> -->
+
+	        </div> <!-- modal-footer -->
+	      </div> <!-- modal-content -->
+	    </div> <!-- modal-dialog -->
+	  </div> <!-- modal -->
+
   <div class="navbar navbar-default navbar-fixed-top"> 
     <div class="container">
       <div class="navbar-header">
@@ -43,7 +73,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
             <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Raspored</a></li>
+              <li><a href="#" data-toggle="modal" data-target="#user-schedule-modal">Raspored</a></li>
               <li class="divider"></li>
               <li><a href="#">Odjava</a></li>
             </ul>
