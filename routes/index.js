@@ -21,5 +21,9 @@ module.exports = {
 
 	coursePosts: function(req, res){
 		  res.render('coursePosts'); 
+	},
+
+	courses: function(req, res) {
+		res.render('courses'); 
 	}	
 };

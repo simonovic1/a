@@ -4,7 +4,7 @@ var express = require('express')
 
   // csbook routes
   , index   = require('./routes/index')
-  , login   = require('./routes/login')
+  //, login   = require('./routes/login')
   , db4j    = require('./routes/db4j');
 
 var app = express();
@@ -30,8 +30,8 @@ app.get('/signUp', index.signUp);
 app.get('/newsFeed', index.newsFeed); 
 app.get('/coursePosts', index.coursePosts); 
 
-//new newsfeed-page added by Simon
 app.get('/newsfeed-page', index.newsfeed); 
+app.get('/courses', index.courses);
 
 
 app.get('/loginCheck', function(req, res) {
