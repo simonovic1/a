@@ -112,6 +112,8 @@ app.get('/createPoll', db4j.createPoll);
 
 app.get('/getAllPolls', db4j.getAllPolls);
 
+app.get('/voteOption', db4j.voteOption);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });

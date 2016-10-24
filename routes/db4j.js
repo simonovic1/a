@@ -517,7 +517,7 @@ checkIfUserSubscribedToCourse : function(req, res){
 			res.end();
 		} else {
 			var id = result['ID(r)'];
-			exports.userPostReview({username: req.query.username, review_id:id, course_name: req.query.name},res);
+			thisModule.userPostReview({username: req.query.username, review_id:id, course_name: req.query.name},res);
 		}
 	});
 },
@@ -544,7 +544,7 @@ userPostReview : function(req,res){
 			res.write(JSON.stringify(false));
 			res.end();
 		} else {
-			exports.createCourseReview(req,res)
+			thisModule.createCourseReview(req,res)
 		}
 	});
 },
@@ -635,7 +635,7 @@ createCourseReview : function(req,res){
 			res.end();
 		} else {
 
-			exports.userUpvoteReview({username: req.query.username, review_id:req.query.id},res);
+			thisModule.userUpvoteReview({username: req.query.username, review_id:req.query.id},res);
 		}
 	});
 },
@@ -696,7 +696,7 @@ downvoteReview : function(req,res){
 			res.end();
 		} else {
 
-			exports.userDownvoteReview({username: req.query.username, review_id:req.query.id},res);
+			thisModule.userDownvoteReview({username: req.query.username, review_id:req.query.id},res);
 		}
 	});
 },
@@ -746,7 +746,7 @@ checkIfUserVoted : function(req, res){
 		if (err) throw err;
 		var result = results[0];
 		if (!result) {
-			exports.checkIfUserDownvoted(req,res);
+			thisModule.checkIfUserDownvoted(req,res);
 		} else {
 			var review = result['r'];
 			console.log(JSON.stringify(review, null, 4));
@@ -794,7 +794,7 @@ checkIfUserDownvoted : function(req, res){
 	});
 },
 
-totalUpvotes : function(req, res){
+	totalUpvotes : function(req, res){
 	db.cypher({
 		query: 'MATCH (r:Review) WHERE ID(r)={id} RETURN r.upvote',
 		params: {
@@ -825,7 +825,6 @@ totalUpvotes : function(req, res){
 		}
 	});
 },
-
 	totalDownvotes : function(req, res){
 	db.cypher({
 		query: 'MATCH (r:Review) WHERE ID(r)={id} RETURN r.downvote',
@@ -857,6 +856,7 @@ totalUpvotes : function(req, res){
 		}
 	});
 },
+
 	getAllFollowedCourses : function(req,res){
 
 		db.cypher({
@@ -1080,7 +1080,7 @@ totalUpvotes : function(req, res){
 
 		db.cypher({
 			query: 'CREATE (e:Event {picture: {picture}, username: {username}, date: {date}, time: {time}, eventDate: {eventDate},' +
-			'eventTime: {eventTime},title: {title}, tags: {tags}}) RETURN ID(e)',
+			'eventTime: {eventTime},title: {title}, courseName: {courseName}, tags: {tags}}) RETURN ID(e)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
@@ -1089,6 +1089,7 @@ totalUpvotes : function(req, res){
 				eventDate : req.query.eventDate,
 				eventTime : req.query.eventTime,
 				title: req.query.title,
+				courseName: req.query.courseName,
 				tags: req.query.tags,
 			},
 		}, function (err, results) {
@@ -1511,5 +1512,129 @@ totalUpvotes : function(req, res){
 
 			}
 		});
-	}
+	},
+
+	voteOption : function(req, res){
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option), (p)-[h:HAS_OPTION]->(o)<-[v:VOTE_POLL]-(u) WHERE ID(p)={id} RETURN v',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				thisModule.userVoteOption({username: req.query.username, id: req.query.id, name: req.query.name}, res);
+			} else {
+				thisModule.poolOptionDecrement({username: req.query.username, id: req.query.id, name: req.query.name}, res);
+			}
+		});
+	},
+
+	userVoteOption : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option {name:{name}}), (p)-[HAS_OPTION]->(o) WHERE ID(p)={id} CREATE (u)-[u1:VOTE_POLL]->(o) RETURN u1',
+			params: {
+				username: req.username,
+				name: req.name,
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.poolOptionIncrement({id: req.id, name: req.name},res);
+			}
+		});
+	},
+	poolOptionIncrement : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll), (o:Option {name: {name}}), (p)-[:HAS_OPTION]->(o) WHERE ID(p)={id} SET o.votes =  o.votes + 1 RETURN o.votes',
+			params: {
+				id: parseInt(req.id),
+				name: req.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	deleteVoteOption : function(req, res){
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option), (p)-[HAS_OPTION]->(o)<-[v:VOTE_POLL]-(u) WHERE ID(p)={id} DELETE v RETURN true',
+			params: {
+				username: req.username,
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				
+			} else {
+				thisModule.userVoteOption({username: req.username, id: req.id, name: req.name}, res);
+			}
+		});
+	},
+	poolOptionDecrement : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option), (p)-[HAS_OPTION]->(o)<-[v:VOTE_POLL]-(u) WHERE ID(p)={id} SET o.votes =  o.votes - 1 RETURN o.votes',
+			params: {
+				username: req.username,
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.deleteVoteOption({username: req.username, id: req.id, name: req.name}, res);
+			}
+		});
+	},
 };
