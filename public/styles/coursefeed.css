@@ -1,0 +1,98 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+body
+{
+	width:100%;
+	margin:0 auto;
+}
+
+.container
+{
+	margin:0 auto;
+	width:80%;
+	padding:20px;
+}
+
+.heading-table
+{
+	display:table;
+	position:relative;
+	width:100%;
+}
+
+.panel-title
+{
+	display:table-cell;
+}
+
+.panel-image
+{
+	display:table-cell;
+	width:5%;
+}
+
+
+.panel-image img
+{
+	display:block;
+	max-height:30px;
+}
+
+
+.panel-date
+{
+	display:table-cell;
+	position:absolute;
+	right:10px;
+	bottom:0;
+}
+
+
+.panel-footer span
+{
+	margin-right:10px;
+}
+
+.voting
+{
+	padding:0 10px;
+}
+
+
+.vote-item
+{
+ position:relative;
+ display:table;
+}
+
+.vote-percent, .vote-button, .vote-progress, .vote-name
+{
+	display:table-cell;
+	vertical-align:middle;
+}
+
+.progress
+{
+	margin:0;
+}
+
+.vote-button button{
+	width:30px;
+	max-height:20px;
+}
+
+.vote-progress
+{
+	padding:0px 10px;
+	width:90%;
+}
+
+.vote-percent
+{
+	padding-right:10px;
+}
