@@ -28,8 +28,8 @@ var events = [
 				
 				
 				
-    $('#poll-deadline').datetimepicker();
-	   $('#event-deadline').datetimepicker();
+    $('#poll-deadline').datetimepicker({ dateFormat: "MM.DD.YYYY" });
+	$('#event-deadline').datetimepicker({ dateFormat: "MM.DD.YYYY" });
 	   
 	   
             
@@ -78,16 +78,32 @@ function addNewStatus(){
 
 	var status = {};
 	var selectize = $('#status-tags')[0].selectize;
-	
-	status['text'] = $('#status-text').val();
-	status['tags'] = selectize.getValue();
-	status['user-id'] = 21;
-	status['course-id'] = 3;
-	
-	
-	$('#status-modal').modal('hide');
-	alert(JSON.stringify(status));
 
+	var tagsArray = selectize.getValue().split(',');
+	status['text'] = $('#status-text').val();
+	status['tags'] = tagsArray;
+	status['username'] = "Djordje Jovic";
+	status['courseName'] = "Sistemi baza podataka";
+	status['date'] = moment().format('DD.M.YYYY.');
+	status['time'] = new moment().format('HH:mm');
+	status['indexNo'] = 285;
+	status['picture'] = 285;
+	
+		$.ajax({
+		type: 'GET',
+		url: '/createPost',
+		dataType: 'json',
+		data: status,
+		success: function(data){
+			
+				alert("Status created!");
+				$('#status-modal').modal('hide');
+		},
+		error:function(jqXHR, textStatus){
+				alert("Creating post unsuccessful.");
+			alert(JSON.stringify(status));
+		}
+	});
 		
 	
 
@@ -102,16 +118,37 @@ function addNewPoll(){
 		options.push( $('#ID' + i + "_option").val());
 	}
 	var poll={};
-	poll.text = $("#poll-text").val();
-	poll.deadline = $("#poll-deadline").val();
-	poll.options = options;
-	poll['user-id'] = 21;
-	poll['course-id'] = 3;
-	poll['tags'] = selectize.getValue();
+	poll['text'] = $("#poll-text").val();
+	poll['date'] = moment($("#poll-deadline").val()).format('DD.M.YYYY.');
+	poll['time'] = moment($("#poll-deadline").val()).format('HH:mm');
+	poll['options'] = options;
+	poll['username'] = "Djordje Jovic";
+	poll['courseName'] = "Sistemi baza podataka"
+	poll['tags'] =  selectize.getValue().split(',');
 	
+	poll['indexNo'] = 285;
+	poll['picture'] = 285;
 	
 	$('#poll-modal').modal('hide');
 	alert(JSON.stringify(poll));
+
+	
+
+		$.ajax({
+		type: 'GET',
+		url: '/createPoll',
+		dataType: 'json',
+		data: poll,
+		success: function(data){
+			
+				alert("Poll created!");
+				$('#poll-modal').modal('hide');
+		},
+		error:function(jqXHR, textStatus){
+				alert("Creating post unsuccessful.");
+			alert(JSON.stringify(poll));
+		}
+	});
 	
 }
 
@@ -123,17 +160,43 @@ function addNewEvent(){
     return this.getItem(this.getValue()).text();
 };
 	var event={};
-	event.text = $("#event-text").val();
-	event.deadline = $("#event-deadline").val();
-	event['user-id'] = 21;
-	event['type'] = selectizeEventType.getText();
-	event['course-id'] = 3;
-	event['tags'] = selectizeTags.getValue();
+	//event['text'] = $("#event-text").val();
+	
+	event['title'] = selectizeEventType.getText();
+
+	event['tags'] = selectizeTags.getValue().split(',');;
+	
+	event['date'] = moment().format('DD.M.YYYY.');
+	event['time'] = new moment().format('HH:mm');
+	event['eventDate'] = moment($("#event-deadline").val()).format('DD.M.YYYY.');
+	event['eventTime'] = moment($("#event-deadline").val()).format('HH:mm');
+
+	event['username'] = "Djordje Jovic";
+	event['courseName'] = "Sistemi baza podataka"
+
+	
+	event['indexNo'] = 285;
+	event['picture'] = 285;
 	
 	$('#event-modal').modal('hide');
 	alert(JSON.stringify(event));
 	
 
+		$.ajax({
+		type: 'GET',
+		url: '/createEvent',
+		dataType: 'json',
+		data: event,
+		success: function(data){
+			
+				alert("Event created!");
+				$('#event-modal').modal('hide');
+		},
+		error:function(jqXHR, textStatus){
+				alert("Creating post unsuccessful.");
+			alert(JSON.stringify(event));
+		}
+	});
 
 
 }
