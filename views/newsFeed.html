@@ -1,0 +1,101 @@
+<html>
+	<head>
+		<title>CSBook</title>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<!--    Fonts -->
+		<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700">
+		<link type="text/css" rel="stylesheet" href="http://fonts.googleapis.com/css?family=Oswald:400,700,300">
+		<link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+	</head>
+
+	<body onload="loadUserProfile()">
+
+		<!-- Modal -->
+	  <div class="modal fade" id="user-schedule-modal" tabindex="-1" role="dialog" aria-labelledby="user-schedule-modal-label" aria-hidden="true">
+	    <div class="modal-dialog modal-lg" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	          </button>
+	          <h4 class="modal-title" id="user-schedule-modal-label">Raspored</h4>
+	        </div> <!-- modal-header -->
+
+	        <div class="modal-body">
+	          <div id="schedule"></div>
+	        </div> <!-- modal-body -->
+
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-secondary" onclick="toggleLecture()">Predavanja</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleExcercise()">Računske Vežbe</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleLabExcercise()">Laboratorijske Vežbe</button>
+
+	          <button type="button" class="btn btn-primary" data-dismiss="modal">Zatvori</button>
+	          <!-- TODO: if we are going to edit through the schedule  -->
+	          <!-- <button type="button" class="btn btn-primary">Zapamti Promene</button> -->
+
+	        </div> <!-- modal-footer -->
+	      </div> <!-- modal-content -->
+	    </div> <!-- modal-dialog -->
+	  </div> <!-- modal -->
+
+	  <!-- Change profile modal -->
+	  <div id="changeProfileModal" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Izmeni profil</h4>
+			  </div>
+			  <div class="modal-body">
+				<form action="/pictureUpload" id="dropzoneInst" class="dropzone" style="border-radius:7px;">
+					<div class="fallback">
+						<input id="inputPicture" name="picture" type="picture" multiple />
+					</div>
+				</form>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="changeProfilePicture()">Save</button>
+			  </div>
+			</div>
+
+		  </div>
+		</div>
+	  
+	<br/>
+	<div class="col-md-3 col-sm-3 col-xs-3">
+		<div class="col-sm-12 col-md-12 col-xs-12 profile-content" id="profile">
+		  <div class="col-sm-6 col-md-6 col-xs-6" style="text-align:right">
+			<h4 class="list-group-item-heading" id="profileNameSurname">Djordje Jovic</h4>
+			<p class="list-group-item-text" id="profileIndex">285</p>
+		  </div>
+		  <img class="col-sm-6 col-md-6 col-xs-6 profile-image" id="profileImage" src="users/pictures/287.png"/>
+		</div>
+		<div id="hiddenProfile" class="col-sm-7 col-md-7 col-xs-7 col-sm-offset-2 col-md-offset-2 col-xs-offset-2" style="background-color:#ffffff;">
+			<br/>
+			<div class="col-sm-12 col-md-12 col-xs-12 profile-overlay">
+				<br/>
+				<a href="#" class="btn btn-primary col-sm-12 col-md-12 col-xs-12" data-toggle="modal" data-target="#changeProfileModal">Izmeni profil </a>
+				<div class="col-sm-12 col-md-12 col-xs-12">
+					<br class="col-sm-12 col-md-12 col-xs-12"/>
+				</div>
+				<a href="#" class="btn btn-primary col-sm-12 col-md-12 col-xs-12" data-toggle="modal" data-target="#user-schedule-modal">Raspored</a>
+				<div class="col-sm-12 col-md-12 col-xs-12">
+					<br class="col-sm-12 col-md-12 col-xs-12"/>
+				</div>
+				<a href="#" class="btn btn-primary col-sm-12 col-md-12 col-xs-12" onclick="signOut()">Sign Out</a>
+				<div class="col-sm-12 col-md-12 col-xs-12">
+					<br class="col-sm-12 col-md-12 col-xs-12"/>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<body>
+</html>

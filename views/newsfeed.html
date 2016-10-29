@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CsBook</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/styles/bootstrap.min.css">
+  <link rel="stylesheet" href="/styles/newsfeed-page.css">
+  <link rel="stylesheet" href="/styles/timeline.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <!-- Modal -->
+	  <div class="modal fade" id="user-schedule-modal" tabindex="-1" role="dialog" aria-labelledby="user-schedule-modal-label" aria-hidden="true">
+	    <div class="modal-dialog modal-lg" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	          </button>
+	          <h4 class="modal-title" id="user-schedule-modal-label">Raspored</h4>
+	        </div> <!-- modal-header -->
+
+	        <div class="modal-body">
+	          <div id="schedule"></div>
+	        </div> <!-- modal-body -->
+
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-secondary" onclick="toggleLecture()">Predavanja</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleExcercise()">Računske Vežbe</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleLabExcercise()">Laboratorijske Vežbe</button>
+
+	          <button type="button" class="btn btn-primary" data-dismiss="modal">Zatvori</button>
+	          <!-- TODO: if we are going to edit through the schedule  -->
+	          <!-- <button type="button" class="btn btn-primary">Zapamti Promene</button> -->
+
+	        </div> <!-- modal-footer -->
+	      </div> <!-- modal-content -->
+	    </div> <!-- modal-dialog -->
+	  </div> <!-- modal -->
+
+  <div class="navbar navbar-default navbar-fixed-top"> 
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <img class="logo" src="/images/CSBplavo.png" alt="Logo" width="110" height="60">
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control search-input" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-default">Search</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">  
+          <li>
+            <a id="user-name" href="#">Ime Prezime</a> 
+          </li>  
+          <li> 
+            <div class="img-profile">
+              <span class="helper"></span>
+              <img src="/images/user.png" class="img-circle" alt="Profile image" width="40" height="40">
+            </div> 
+          </li> 
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#" data-toggle="modal" data-target="#user-schedule-modal">Raspored</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Odjava</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div> 
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row main-content">
+      <div class="col-lg-3">
+          <h1>AAAAA</h1>
+      </div>
+      <div class="content col-lg-6">
+        <div class="bs-component">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
+            <li class=""><a href="#profile" data-toggle="tab" aria-expanded="false">Profile</a></li>  
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade active in" id="home">
+              <div class="timeline-centered">
+                <article class="timeline-entry">
+                  <div class="timeline-entry-inner">
+                    <div class="timeline-icon bg-success">
+                      <i class="entypo-feather"></i>
+                    </div>
+                    <div class="timeline-label">
+                      <h2><a href="#">Jea Madafaka</a> <span>posted a status update</span></h2>
+                      <p>Neki random tekst1.</p>
+                   </div>
+                  </div>
+                </article>
+                <article class="timeline-entry">
+                  <div class="timeline-entry-inner">
+                    <div class="timeline-icon bg-secondary">
+                      <i class="entypo-feather"></i>
+                    </div>
+                    <div class="timeline-label">
+                      <h2><a href="#">Jea Madafaka</a> <span>posted a status update</span></h2>
+                      <p>Neki random tekst2.</p>
+                   </div>
+                  </div>
+                </article>
+              </div>              
+            </div>
+            <div class="tab-pane fade" id="profile">
+              <p>Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua, retro synth master cleanse. Mustache cliche tempor, williamsburg carles vegan helvetica. Reprehenderit butcher retro keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui irure terry richardson ex squid. Aliquip placeat salvia cillum iphone. Seitan aliquip quis cardigan american apparel, butcher voluptate nisi qui.</p><br><br><br><br><br><br><br><br><br><br><br><br><br>
+              <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+              <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> 
+            </div>
+          </div>  
+        </div>     
+      </div>
+      <div class="col-lg-3">
+          <h1>BBBBB</h1>      
+      </div>
+    </div>   
+  </div>
+
+</body>
+</html>
