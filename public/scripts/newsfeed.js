@@ -1,3 +1,5 @@
+var myDropzone;
+
 $(document).ready(function(){
 
 	var names=["Filter1", "Filter2", "Filter3", "Filter4", "Filter5"]; //samo dodamo novo ime i dodaje se tag
@@ -18,7 +20,29 @@ $(document).ready(function(){
 	drawPanels(5, "Panel", "Sadrzaj lalalaawdwfdwflalalal", "rightSideBar");
 	
 	loadUserProfile();
+	
+	//file upload section
+	
+	 Dropzone.options.dropzoneForm = {
+		url: '/upload-files',
+		heading: {'subfolder': 'newsFeed'},
+		dictDefaultMessage: 'Prebacite fajlove ovde',
+		autoProcessQueue: false,
+		addRemoveLinks: 'dictRemoveFile',
+		maxFilesize: '30',
+		init: function() {
+		   myDropzone = this;
+		   this.on('addedfile', function(file) {
+			   //todo...something...
+		   });
+		   //catch other events here...
+		}
+    };
 });
+
+function beginUpload(){
+	myDropzone.processQueue();
+}
 
 function createTags(names)
 {
