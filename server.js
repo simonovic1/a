@@ -31,7 +31,7 @@ app.get('/newsFeed', index.newsFeed);
 app.get('/coursePosts', index.coursePosts); 
 
 //new newsfeed-page added by Simon
-app.get('/newsfeed-page', index.newsfeed); 
+//app.get('/newsfeed-page', index.newsfeed); 
 
 
 app.get('/loginCheck', function(req, res) {

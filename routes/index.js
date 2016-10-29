@@ -11,10 +11,6 @@ module.exports = {
 		res.render('signUp', { title: 'CSBook Sign Up' });
 	},
 	
-	newsfeed: function(req, res){
-		res.render('newsfeed', { title: 'CSBook' }); 
-	},
-
 	newsFeed: function(req, res){
 		res.render('newsFeed', { title: 'CSBook' }); 
 	},
