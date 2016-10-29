@@ -41,6 +41,31 @@
 	    </div> <!-- modal-dialog -->
 	  </div> <!-- modal -->
 
+		 <!-- Change profile modal -->
+		<div id="changeProfileModal" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Izmeni profil</h4>
+			  </div>
+			  <div class="modal-body">
+				<form action="/pictureUpload" id="dropzoneInst" class="dropzone" style="border-radius:7px;">
+					<div class="fallback">
+						<input id="inputPicture" name="picture" type="picture" multiple />
+					</div>
+				</form>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="changeProfilePicture()">Save</button>
+			  </div>
+			</div>
+
+		  </div>
+		</div>
+	  
   <div class="navbar navbar-default navbar-fixed-top"> 
     <div class="container">
       <div class="navbar-header">
@@ -61,12 +86,12 @@
         </form>
         <ul class="nav navbar-nav navbar-right">  
           <li>
-            <a id="user-name" href="#">Ime Prezime</a> 
+            <a id="profileNameSurname" href="#">Ime Prezime</a> 
           </li>  
           <li> 
             <div class="img-profile">
               <span class="helper"></span>
-              <img src="/images/user.png" class="img-circle" alt="Profile image" width="40" height="40">
+              <img src="/images/user.png" id="profileImage" class="img-circle" alt="Profile image" width="40" height="40">
             </div> 
           </li> 
           <li class="dropdown">
@@ -74,8 +99,10 @@
             <span class="caret"></span></a>
             <ul class="dropdown-menu" role="menu">
               <li><a href="#" data-toggle="modal" data-target="#user-schedule-modal">Raspored</a></li>
+			  <li class="divider"></li>
+              <li><a href="#" data-toggle="modal" data-target="#changeProfileModal">Izmeni profil</a></li>
               <li class="divider"></li>
-              <li><a href="#">Odjava</a></li>
+              <li><a href="#" onclick="signOut()">Odjava</a></li>
             </ul>
           </li>
         </ul>
@@ -93,6 +120,7 @@
           <ul class="nav nav-tabs">
             <li class="active"><a href="#home" data-toggle="tab" aria-expanded="true">Home</a></li>
             <li class=""><a href="#profile" data-toggle="tab" aria-expanded="false">Profile</a></li>  
+			<li class=""><a href="#upload" data-toggle="tab" aria-expanded="false">Upload files</a></li>  
           </ul>
           <div class="tab-content">
             <div class="tab-pane fade active in" id="home">
@@ -126,7 +154,10 @@
               <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
               <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br> 
             </div>
-          </div>  
+			<div class="tab-pane fade" id="upload">
+			
+			</div>
+		  </div>  
         </div>     
       </div>
       <div class="col-lg-3">

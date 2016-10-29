@@ -16,6 +16,8 @@ $(document).ready(function(){
 	drawPanels(3, "Panel", "Sadrzaj lalalalalalal", "rightSideBar");
 	drawPanels(4, "Panel", "Sadrzaj djoiaw", "rightSideBar");
 	drawPanels(5, "Panel", "Sadrzaj lalalaawdwfdwflalalal", "rightSideBar");
+	
+	loadUserProfile();
 });
 
 function createTags(names)
@@ -81,4 +83,51 @@ function drawPanels(type, title, content, panelId)
 		$(div2).append(h3);
 	    $(div1).append(div3);
 		$("#" + panelId).append(div1);
+}
+
+//Postavlja ime, prezime, index i sliku u myProfile sekciji.
+//Treba pozvati prilikom inicijalizacije newsFeed strane.
+function loadUserProfile(){
+	document.getElementById("profileNameSurname").innerHTML = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
+	var index = localStorage.getItem("Index");
+	//document.getElementById("profileIndex").innerHTML = index;
+	
+	var img = localStorage.getItem("imgUrl");
+
+	var imgUrl = "users/pictures/" + img + ".jpg";
+	var imgUrl2 = "users/pictures/" + img + ".png";
+	var imgUrl3 = "users/pictures/noProfile.jpg";
+	if(imageExists(imgUrl))
+		document.getElementById("profileImage").src = imgUrl;
+	else if(imageExists(imgUrl2))
+		document.getElementById("profileImage").src = imgUrl2;
+	else
+		document.getElementById("profileImage").src = imgUrl3;
+
+}
+
+
+//Proverava da li slika (ili bilo koji fajl) postoji na datom URL-uName
+//Poziva se jer se ne zna u kom formatu su slike koje korisnici uploduju.
+function imageExists(image_url){
+
+    var http = new XMLHttpRequest();
+
+    http.open('HEAD', image_url, false);
+    http.send();
+
+    return http.status != 404;
+
+}
+
+function changeProfilePicture(){
+	var pic = document.getElementById("inputPicture");
+	var username = localStorage.getItem("Username");
+	
+	//todo: call changing user picture url from given username.
+}
+
+function signOut(){
+	localStorage.clear();
+	window.location = "/#";
 }
