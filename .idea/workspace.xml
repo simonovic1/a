@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d991a2dc-bb16-48a0-8e40-6a4599993170" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Server - dokumentacija.doc" afterPath="$PROJECT_DIR$/Server - dokumentacija.doc" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/db4j.js" afterPath="$PROJECT_DIR$/routes/db4j.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.js" afterPath="$PROJECT_DIR$/server.js" />
     </list>
@@ -28,8 +28,8 @@
       <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="67" column="22" selection-start-line="67" selection-start-column="10" selection-end-line="67" selection-end-column="32" />
+            <state relative-caret-position="210">
+              <caret line="125" column="31" selection-start-line="125" selection-start-column="10" selection-end-line="125" selection-end-column="31" />
               <folding />
             </state>
           </provider>
@@ -70,8 +70,8 @@
       <file leaf-file-name="db4j.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/db4j.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="87">
-              <caret line="113" column="19" selection-start-line="113" selection-start-column="19" selection-end-line="113" selection-end-column="19" />
+            <state relative-caret-position="320">
+              <caret line="1896" column="46" selection-start-line="1896" selection-start-column="46" selection-end-line="1896" selection-end-column="46" />
               <folding>
                 <element signature="e#312#1101#0" expanded="false" />
                 <element signature="e#1138#2083#0" expanded="false" />
@@ -109,6 +109,9 @@
                 <element signature="e#37412#38126#0" expanded="false" />
                 <element signature="e#38166#38627#0" expanded="false" />
                 <element signature="e#38669#39352#0" expanded="false" />
+                <element signature="e#39393#40119#0" expanded="false" />
+                <element signature="e#40160#40892#0" expanded="false" />
+                <element signature="e#40932#41658#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -316,12 +319,12 @@
       <workItem from="1476006075312" duration="17199000" />
       <workItem from="1476804622015" duration="677000" />
       <workItem from="1477326983748" duration="6279000" />
-      <workItem from="1477817541765" duration="598000" />
+      <workItem from="1477817541765" duration="2874000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33867000" />
+    <option name="totallyTimeSpent" value="36143000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="1" />
@@ -476,6 +479,9 @@
             <element signature="e#37412#38126#0" expanded="false" />
             <element signature="e#38166#38627#0" expanded="false" />
             <element signature="e#38669#39352#0" expanded="false" />
+            <element signature="e#39393#40119#0" expanded="false" />
+            <element signature="e#40160#40892#0" expanded="false" />
+            <element signature="e#40932#41658#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -555,6 +561,9 @@
             <element signature="e#37412#38126#0" expanded="false" />
             <element signature="e#38166#38627#0" expanded="false" />
             <element signature="e#38669#39352#0" expanded="false" />
+            <element signature="e#39393#40119#0" expanded="false" />
+            <element signature="e#40160#40892#0" expanded="false" />
+            <element signature="e#40932#41658#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -694,6 +703,9 @@
             <element signature="e#37412#38126#0" expanded="false" />
             <element signature="e#38166#38627#0" expanded="false" />
             <element signature="e#38669#39352#0" expanded="false" />
+            <element signature="e#39393#40119#0" expanded="false" />
+            <element signature="e#40160#40892#0" expanded="false" />
+            <element signature="e#40932#41658#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -747,8 +759,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/db4j.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="87">
-          <caret line="113" column="19" selection-start-line="113" selection-start-column="19" selection-end-line="113" selection-end-column="19" />
+        <state relative-caret-position="320">
+          <caret line="1896" column="46" selection-start-line="1896" selection-start-column="46" selection-end-line="1896" selection-end-column="46" />
           <folding>
             <element signature="e#312#1101#0" expanded="false" />
             <element signature="e#1138#2083#0" expanded="false" />
@@ -786,14 +798,17 @@
             <element signature="e#37412#38126#0" expanded="false" />
             <element signature="e#38166#38627#0" expanded="false" />
             <element signature="e#38669#39352#0" expanded="false" />
+            <element signature="e#39393#40119#0" expanded="false" />
+            <element signature="e#40160#40892#0" expanded="false" />
+            <element signature="e#40932#41658#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/server.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="67" column="22" selection-start-line="67" selection-start-column="10" selection-end-line="67" selection-end-column="32" />
+        <state relative-caret-position="210">
+          <caret line="125" column="31" selection-start-line="125" selection-start-column="10" selection-end-line="125" selection-end-column="31" />
           <folding />
         </state>
       </provider>

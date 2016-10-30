@@ -117,6 +117,18 @@ app.get('/getAllPolls', db4j.getAllPolls);
 
 app.get('/voteOption', db4j.voteOption);
 
+app.get('/getAllCoursePosts', db4j.getAllCoursePosts);
+
+app.get('/getAllCourseEvents', db4j.getAllCourseEvents);
+
+app.get('/getAllCoursePolls', db4j.getAllCoursePolls);
+
+app.get('/getUsersNewsFeedPosts', db4j.getUsersNewsFeedPosts);
+
+app.get('/getUsersNewsFeedEvents', db4j.getUsersNewsFeedEvents);
+
+app.get('/getUsersNewsFeedPolls', db4j.getUsersNewsFeedPolls);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });

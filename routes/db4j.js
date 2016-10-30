@@ -1669,4 +1669,234 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
+
+	getAllCoursePosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+	getAllCourseEvents : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+			}
+		});
+	},
+	getAllCoursePolls : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POLL]->(p:Poll) RETURN p',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					polls.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
+
+	getUsersNewsFeedPosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+	getUsersNewsFeedEvents : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+			}
+		});
+	},
+	getUsersNewsFeedPolls : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POLL]->(p:Poll) RETURN p',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					polls.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
 };
