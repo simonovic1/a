@@ -1068,6 +1068,7 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
+
 	getAllPosts : function(req,res){
 
 		db.cypher({
@@ -1141,7 +1142,38 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 				var id = results[0]['ID(e)'];
-				thisModule.userPostedEvent({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+				thisModule.createNotification({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags, title: req.query.title, text:req.query.text, type: req.query.type},res);
+			}
+		});
+	},
+	createNotification : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User)-[s:SUBSCRIBE]->(c:Course{name:{courseName}})WHERE (u.indexNumber <> {indexNo}) ' +
+			'CREATE (u)-[:HAS_NOTIFICATION]->(n:Notification {name:{title}, text:{text}, type:{type}, courseName:{courseName}, eventID: {postID}}) RETURN u',
+			params: {
+				courseName : req.courseName,
+				indexNo: req.indexNo,
+				title: req.title,
+				text: req.text,
+				type: req.type,
+				postID: req.postID
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user has notification');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.userPostedEvent({indexNo: req.indexNo, postID : req.postID, courseName: req.courseName, tags: req.tags},res);
 			}
 		});
 	},
@@ -1255,6 +1287,7 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
+
 	getAllEvents : function(req,res){
 
 		db.cypher({
@@ -1494,6 +1527,7 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
+
 	getAllPolls : function(req,res){
 
 		db.cypher({
@@ -1898,6 +1932,77 @@ checkIfUserDownvoted : function(req, res){
 				});
 
 				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
+
+	getAllNotificationsForUser : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[h:HAS_NOTIFICATION]->(n:Notification) RETURN n',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No notifications found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var notifications = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					notifications.push(results[i]['n']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(notifications, null, 4));
+				res.end();
+			}
+		});
+	},
+	deleteNotification: function(req,res){
+
+		db.cypher({
+			query: 'MATCH (n:Notification) WHERE ID(n) = {id} OPTIONAL MATCH (u:User)-[r:HAS_NOTIFICATION]-(n) DELETE n,r RETURN u',
+			params: {
+				id: parseInt(req.query.id)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No success in deliting notification');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true, null, 4));
 				res.end();
 			}
 		});
