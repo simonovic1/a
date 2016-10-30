@@ -65,6 +65,8 @@ app.post('/pictureUpload', function(req, res) {
 
 app.get('/getUserByUsername', db4j.getUserByUsername);
 
+app.get('/editUserProfilePicture', db4j.editUserProfilePicture);
+
 app.get('/getAllCourses', db4j.getAllCourses);
 
 app.get('/getCourseByName', db4j.getCourseByName);
