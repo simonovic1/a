@@ -1112,7 +1112,7 @@ checkIfUserDownvoted : function(req, res){
 
 		db.cypher({
 			query: 'CREATE (e:Event {picture: {picture}, username: {username}, date: {date}, time: {time}, eventDate: {eventDate},' +
-			'eventTime: {eventTime},title: {title}, courseName: {courseName}, tags: {tags}}) RETURN ID(e)',
+			'eventTime: {eventTime},title: {title}, text:{text}, type:{type}, courseName: {courseName}, tags: {tags}}) RETURN ID(e)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
@@ -1121,6 +1121,8 @@ checkIfUserDownvoted : function(req, res){
 				eventDate : req.query.eventDate,
 				eventTime : req.query.eventTime,
 				title: req.query.title,
+				text: req.query.text,
+				type: req.query.type,
 				courseName: req.query.courseName,
 				tags: req.query.tags,
 			},
@@ -1296,13 +1298,14 @@ checkIfUserDownvoted : function(req, res){
 	createPoll : function(req,res){
 
 		db.cypher({
-			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
+			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, deadline: {deadline} tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
 				date : req.query.date,
 				time : req.query.time,
 				text: req.query.text,
+				deadline: req.query.deadline,
 				tags: req.query.tags,
 				optionNum: req.query.options.length,
 			},
