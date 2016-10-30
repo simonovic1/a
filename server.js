@@ -63,7 +63,20 @@ app.post('/pictureUpload', function(req, res) {
     });
   });
 
-})
+});
+
+app.post('/upload-files', function(req, res){
+	console.log(req.files.file.name);
+	
+	fs.readFile(req.files.file.path, function (err, data) {
+		var new_path = __dirname + "/public/courses/" + req.header('subfolder') + "/" + req.files.file.name;
+		fs.writeFile(new_path, data, function (err) {
+		console.log(err);
+		  res.redirect("back");
+		});
+	});
+	
+});
 
 app.get('/getUserByUsername', db4j.getUserByUsername);
 

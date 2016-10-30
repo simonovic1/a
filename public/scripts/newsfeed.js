@@ -22,18 +22,17 @@ $(document).ready(function(){
 	loadUserProfile();
 	
 	//file upload section
-	
 	 Dropzone.options.dropzoneForm = {
 		url: '/upload-files',
-		heading: {'subfolder': 'newsFeed'},
-		dictDefaultMessage: 'Prebacite fajlove ovde',
+		headers: {'subfolder': 'newsFeed'}, //TEMPLATE FOR OTHER UPLOADS
+		dictDefaultMessage: 'Click here to transfer files',
 		autoProcessQueue: false,
 		addRemoveLinks: 'dictRemoveFile',
-		maxFilesize: '30',
+		maxFilesize: '30', //MB
 		init: function() {
 		   myDropzone = this;
-		   this.on('addedfile', function(file) {
-			   //todo...something...
+		   this.on('complete', function(file) {
+			   myDropzone.removeFile(file);
 		   });
 		   //catch other events here...
 		}
