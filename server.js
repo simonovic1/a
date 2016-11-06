@@ -65,7 +65,7 @@ app.post('/pictureUpload', function(req, res) {
 
 });
 
-app.post('/upload-files', function(req, res){
+app.post('/uploadFiles', function(req, res){
 	console.log(req.files.file.name);
 	
 	fs.readFile(req.files.file.path, function (err, data) {

@@ -23,7 +23,7 @@ $(document).ready(function(){
 	
 	//file upload section
 	 Dropzone.options.dropzoneForm = {
-		url: '/upload-files',
+		url: '/uploadFiles',
 		headers: {'subfolder': 'newsFeed'}, //TEMPLATE FOR OTHER UPLOADS
 		dictDefaultMessage: 'Click here to transfer files',
 		autoProcessQueue: false,
