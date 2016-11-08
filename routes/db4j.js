@@ -1554,6 +1554,7 @@ checkIfUserDownvoted : function(req, res){
 
 				for(var i =0; i< results.length;) {
 					var obj = new Object();
+					obj.id = parseInt(results[i]['p']['_id']);
 					obj.time = results[i]['p']['properties']['time'];
 					obj.date = results[i]['p']['properties']['date'];
 					obj.text = results[i]['p']['properties']['text'];
@@ -1786,7 +1787,7 @@ checkIfUserDownvoted : function(req, res){
 	getAllCoursePolls : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (Course {name:{name}})-[r:HAS_POLL]->(p:Poll) RETURN p',
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
 			params: {
 				name: req.query.name,
 			},
@@ -1806,9 +1807,24 @@ checkIfUserDownvoted : function(req, res){
 			} else {
 				var polls = [];
 
-				for(var i =0; i< results.length; i++)
-				{
-					polls.push(results[i]['p']);
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj.id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
 				}
 
 				res.writeHead(200, {
@@ -1901,7 +1917,7 @@ checkIfUserDownvoted : function(req, res){
 	getUsersNewsFeedPolls : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POLL]->(p:Poll) RETURN p',
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
 			params: {
 				username: req.query.username,
 			},
@@ -1921,9 +1937,24 @@ checkIfUserDownvoted : function(req, res){
 			} else {
 				var polls = [];
 
-				for(var i =0; i< results.length; i++)
-				{
-					polls.push(results[i]['p']);
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj.id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
 				}
 
 				res.writeHead(200, {
