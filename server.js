@@ -128,6 +128,8 @@ app.get('/createPoll', db4j.createPoll);
 
 app.get('/getAllPolls', db4j.getAllPolls);
 
+app.get('/editUserProfilePicture', db4j.editUserProfilePicture);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });
