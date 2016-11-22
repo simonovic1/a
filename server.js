@@ -101,6 +101,8 @@ app.get('/totalUpvotes', db4j.totalUpvotes);
 
 app.get('/totalDownvotes', db4j.totalDownvotes);
 
+app.get('/getAllCourseReviews', db4j.getAllCourseReviews);
+
 app.get('/getTimetableInfo', db4j.getTimetableInfo);
 
 app.get('/createPost', db4j.createPost);
