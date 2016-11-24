@@ -1,11 +1,13 @@
 var express = require('express')
   , http    = require('http')
   , fs      = require('fs')
+  //, curl    = require('curlrequest') // TODO: if there's no way authentication.dll is working properly
 
   // csbook routes
   , index   = require('./routes/index')
   , login   = require('./routes/login')
   , db4j    = require('./routes/db4j');
+  //, path = require('path');
 
 var app = express();
 var server = http.createServer(app);
@@ -24,20 +26,18 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
-
-app.get('/', index.landing);
-app.get('/signUp', index.signUp); 
-app.get('/newsFeed', index.newsFeed); 
-app.get('/coursePosts', index.coursePosts); 
-
 //new newsfeed-page added by Simon
 app.get('/newsfeed-page', index.newsfeed); 
 
+app.get('/', index.landing);
+app.get('/signUp', index.signUp);
+app.get('/coursePosts', index.coursePosts);
 
 app.get('/loginCheck', function(req, res) {
-	console.log("Started login check");
+	console.log("Started login");
 	var toRet = login.check(req.query.username, req.query.password);
-	console.log("Finished login check, "+ toRet);
+	console.log("Finished login");
+	console.log(toRet);
 
 	//set cookie to client
 	res.cookie(userNameCookieName, req.query.username, {maxAge: 1000 * 60, httpOnly:true});
@@ -54,11 +54,11 @@ app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {
+  console.log(req.files.file.name);
+
   fs.readFile(req.files.file.path, function (err, data) {
-    var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
-	console.log(new_path);
+    var new_path = __dirname + "/users/pictures/" + req.files.file.name;
     fs.writeFile(new_path, data, function (err) {
-		console.log(err);
       res.redirect("back");
     });
   });
@@ -66,6 +66,8 @@ app.post('/pictureUpload', function(req, res) {
 })
 
 app.get('/getUserByUsername', db4j.getUserByUsername);
+
+app.get('/editUserProfilePicture', db4j.editUserProfilePicture);
 
 app.get('/getAllCourses', db4j.getAllCourses);
 
@@ -114,6 +116,24 @@ app.get('/getAllEvents', db4j.getAllEvents);
 app.get('/createPoll', db4j.createPoll);
 
 app.get('/getAllPolls', db4j.getAllPolls);
+
+app.get('/voteOption', db4j.voteOption);
+
+app.get('/getAllCoursePosts', db4j.getAllCoursePosts);
+
+app.get('/getAllCourseEvents', db4j.getAllCourseEvents);
+
+app.get('/getAllCoursePolls', db4j.getAllCoursePolls);
+
+app.get('/getUsersNewsFeedPosts', db4j.getUsersNewsFeedPosts);
+
+app.get('/getUsersNewsFeedEvents', db4j.getUsersNewsFeedEvents);
+
+app.get('/getUsersNewsFeedPolls', db4j.getUsersNewsFeedPolls);
+
+app.get('/getAllNotificationsForUser', db4j.getAllNotificationsForUser);
+
+app.get('/deleteNotification', db4j.deleteNotification);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
