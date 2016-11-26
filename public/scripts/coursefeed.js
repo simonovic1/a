@@ -19,7 +19,7 @@ function getAllEvents() {
 		url: '/getAllEvents',
 		dataType: 'json',
 		success: function(data){
-			console.log(data);
+			//console.log(data);
 			addEvents(data);
 		}
 	});
@@ -32,7 +32,7 @@ function getAllPolls() {
 		url: '/getAllPolls',
 		dataType: 'json',
 		success: function(data){
-			console.log(data);
+			//console.log(data);
 			addVotings(data);
 		}
 	});
@@ -57,10 +57,31 @@ function getAllPolls() {
 		
 	    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img src=\"" + post.picture + "\"/></div><h3 class=\"panel-title\">" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\"><span class=\"label label-primary\">Tag1</span>" + tagarray + "</div></div></div>");	
 
-		$("#home").append(str);	
+		$("#posts").append(str);	
 	}
 	
 	
+	
+	function vote(poll_id, poll_name, username)
+	{
+		//pozovi karolininu fju na serveru
+		debugger;
+		$.ajax({
+		type: 'GET',
+		  url: '/voteOption', // ime f-je sa servera
+		  dataType: 'json', // sta vraca
+		  data:{
+		   'id': poll_id,
+		   'name': poll_name,
+		   'username': username
+		  },
+		  success: function(data){
+			  debugger;
+			  location.reload();
+		   //$("#" + poll_id).html("<div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+ data.votes +"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + poll_id + "\', \'" + poll_name + "\', \'" + "djolej@elfak.rs" + "\');\">+</button></div></div>");
+		  }
+		 });
+	}
 	
 	
 	function addVotings(polls)
@@ -68,6 +89,8 @@ function getAllPolls() {
 		$.each(polls , function(i, val) { 
 			addVoting(polls[i]);
 		});
+		
+		//console.log(polls);
 	}
 	
 	function addVoting(voting){
@@ -77,7 +100,8 @@ function getAllPolls() {
 	
 		var progressArray = "";		
 		$.each(progressList , function(i, val) { 
-			progressArray += "<div class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"%</span></div><div class=\"vote-button\"><button>+</button></div></div>";
+		//tu gde je username promeni da se salje email iz local storagea
+			progressArray += "<div id=\"" + voting.id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting.id + "\', \'" + progressList[i].name + "\', \'" + "djolej@elfak.rs" + "\');\">+</button></div></div>";
 		});
 		
 		var tagarray = "";		
@@ -85,8 +109,8 @@ function getAllPolls() {
 			tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
 		});
 		
-		var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\">	<div class=\"panel-image\"><img src=\""+ voting.image +"\"/></div><h3 class=\"panel-title\">"+ voting.username+"</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+voting.text+"</div><div class=\"voting\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
-		$("#home").append(poolStr);	
+		var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\">	<div class=\"panel-image\"><img src=\""+ voting.image +"\"/></div><h3 class=\"panel-title\">"+ voting.text+"?</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+""+"</div><div class=\"voting\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
+		$("#posts").append(poolStr);	
 	}
 	
 	
@@ -111,8 +135,8 @@ function getAllPolls() {
 		
 		// var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + Event.courseName+ "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		
-		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + tagList[0] + "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
-		$("#home").append(eventStr);	
+		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Opis: " + "Opis" + "</div><div>Predmet: " + tagList[0] + "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+		$("#posts").append(eventStr);	
 	}
 	
 
