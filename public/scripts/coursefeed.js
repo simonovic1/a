@@ -7,6 +7,7 @@ function getAllPosts() {
 		url: '/getAllPosts',
 		dataType: 'json',
 		success: function(data){
+		alert(JSON.stringify(data));
 			addPosts(data);
 		}
 	});
@@ -18,6 +19,7 @@ function getAllEvents() {
 		url: '/getAllEvents',
 		dataType: 'json',
 		success: function(data){
+			console.log(data);
 			addEvents(data);
 		}
 	});
