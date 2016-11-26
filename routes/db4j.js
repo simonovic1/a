@@ -528,11 +528,12 @@ checkIfUserSubscribedToCourse : function(req, res){
 	createReview : function(req,res){
 
 	db.cypher({
-		query: 'CREATE (r:Review {text:{text},upvote:{upvote},downvote:{downvote}}) RETURN ID(r)',
+		query: 'CREATE (r:Review {text:{text},upvote:{upvote},downvote:{downvote}, creatorName:{creatorName}}) RETURN ID(r)',
 		params: {
 			text: req.query.text,
 			upvote: 0,
 			downvote: 0,
+			creatorName: req.query.creatorName
 		},
 	}, function (err, results) {
 		if (err) throw err;
