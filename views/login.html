@@ -24,8 +24,9 @@
 
 </head>
 
-<body id="page-top" class="animated fadeIn">
+<body id="page-top" class="animated fadeIn" onload="loginLoad()">
     <header>
+		
         <div class="row">
             <div class="signin-header">
                 <div class="container text-center">
@@ -64,7 +65,7 @@
 
                 <div class="row signUp-row animated fadeInDown">
                     <div class="col-lg-12">
-                        <a href="#" onclick="checkIfExists()" class="btn btn-primary btn-block btn-lg">Log in</a>
+                        <a href="#" id="LoginBtn" onclick="checkIfExists()" class="btn btn-primary btn-block btn-lg">Log in</a>
                     </div>
                 </div>
 
@@ -85,10 +86,14 @@
                 </div>
 
                 <span class="line-thru"></span>
+				
+				<div class="row loader" id="loader" style="visibility:hidden">
+					<div class="col-sm-offset-5 col-md-offset-5"></div><!-- LOADING SPINNER -->
+				</div>
+				
             </div>
         </div>
     </header>
-
 </body>
 
 </html>

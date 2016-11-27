@@ -1,14 +1,18 @@
 function checkIfExists() {
 
+	var loader = document.getElementById("loader");
+	loader.style.visibility = "inherit";
+	
 	var name = document.getElementById("inputName").value;
 	var pass = document.getElementById("inputPassword").value;
-
+	
 	$.ajax({
 		type: 'GET',
 		url: '/loginCheck',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass},
 		success: function(data){
+			loader.style.visibility = "hidden";
 			if(data == true) {
 				checkIfProfileExists(name, pass);
 			}
@@ -75,6 +79,22 @@ function CheckCookieSession() {
 		window.location = "login.html";
 		alert("Your session has expired");
 	}*/
+}
+
+function loginLoad(){
+	//Add on Enter listener, for input pass & input username
+	
+	document.getElementById("inputName").addEventListener("keyup", function(event) {
+		if (event.keyCode == 13) {
+			document.getElementById("LoginBtn").click();
+		}
+	});
+	
+	document.getElementById("inputPassword").addEventListener("keyup", function(event) {
+		if (event.keyCode == 13) {
+			document.getElementById("LoginBtn").click();
+		}
+	});
 }
 
 function searchKeyPress(e) {

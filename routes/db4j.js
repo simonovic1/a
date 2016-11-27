@@ -43,7 +43,7 @@ var thisModule = module.exports = {
   createProfile: function(req,res){
 
   	db.cypher({
-  		query: 'CREATE (u:User {username: {username}, password: {password}, indexNumber: {indexNumber}, firstName: {firstName}, lastName: {lastName}, picture:{picture}})',
+  		query: 'CREATE (u:User {username: {username}, password: {password}, indexNumber: {indexNumber}, firstName: {firstName}, lastName: {lastName}, picture:{picture}}) return u',
   		params: {
   			username: req.query.username,
   			password: req.query.password,
@@ -56,6 +56,7 @@ var thisModule = module.exports = {
   		if (err) throw err;
   		var result = results[0];
   		if (!result) {
+			console.log(results);
   			console.log('Error creating user');
 
   			res.writeHead(200, {

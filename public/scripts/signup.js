@@ -28,6 +28,7 @@ function CreateUserAccount() {
 	var firstName = document.getElementById("inputFirstName").value;
 	var lastName = document.getElementById("inputLastName").value;
 	//var dropzone = document.getElementById("inputPicture");
+	var imgUrl = myDropzone.files[0].name;
 	myDropzone.processQueue();
 	
 	
@@ -36,7 +37,7 @@ function CreateUserAccount() {
 		type: 'GET',
 		url: '/createProfile',
 		dataType: 'json',
-		data: { 'username': name, 'password': pass, 'indexNumber': indexNo, 'firstName' : firstName, 'lastName': lastName, 'picture' : myDropzone.files[0].name},
+		data: { 'username': name, 'password': pass, 'indexNumber': indexNo, 'firstName' : firstName, 'lastName': lastName, 'picture' : imgUrl},
 		success: function(data){
 			if(data == true)
 			{
@@ -45,7 +46,7 @@ function CreateUserAccount() {
 				localStorage.setItem("Prezime", lastName);
 				localStorage.setItem("Index", indexNo);
 				localStorage.setItem("Username", name);
-				localStorage.setItem("imgUrl", myDropzone.files[0].name);
+				localStorage.setItem("imgUrl", imgUrl);
 				window.location = "newsFeed";
 			}
 			else
