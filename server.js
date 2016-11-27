@@ -135,11 +135,11 @@ app.get('/getAllNotificationsForUser', db4j.getAllNotificationsForUser);
 
 app.get('/deleteNotification', db4j.deleteNotification);
 
-app.get('/searchPostsByTag', db4j.searchPostsByTag);
+app.get('/searchCoursePostsByTag', db4j.searchCoursePostsByTag);
 
-app.get('/searchEventsByTag', db4j.searchEventsByTag);
+app.get('/searchCourseEventsByTag', db4j.searchCourseEventsByTag);
 
-app.get('/searchPollsByTag', db4j.searchPollsByTag);
+app.get('/searchCoursePollsByTag', db4j.searchCoursePollsByTag);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

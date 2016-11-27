@@ -2113,17 +2113,17 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
-	searchPostsByTag : function(req,res){
+	searchCoursePostsByTag : function(req,res){
 
-		var query = "MATCH (p:Post)";
+		var query = "MATCH (p:Post), (c:Course {name:{name}})";
 			for(var i = 0; i < req.query.tags.length; i++)
 			{
 				if(i == 0)
 				{
-					query = query + " WHERE(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+					query = query + " WHERE (c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
 				}
 				else{
-					query = query + " OR(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+					query = query + " OR (c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
 				}
 
 				if(i+1 == req.query.tags.length)
@@ -2135,12 +2135,13 @@ checkIfUserDownvoted : function(req, res){
 		db.cypher({
 			query: query,
 			params: {
+				name: req.query.name
 			},
 		}, function (err, results) {
 			if (err) throw err;
 
 			if (!results) {
-				console.log('No polls found');
+				console.log('No posts found');
 
 				res.writeHead(200, {
 					'Content-Type': 'application/json',
@@ -2172,17 +2173,17 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
-	searchEventsByTag : function(req,res){
+	searchCourseEventsByTag : function(req,res){
 
-		var query = "MATCH (e:Event)";
+		var query = "MATCH (e:Event), (c:Course {name:{name}})";
 		for(var i = 0; i < req.query.tags.length; i++)
 		{
 			if(i == 0)
 			{
-				query = query + " WHERE(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				query = query + " WHERE (c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
 			}
 			else{
-				query = query + " OR(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				query = query + " OR (c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
 			}
 
 			if(i+1 == req.query.tags.length)
@@ -2194,6 +2195,7 @@ checkIfUserDownvoted : function(req, res){
 		db.cypher({
 			query: query,
 			params: {
+				name: req.query.name
 			},
 		}, function (err, results) {
 			if (err) throw err;
@@ -2231,17 +2233,17 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
-	searchPollsByTag : function(req,res){
+	searchCoursePollsByTag : function(req,res){
 
-		var query = "MATCH (p:Poll),(o:Option)";
+		var query = "MATCH (p:Poll),(o:Option), (c:Course {name:{name}})";
 		for(var i = 0; i < req.query.tags.length; i++)
 		{
 			if(i == 0)
 			{
-				query = query + " WHERE (o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				query = query + " WHERE ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"}) AND (c)-[:HAS_POLL]->(p))";
 			}
 			else{
-				query = query + " OR (o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				query = query + " OR ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"}) AND (c)-[:HAS_POLL]->(p))";
 			}
 
 			if(i+1 == req.query.tags.length)
@@ -2253,6 +2255,7 @@ checkIfUserDownvoted : function(req, res){
 		db.cypher({
 			query: query,
 			params: {
+				name: req.query.name
 			},
 		}, function (err, results) {
 			if (err) throw err;
