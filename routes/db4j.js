@@ -41,6 +41,13 @@ var thisModule = module.exports = {
 		}
 		return j == sub.length;
 	},
+
+	 sortByKey: function(array, key) {
+	return array.sort(function(a, b) {
+		var x = a[key]; var y = b[key];
+		return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+	});
+},
   checkIfProfileExists: function(req, res){
 
     db.cypher({
@@ -1629,7 +1636,7 @@ checkIfUserDownvoted : function(req, res){
 
 				for(var i =0; i< results.length;) {
 					var obj = new Object();
-					obj.id = parseInt(results[i]['p']['_id']);
+					obj._id = parseInt(results[i]['p']['_id']);
 					obj.time = results[i]['p']['properties']['time'];
 					obj.date = results[i]['p']['properties']['date'];
 					obj.text = results[i]['p']['properties']['text'];
@@ -1884,7 +1891,7 @@ checkIfUserDownvoted : function(req, res){
 
 				for(var i =0; i< results.length;) {
 					var obj = new Object();
-					obj.id = parseInt(results[i]['p']['_id']);
+					obj._id = parseInt(results[i]['p']['_id']);
 					obj.time = results[i]['p']['properties']['time'];
 					obj.date = results[i]['p']['properties']['date'];
 					obj.text = results[i]['p']['properties']['text'];
@@ -2014,7 +2021,7 @@ checkIfUserDownvoted : function(req, res){
 
 				for(var i =0; i< results.length;) {
 					var obj = new Object();
-					obj.id = parseInt(results[i]['p']['_id']);
+					obj._id = parseInt(results[i]['p']['_id']);
 					obj.time = results[i]['p']['properties']['time'];
 					obj.date = results[i]['p']['properties']['date'];
 					obj.text = results[i]['p']['properties']['text'];
@@ -2279,7 +2286,7 @@ checkIfUserDownvoted : function(req, res){
 						var array = results[i]['p']['properties']['tags'];
 						if(thisModule.contains(array,combinations[j])){
 							var obj = new Object();
-							obj.id = parseInt(results[i]['p']['_id']);
+							obj._id = parseInt(results[i]['p']['_id']);
 							obj.time = results[i]['p']['properties']['time'];
 							obj.date = results[i]['p']['properties']['date'];
 							obj.text = results[i]['p']['properties']['text'];
@@ -2305,6 +2312,244 @@ checkIfUserDownvoted : function(req, res){
 				});
 
 				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
+	
+	getAllUsersNewsFeedItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				thisModule.getUsersNewsFeedEventsItems({items: posts, username: req.query.username},res);
+			}
+		});
+	},
+	getUsersNewsFeedEventsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				username: req.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = req.items;
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				thisModule.getUsersNewsFeedPollsItems({items: events, username: req.username},res);
+			}
+		});
+	},
+	getUsersNewsFeedPollsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
+			params: {
+				username: req.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = req.items;
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
+				res.end();
+			}
+		});
+	},
+
+	getAllCourseItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				thisModule.getAllCourseEventsItems({items: posts, name: req.query.name},res);
+			}
+		});
+	},
+	getAllCourseEventsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				name: req.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = req.items;
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				thisModule.getAllCoursePollsItems({items: events, name: req.name},res);
+			}
+		});
+	},
+	getAllCoursePollsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
+			params: {
+				name: req.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = req.items;
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
 				res.end();
 			}
 		});
