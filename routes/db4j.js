@@ -5,6 +5,42 @@ var db = new neo4j.GraphDatabase("http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkj
 
 var thisModule = module.exports = {
 
+	combine : function(a, min) {
+		var fn = function(n, src, got, all) {
+			if (n == 0) {
+				if (got.length > 0) {
+					all[all.length] = got;
+				}
+				return;
+			}
+			for (var j = 0; j < src.length; j++) {
+				fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
+			}
+			return;
+		}
+		var all = [];
+		for (var i = min; i < a.length; i++) {
+			fn(i, a, [], all);
+		}
+		all.push(a);
+		return all;
+	},
+	contains : function(sup , sub) {
+		sup.sort();
+		sub.sort();
+		var i, j;
+		for (i=0,j=0; i<sup.length && j<sub.length;) {
+			if (sup[i] < sub[j]) {
+				++i;
+			} else if (sup[i] == sub[j]) {
+				++i; ++j;
+			} else {
+
+				return false;
+			}
+		}
+		return j == sub.length;
+	},
   checkIfProfileExists: function(req, res){
 
     db.cypher({
@@ -2073,6 +2109,199 @@ checkIfUserDownvoted : function(req, res){
 				});
 
 				res.write(JSON.stringify(true, null, 4));
+				res.end();
+			}
+		});
+	},
+	searchPostsByTag : function(req,res){
+
+		var query = "MATCH (p:Post)";
+			for(var i = 0; i < req.query.tags.length; i++)
+			{
+				if(i == 0)
+				{
+					query = query + " WHERE(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+				else{
+					query = query + " OR(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+
+				if(i+1 == req.query.tags.length)
+				{
+					query = query + " RETURN p";
+				}
+			}
+
+		db.cypher({
+			query: query,
+			params: {
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['p']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							posts.push(results[i]);
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+	searchEventsByTag : function(req,res){
+
+		var query = "MATCH (e:Event)";
+		for(var i = 0; i < req.query.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.query.tags.length)
+			{
+				query = query + " RETURN e";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['e']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							events.push(results[i]);
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+			}
+		});
+	},
+	searchPollsByTag : function(req,res){
+
+		var query = "MATCH (p:Poll),(o:Option)";
+		for(var i = 0; i < req.query.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE (o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR (o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.query.tags.length)
+			{
+				query = query + " RETURN p,o";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['p']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							var obj = new Object();
+							obj.id = parseInt(results[i]['p']['_id']);
+							obj.time = results[i]['p']['properties']['time'];
+							obj.date = results[i]['p']['properties']['date'];
+							obj.text = results[i]['p']['properties']['text'];
+							obj.tags = results[i]['p']['properties']['tags'];
+							obj.picture = results[i]['p']['properties']['picture'];
+							obj.username = results[i]['p']['properties']['username'];
+							var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+							var options = [];
+							for(var k = i; k < i+optionNum; k++)
+							{
+								options.push(results[k]['o']['properties']);
+							}
+							i = i + optionNum;
+							obj.options = options;
+							polls.push(obj)
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
 				res.end();
 			}
 		});
