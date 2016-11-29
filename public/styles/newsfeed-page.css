@@ -1,7 +1,12 @@
 html, body { 
-	height: 99%;
 	background-color: #F7F7F7;
     overflow: hidden;	
+}
+
+
+.label
+{
+	margin-right:10px;
 }
 
 .logo {
@@ -82,5 +87,30 @@ html, body {
 
 .vote-item
 {
-	padding-bottom:10px;
+	padding:10px;
+	padding-top:0px;
+	display:table;
+	width:100%;
+}
+
+.vote-name{
+	display:table-cell;
+}
+
+.vote-progress 
+{
+	padding: 0 10px;
+	display:table-cell;
+	width:90%;
+}
+
+.vote-percent
+{
+	display:table-cell;
+	padding-right:10px;
+}
+
+.vote-button
+{
+	display:table-cell;
 }

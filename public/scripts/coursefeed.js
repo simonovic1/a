@@ -19,7 +19,7 @@ function getAllEvents() {
 		url: '/getAllEvents',
 		dataType: 'json',
 		success: function(data){
-			console.log(data);
+			//console.log(data);
 			addEvents(data);
 		}
 	});
@@ -32,7 +32,7 @@ function getAllPolls() {
 		url: '/getAllPolls',
 		dataType: 'json',
 		success: function(data){
-			console.log(data);
+			//console.log(data);
 			addVotings(data);
 		}
 	});
@@ -65,6 +65,7 @@ function getAllPolls() {
 	function vote(poll_id, poll_name, username)
 	{
 		//pozovi karolininu fju na serveru
+		debugger;
 		$.ajax({
 		type: 'GET',
 		  url: '/voteOption', // ime f-je sa servera
@@ -76,7 +77,8 @@ function getAllPolls() {
 		  },
 		  success: function(data){
 			  debugger;
-		   addVotings(data) 
+			  location.reload();
+		   //$("#" + poll_id).html("<div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+ data.votes +"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + poll_id + "\', \'" + poll_name + "\', \'" + "djolej@elfak.rs" + "\');\">+</button></div></div>");
 		  }
 		 });
 	}
@@ -98,8 +100,8 @@ function getAllPolls() {
 	
 		var progressArray = "";		
 		$.each(progressList , function(i, val) { 
-		//tu gde je id ubaci progressList[i].id kad karolina ubaci, ubaci ga u vote() fju ustvari
-			progressArray += "<div class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting.id + "\', \'" + progressList[i].name + "\', \'" + voting.username + "\');\">+</button></div></div>";
+		//tu gde je username promeni da se salje email iz local storagea
+			progressArray += "<div id=\"" + voting.id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting.id + "\', \'" + progressList[i].name + "\', \'" + "djolej@elfak.rs" + "\');\">+</button></div></div>";
 		});
 		
 		var tagarray = "";		

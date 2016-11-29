@@ -613,6 +613,44 @@ createCourseReview : function(req,res){
 		}
 	});
 },
+	getAllCourseReviews : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (r:Review),(c:Course {name:{name}}) WHERE(c)-[:HAS_REVIEW]->(r) RETURN r',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating follow');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var reviews = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					reviews.push(results[i]['r']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(reviews, null, 4));
+				res.end();
+			}
+		});
+	},
 	checkIfUserPostedReview : function(req, res){
 	db.cypher({
 		query: 'MATCH (User {username:{username}})-[r1:POST_REVIEW]->(r),(Course {name:{name}})-[r2:HAS_REVIEW]->(r) RETURN r',

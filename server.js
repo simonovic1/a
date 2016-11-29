@@ -26,12 +26,12 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(__dirname + '/public'));
 
-//new newsfeed-page added by Simon
-app.get('/newsfeed-page', index.newsfeed); 
 
 app.get('/', index.landing);
 app.get('/signUp', index.signUp);
 app.get('/coursePosts', index.coursePosts);
+//new newsfeed-page added by Simon
+app.get('/newsfeed-page', index.newsfeed);
 
 app.get('/loginCheck', function(req, res) {
 	console.log("Started login");
@@ -102,6 +102,8 @@ app.get('/checkIfUserVoted', db4j.checkIfUserVoted);
 app.get('/totalUpvotes', db4j.totalUpvotes);
 
 app.get('/totalDownvotes', db4j.totalDownvotes);
+
+app.get('/getAllCourseReviews', db4j.getAllCourseReviews);
 
 app.get('/getTimetableInfo', db4j.getTimetableInfo);
 
