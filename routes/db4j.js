@@ -1413,7 +1413,7 @@ checkIfUserDownvoted : function(req, res){
 	createPoll : function(req,res){
 
 		db.cypher({
-			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, deadline: {deadline} tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
+			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, deadline: {deadline}, tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
@@ -1715,7 +1715,7 @@ checkIfUserDownvoted : function(req, res){
 	poolOptionIncrement : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (p:Poll), (o:Option {name: {name}}), (p)-[:HAS_OPTION]->(o) WHERE ID(p)={id} SET o.votes =  o.votes + 1 RETURN o.votes',
+			query: 'MATCH (p:Poll), (o:Option {name: {name}}), (p)-[:HAS_OPTION]->(o) WHERE ID(p)={id} SET o.votes = o.votes + 1 RETURN o.votes',
 			params: {
 				id: parseInt(req.id),
 				name: req.name
@@ -1733,14 +1733,47 @@ checkIfUserDownvoted : function(req, res){
 
 				res.write(JSON.stringify(false));
 				res.end();
-			} else {
+			} else{
+					thisModule.allPoolOptions({id: req.id}, res);
+			}
+		});
+	},
+	allPoolOptions : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll), (o:Option), (p)-[:HAS_OPTION]->(o) WHERE ID(p)={id} RETURN o',
+			params: {
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error voting');
 
 				res.writeHead(200, {
 					'Content-Type': 'application/json',
 					"Access-Control-Allow-Origin":"*",
 				});
 
-				res.write(JSON.stringify(true));
+				res.write(JSON.stringify(false));
+				res.end();
+			} else{
+				var options = [];
+				for(var i =0; i < results.length; i++)
+				{
+					var obj = new Object();
+					obj.name = results[i]['o']['properties']['name'];
+					obj.votes = parseInt(results[i]['o']['properties']['votes']);
+					options.push(obj);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(options));
 				res.end();
 			}
 		});
