@@ -21,20 +21,42 @@ function show_courses(data){
       $("#all-courses").append('<a href="#" class="list-group-item">'+data.allCourses[i]+'</a>');
   }
 }
-//function show_courses(getAllCourses()){
-//  var i;
-//  for(i=0;i<data.m" class="list-group-item">'+data.myCourses[i]+'</a>');
-//      $("#all-courses").append('<a href="#" class="list-group-item">'+data.allCourses[i]+'</a>');
-//  }
-//  for(i;i<data.allCourses.length;i++)
-//  {yCourses.length;i++)
-//  {
-//      $("#my-courses").append('<a href="#
-//      $("#all-courses").append('<a href="#" class="list-group-item">'+data.allCourses[i]+'</a>');
- // }
-//}
 
+function showAllCourses(data){
+	var i;
+	console.log(data.length);
+	 for(i=0;i<data.length;i++)
+  {
+	  console.log(data[i]);
+	  console.log(data[i].name);
+      $("#all-courses").append('<a href="#" class="list-group-item">'+data[i].properties.name+'</a>');
+  }
+}
 
+function showMyCourses(data){
+	 var i;
+	 
+	for(i=0;i<data.length;i++)
+	{
+	  
+      $("#my-courses").append('<a href="#" class="list-group-item">'+data[i].properties.name+'</a>');
+   
+	}
+}
 $(document).ready(function(){
-    show_courses(data);
+    //show_courses(data);
+	getAllCourses();
 });
+
+
+function getAllCourses() {
+	$.ajax({
+		type: 'GET',
+		url: '/getAllCourses',
+		dataType: 'json',
+		success: function(data){
+		alert(JSON.stringify(data));
+			showAllCourses(data);
+		}
+	});
+}
