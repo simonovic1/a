@@ -24,12 +24,12 @@ function show_courses(data){
 
 function showAllCourses(data){
 	var i;
-	console.log(data.length);
+	//console.log(data.length);
 	 for(i=0;i<data.length;i++)
   {
-	  console.log(data[i]);
-	  console.log(data[i].name);
-      $("#all-courses").append('<a href="#" class="list-group-item">'+data[i].properties.name+'</a>');
+	  // console.log(data[i]);
+	  // console.log(data[i].name);
+      $("#all-courses").append('<a href="#" onclick="courseClicked(\'' + data[i].properties.name + '\');" class="list-group-item">'+data[i].properties.name+'</a>');
   }
 }
 
@@ -39,7 +39,7 @@ function showMyCourses(data){
 	for(i=0;i<data.length;i++)
 	{
 	  
-      $("#my-courses").append('<a href="#" class="list-group-item">'+data[i].properties.name+'</a>');
+      $("#my-courses").append('<a href="#" onclick="courseClicked(\'' + data[i].properties.name + '\');" class="list-group-item">'+data[i].properties.name+'</a>');
    
 	}
 }
@@ -60,3 +60,4 @@ function getAllCourses() {
 		}
 	});
 }
+

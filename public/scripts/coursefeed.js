@@ -139,11 +139,61 @@ function getAllPolls() {
 		$("#posts").append(eventStr);	
 	}
 	
-
+function courseClicked(courseName)
+	{
+		$('.post').remove();
+		getAllElementsByCourse(courseName);
+	}
+	
+	
+	function getAllElementsByCourse(courseName)
+	{
+		$.ajax({
+		type: 'GET',
+		url: '/getAllCoursePosts', 
+		  dataType: 'json',
+		  data:{
+		   'name': courseName
+		  },
+		success: function(data){
+		alert(JSON.stringify(data));
+			addPosts(data);
+		}
+	});
+	
+	$.ajax({
+		type: 'GET',
+		url: '/getAllCourseEvents', 
+		  dataType: 'json',
+		  data:{
+		   'name': courseName
+		  },
+		success: function(data){
+		alert(JSON.stringify(data));
+			addEvents(data);
+		}
+	});
+	
+	$.ajax({
+		type: 'GET',
+		url: '/getAllCoursePolls', 
+		  dataType: 'json',
+		  data:{
+		   'name': courseName
+		  },
+		success: function(data){
+		alert(JSON.stringify(data));
+			addVoting(data);
+		}
+	});
+	}
 	
 	$( document ).ready(function() {
 		getAllPosts();
 		getAllPolls();
 		getAllEvents();
 });
+
+
+
 

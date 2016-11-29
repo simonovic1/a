@@ -31,6 +31,13 @@ app.get('/', index.landing);
 app.get('/signUp', index.signUp);
 app.get('/coursePosts', index.coursePosts);
 
+ // //new newsfeed-page added by Simon
+	app.get('/newsFeed', index.newsfeed);
+
+// //about-page
+// app.get('/about-page', index.aboutPage);
+// app.get('/course-page', index.coursePage);
+
 app.get('/loginCheck', function(req, res) {
 	console.log("Started login");
 	var toRet = login.check(req.query.username, req.query.password);
