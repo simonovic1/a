@@ -77,9 +77,18 @@ function getAllPolls() {
 		  },
 		  success: function(data){
 			  debugger;
-			  location.reload();
-		   //$("#" + poll_id).html("<div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+ data.votes +"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + poll_id + "\', \'" + poll_name + "\', \'" + "djolej@elfak.rs" + "\');\">+</button></div></div>");
-		  }
+			  // $("#" + poll_id).load(location.href + " #" + poll_id);
+			  //location.reload();
+			  
+			  //console.log(thisObject.parent);
+			  
+			  var progressArray = "";		
+			$.each(data , function(i, val) { 
+			//tu gde je username promeni da se salje email iz local storagea
+				progressArray += "<div id=\"" + poll_id + "\" class=\"vote-item\"><div class=\"vote-name\">" +  data[i]["name"] + "</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+ data[i]["votes"] +"%\"></div></div></div><div class=\"vote-percent\"><span>"+data[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + poll_id + "\', \'" + data[i]["name"] + "\', \'djolej@elfak.rs\');\">+</button></div></div>";
+			});
+			$('.voting').html(progressArray);
+			}
 		 });
 	}
 	
@@ -97,11 +106,12 @@ function getAllPolls() {
 		var progressList = voting.options;
 		var tagList = voting.tags;
 				
+				console.log("Voting: " + voting._id);
 	
 		var progressArray = "";		
 		$.each(progressList , function(i, val) { 
 		//tu gde je username promeni da se salje email iz local storagea
-			progressArray += "<div id=\"" + voting.id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting.id + "\', \'" + progressList[i].name + "\', \'" + "djolej@elfak.rs" + "\');\">+</button></div></div>";
+			progressArray += "<div id=\"" + voting._id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting._id + "\', \'" + progressList[i].name + "\', \'djolej@elfak.rs\');\">+</button></div></div>";
 		});
 		
 		var tagarray = "";		
