@@ -1,52 +1,23 @@
 function checkIfExists() {
 
+	var loader = document.getElementById("loader");
+	loader.style.visibility = "inherit";
+	
 	var name = document.getElementById("inputName").value;
 	var pass = document.getElementById("inputPassword").value;
-
+	
 	$.ajax({
 		type: 'GET',
 		url: '/loginCheck',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass},
 		success: function(data){
+			loader.style.visibility = "hidden";
 			if(data == true) {
 				checkIfProfileExists(name, pass);
 			}
 			else
 				alert("Wrong username/password combination");
-		}
-	});
-}
-
-function CreateUserAccount() {
-
-	var name = document.getElementById("inputName").value;
-	var pass = document.getElementById("inputPassword").value;
-	var indexNo = document.getElementById("indexNo").value;
-	var firstName = document.getElementById("inputFirstName").value;
-	var lastName = document.getElementById("inputLastName").value;
-	var dropzone = document.getElementById("inputPicture");
-	
-	
-
-	$.ajax({
-		type: 'GET',
-		url: '/createProfile',
-		dataType: 'json',
-		data: { 'username': name, 'password': pass, 'indexNumber': indexNo, 'firstName' : firstName, 'lastName': lastName, 'picture' : dropzone.files.file.name},
-		success: function(data){
-			if(data == true)
-			{
-				console.log("Sign up successfull");
-				localStorage.setItem("Ime", firstName);
-				localStorage.setItem("Prezime", lastName);
-				localStorage.setItem("Index", indexNo);
-				localStorage.setItem("Username", name);
-				localStorage.setItem("imgUrl", dropzone.files.file.name);
-				window.location = "newsFeed";
-			}
-			else
-				alert("User is not created");
 		}
 	});
 }
@@ -110,60 +81,25 @@ function CheckCookieSession() {
 	}*/
 }
 
+function loginLoad(){
+	//Add on Enter listener, for input pass & input username
+	
+	document.getElementById("inputName").addEventListener("keyup", function(event) {
+		if (event.keyCode == 13) {
+			document.getElementById("LoginBtn").click();
+		}
+	});
+	
+	document.getElementById("inputPassword").addEventListener("keyup", function(event) {
+		if (event.keyCode == 13) {
+			document.getElementById("LoginBtn").click();
+		}
+	});
+}
+
 function searchKeyPress(e) {
 	if(e.keyCode == 13)
 	{
 		document.getElementById("LoginBtn").click();
 	}
 }
-
-
-/* user Profile logic */
-
-//Postavlja ime, prezime, index i sliku u myProfile sekciji.
-//Treba pozvati prilikom inicijalizacije newsFeed strane.
-function loadUserProfile(){
-	document.getElementById("profileNameSurname").innerHTML = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
-	var index = localStorage.getItem("Index");
-	document.getElementById("profileIndex").innerHTML = index;
-	
-	var img = localStorage.getItem("imgUrl");
-
-	var imgUrl = "users/pictures/" + img + ".jpg";
-	var imgUrl2 = "users/pictures/" + img + ".png";
-	var imgUrl3 = "users/pictures/noProfile.jpg";
-	if(imageExists(imgUrl))
-		document.getElementById("profileImage").src = imgUrl;
-	else if(imageExists(imgUrl2))
-		document.getElementById("profileImage").src = imgUrl2;
-	else
-		document.getElementById("profileImage").src = imgUrl3;
-
-}
-
-//Proverava da li slika (ili bilo koji fajl) postoji na datom URL-uName
-//Poziva se jer se ne zna u kom formatu su slike koje korisnici uploduju.
-function imageExists(image_url){
-
-    var http = new XMLHttpRequest();
-
-    http.open('HEAD', image_url, false);
-    http.send();
-
-    return http.status != 404;
-
-}
-
-function changeProfilePicture(){
-	var pic = document.getElementById("inputPicture");
-	var username = localStorage.getItem("Username");
-	
-	//todo: call changing user picture url from given username.
-}
-
-function signOut(){
-	localStorage.clear();
-	window.location = "/#";
-}
-
-/* !!user Profile logic!! */

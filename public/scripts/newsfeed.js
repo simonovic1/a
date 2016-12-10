@@ -1,3 +1,5 @@
+var myDropzone;
+
 $(document).ready(function(){
 
 	var names=["Filter1", "Filter2", "Filter3", "Filter4", "Filter5"]; //samo dodamo novo ime i dodaje se tag
@@ -16,7 +18,30 @@ $(document).ready(function(){
 	drawPanels(3, "Panel", "Sadrzaj lalalalalalal", "rightSideBar");
 	drawPanels(4, "Panel", "Sadrzaj djoiaw", "rightSideBar");
 	drawPanels(5, "Panel", "Sadrzaj lalalaawdwfdwflalalal", "rightSideBar");
+	
+	
+	//file upload section
+	 Dropzone.options.dropzoneForm = {
+		url: '/uploadFiles',
+		headers: {'subfolder': 'newsFeed'}, //TEMPLATE FOR OTHER UPLOADS
+		dictDefaultMessage: 'Click here to transfer files',
+		autoProcessQueue: false,
+		addRemoveLinks: 'dictRemoveFile',
+		maxFilesize: '30', //MB
+		init: function() {
+		   myDropzone = this;
+		   this.on('complete', function(file) {
+			   myDropzone.removeFile(file);
+		   });
+		   //catch other events here...
+		}
+    };
+	
 });
+
+function beginUpload(){
+	myDropzone.processQueue();
+}
 
 function createTags(names)
 {

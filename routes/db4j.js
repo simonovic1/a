@@ -43,7 +43,7 @@ var thisModule = module.exports = {
   createProfile: function(req,res){
 
   	db.cypher({
-  		query: 'CREATE (u:User {username: {username}, password: {password}, indexNumber: {indexNumber}, firstName: {firstName}, lastName: {lastName}, picture:{picture}})',
+  		query: 'CREATE (u:User {username: {username}, password: {password}, indexNumber: {indexNumber}, firstName: {firstName}, lastName: {lastName}, picture:{picture}}) return u',
   		params: {
   			username: req.query.username,
   			password: req.query.password,
@@ -56,6 +56,7 @@ var thisModule = module.exports = {
   		if (err) throw err;
   		var result = results[0];
   		if (!result) {
+			console.log(results);
   			console.log('Error creating user');
 
   			res.writeHead(200, {
@@ -1511,5 +1512,36 @@ totalUpvotes : function(req, res){
 
 			}
 		});
-	}
+	},
+	editUserProfilePicture : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username: {username}}) SET u.picture = {picture} RETURN u',
+			params: {
+				username: req.query.username,
+				picture: req.query.picture
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error edit profile user');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true, null, 4));
+				res.end();
+			}
+		})}
 };

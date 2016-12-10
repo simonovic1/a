@@ -63,7 +63,20 @@ app.post('/pictureUpload', function(req, res) {
     });
   });
 
-})
+});
+
+app.post('/uploadFiles', function(req, res){
+	console.log(req.files.file.name);
+	
+	fs.readFile(req.files.file.path, function (err, data) {
+		var new_path = __dirname + "/public/courses/" + req.header('subfolder') + "/" + req.files.file.name;
+		fs.writeFile(new_path, data, function (err) {
+		console.log(err);
+		  res.redirect("back");
+		});
+	});
+	
+});
 
 app.get('/getUserByUsername', db4j.getUserByUsername);
 
@@ -114,6 +127,8 @@ app.get('/getAllEvents', db4j.getAllEvents);
 app.get('/createPoll', db4j.createPoll);
 
 app.get('/getAllPolls', db4j.getAllPolls);
+
+app.get('/editUserProfilePicture', db4j.editUserProfilePicture);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
