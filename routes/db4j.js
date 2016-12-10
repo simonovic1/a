@@ -5,6 +5,49 @@ var db = new neo4j.GraphDatabase("http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkj
 
 var thisModule = module.exports = {
 
+	combine : function(a, min) {
+		var fn = function(n, src, got, all) {
+			if (n == 0) {
+				if (got.length > 0) {
+					all[all.length] = got;
+				}
+				return;
+			}
+			for (var j = 0; j < src.length; j++) {
+				fn(n - 1, src.slice(j + 1), got.concat([src[j]]), all);
+			}
+			return;
+		}
+		var all = [];
+		for (var i = min; i < a.length; i++) {
+			fn(i, a, [], all);
+		}
+		all.push(a);
+		return all;
+	},
+	contains : function(sup , sub) {
+		sup.sort();
+		sub.sort();
+		var i, j;
+		for (i=0,j=0; i<sup.length && j<sub.length;) {
+			if (sup[i] < sub[j]) {
+				++i;
+			} else if (sup[i] == sub[j]) {
+				++i; ++j;
+			} else {
+
+				return false;
+			}
+		}
+		return j == sub.length;
+	},
+
+	 sortByKey: function(array, key) {
+	return array.sort(function(a, b) {
+		var x = a[key]; var y = b[key];
+		return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+	});
+},
   checkIfProfileExists: function(req, res){
 
     db.cypher({
@@ -89,7 +132,7 @@ var thisModule = module.exports = {
 		if (err) throw err;
 		var result = results[0];
 		if (!result) {
-			console.log('Error getting user');
+			console.log('Error creating user');
 
 			res.writeHead(200, {
 				'Content-Type': 'application/json',
@@ -109,6 +152,38 @@ var thisModule = module.exports = {
 			res.end();
 		}
 	})},
+
+	editUserProfilePicture : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username: {username}}) SET u.picture = {picture} RETURN u',
+			params: {
+				username: req.query.username,
+				picture: req.query.picture
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error edit profile user');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true, null, 4));
+				res.end();
+			}
+		})},
 
 getAllCourses : function(req,res){
 
@@ -497,11 +572,12 @@ checkIfUserSubscribedToCourse : function(req, res){
 	createReview : function(req,res){
 
 	db.cypher({
-		query: 'CREATE (r:Review {text:{text},upvote:{upvote},downvote:{downvote}}) RETURN ID(r)',
+		query: 'CREATE (r:Review {text:{text},upvote:{upvote},downvote:{downvote}, creatorName:{creatorName}}) RETURN ID(r)',
 		params: {
 			text: req.query.text,
 			upvote: 0,
 			downvote: 0,
+			creatorName: req.query.creatorName
 		},
 	}, function (err, results) {
 		if (err) throw err;
@@ -518,7 +594,7 @@ checkIfUserSubscribedToCourse : function(req, res){
 			res.end();
 		} else {
 			var id = result['ID(r)'];
-			exports.userPostReview({username: req.query.username, review_id:id, course_name: req.query.name},res);
+			thisModule.userPostReview({username: req.query.username, review_id:id, course_name: req.query.name},res);
 		}
 	});
 },
@@ -545,7 +621,7 @@ userPostReview : function(req,res){
 			res.write(JSON.stringify(false));
 			res.end();
 		} else {
-			exports.createCourseReview(req,res)
+			thisModule.createCourseReview(req,res)
 		}
 	});
 },
@@ -582,6 +658,44 @@ createCourseReview : function(req,res){
 		}
 	});
 },
+	getAllCourseReviews : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (r:Review),(c:Course {name:{name}}) WHERE(c)-[:HAS_REVIEW]->(r) RETURN r',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating follow');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var reviews = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					reviews.push(results[i]['r']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(reviews, null, 4));
+				res.end();
+			}
+		});
+	},
 	checkIfUserPostedReview : function(req, res){
 	db.cypher({
 		query: 'MATCH (User {username:{username}})-[r1:POST_REVIEW]->(r),(Course {name:{name}})-[r2:HAS_REVIEW]->(r) RETURN r',
@@ -636,7 +750,7 @@ createCourseReview : function(req,res){
 			res.end();
 		} else {
 
-			exports.userUpvoteReview({username: req.query.username, review_id:req.query.id},res);
+			thisModule.userUpvoteReview({username: req.query.username, review_id:req.query.id},res);
 		}
 	});
 },
@@ -697,7 +811,7 @@ downvoteReview : function(req,res){
 			res.end();
 		} else {
 
-			exports.userDownvoteReview({username: req.query.username, review_id:req.query.id},res);
+			thisModule.userDownvoteReview({username: req.query.username, review_id:req.query.id},res);
 		}
 	});
 },
@@ -747,7 +861,7 @@ checkIfUserVoted : function(req, res){
 		if (err) throw err;
 		var result = results[0];
 		if (!result) {
-			exports.checkIfUserDownvoted(req,res);
+			thisModule.checkIfUserDownvoted(req,res);
 		} else {
 			var review = result['r'];
 			console.log(JSON.stringify(review, null, 4));
@@ -795,7 +909,7 @@ checkIfUserDownvoted : function(req, res){
 	});
 },
 
-totalUpvotes : function(req, res){
+	totalUpvotes : function(req, res){
 	db.cypher({
 		query: 'MATCH (r:Review) WHERE ID(r)={id} RETURN r.upvote',
 		params: {
@@ -826,7 +940,6 @@ totalUpvotes : function(req, res){
 		}
 	});
 },
-
 	totalDownvotes : function(req, res){
 	db.cypher({
 		query: 'MATCH (r:Review) WHERE ID(r)={id} RETURN r.downvote',
@@ -858,6 +971,7 @@ totalUpvotes : function(req, res){
 		}
 	});
 },
+
 	getAllFollowedCourses : function(req,res){
 
 		db.cypher({
@@ -1037,6 +1151,7 @@ totalUpvotes : function(req, res){
 			}
 		});
 	},
+
 	getAllPosts : function(req,res){
 
 		db.cypher({
@@ -1081,7 +1196,7 @@ totalUpvotes : function(req, res){
 
 		db.cypher({
 			query: 'CREATE (e:Event {picture: {picture}, username: {username}, date: {date}, time: {time}, eventDate: {eventDate},' +
-			'eventTime: {eventTime},title: {title}, tags: {tags}}) RETURN ID(e)',
+			'eventTime: {eventTime},title: {title}, text:{text}, type:{type}, courseName: {courseName}, tags: {tags}}) RETURN ID(e)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
@@ -1090,6 +1205,9 @@ totalUpvotes : function(req, res){
 				eventDate : req.query.eventDate,
 				eventTime : req.query.eventTime,
 				title: req.query.title,
+				text: req.query.text,
+				type: req.query.type,
+				courseName: req.query.courseName,
 				tags: req.query.tags,
 			},
 		}, function (err, results) {
@@ -1107,7 +1225,38 @@ totalUpvotes : function(req, res){
 				res.end();
 			} else {
 				var id = results[0]['ID(e)'];
-				thisModule.userPostedEvent({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+				thisModule.createNotification({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags, title: req.query.title, text:req.query.text, type: req.query.type},res);
+			}
+		});
+	},
+	createNotification : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User)-[s:SUBSCRIBE]->(c:Course{name:{courseName}})WHERE (u.indexNumber <> {indexNo}) ' +
+			'CREATE (u)-[:HAS_NOTIFICATION]->(n:Notification {name:{title}, text:{text}, type:{type}, courseName:{courseName}, eventID: {postID}}) RETURN u',
+			params: {
+				courseName : req.courseName,
+				indexNo: req.indexNo,
+				title: req.title,
+				text: req.text,
+				type: req.type,
+				postID: req.postID
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user has notification');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.userPostedEvent({indexNo: req.indexNo, postID : req.postID, courseName: req.courseName, tags: req.tags},res);
 			}
 		});
 	},
@@ -1221,6 +1370,7 @@ totalUpvotes : function(req, res){
 			}
 		});
 	},
+
 	getAllEvents : function(req,res){
 
 		db.cypher({
@@ -1264,13 +1414,14 @@ totalUpvotes : function(req, res){
 	createPoll : function(req,res){
 
 		db.cypher({
-			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
+			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, deadline: {deadline}, tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
 				date : req.query.date,
 				time : req.query.time,
 				text: req.query.text,
+				deadline: req.query.deadline,
 				tags: req.query.tags,
 				optionNum: req.query.options.length,
 			},
@@ -1459,6 +1610,7 @@ totalUpvotes : function(req, res){
 			}
 		});
 	},
+
 	getAllPolls : function(req,res){
 
 		db.cypher({
@@ -1485,6 +1637,7 @@ totalUpvotes : function(req, res){
 
 				for(var i =0; i< results.length;) {
 					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
 					obj.time = results[i]['p']['properties']['time'];
 					obj.date = results[i]['p']['properties']['date'];
 					obj.text = results[i]['p']['properties']['text'];
@@ -1543,5 +1696,927 @@ totalUpvotes : function(req, res){
 				res.write(JSON.stringify(true, null, 4));
 				res.end();
 			}
-		})}
+		})},
+		
+		voteOption : function(req, res){
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option), (p)-[h:HAS_OPTION]->(o)<-[v:VOTE_POLL]-(u) WHERE ID(p)={id} RETURN v',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				thisModule.userVoteOption({username: req.query.username, id: req.query.id, name: req.query.name}, res);
+			} else {
+				thisModule.poolOptionDecrement({username: req.query.username, id: req.query.id, name: req.query.name}, res);
+			}
+		});
+	},
+
+	userVoteOption : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option {name:{name}}), (p)-[HAS_OPTION]->(o) WHERE ID(p)={id} CREATE (u)-[u1:VOTE_POLL]->(o) RETURN u1',
+			params: {
+				username: req.username,
+				name: req.name,
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.poolOptionIncrement({id: req.id, name: req.name},res);
+			}
+		});
+	},
+	poolOptionIncrement : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll), (o:Option {name: {name}}), (p)-[:HAS_OPTION]->(o) WHERE ID(p)={id} SET o.votes = o.votes + 1 RETURN o.votes',
+			params: {
+				id: parseInt(req.id),
+				name: req.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else{
+					thisModule.allPoolOptions({id: req.id}, res);
+			}
+		});
+	},
+	allPoolOptions : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll), (o:Option), (p)-[:HAS_OPTION]->(o) WHERE ID(p)={id} RETURN o',
+			params: {
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else{
+				var options = [];
+				for(var i =0; i < results.length; i++)
+				{
+					var obj = new Object();
+					obj.name = results[i]['o']['properties']['name'];
+					obj.votes = parseInt(results[i]['o']['properties']['votes']);
+					options.push(obj);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(options));
+				res.end();
+			}
+		});
+	},
+	deleteVoteOption : function(req, res){
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option), (p)-[HAS_OPTION]->(o)<-[v:VOTE_POLL]-(u) WHERE ID(p)={id} DELETE v RETURN true',
+			params: {
+				username: req.username,
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				
+			} else {
+				thisModule.userVoteOption({username: req.username, id: req.id, name: req.name}, res);
+			}
+		});
+	},
+	poolOptionDecrement : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll), (o:Option), (p)-[HAS_OPTION]->(o)<-[v:VOTE_POLL]-(u) WHERE ID(p)={id} SET o.votes =  o.votes - 1 RETURN o.votes',
+			params: {
+				username: req.username,
+				id: parseInt(req.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error voting');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.deleteVoteOption({username: req.username, id: req.id, name: req.name}, res);
+			}
+		});
+	},
+
+	getAllCoursePosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+	getAllCourseEvents : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+			}
+		});
+	},
+	getAllCoursePolls : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
+
+	getUsersNewsFeedPosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+	getUsersNewsFeedEvents : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+			}
+		});
+	},
+	getUsersNewsFeedPolls : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
+
+	getAllNotificationsForUser : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[h:HAS_NOTIFICATION]->(n:Notification) RETURN n',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No notifications found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var notifications = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					notifications.push(results[i]['n']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(notifications, null, 4));
+				res.end();
+			}
+		});
+	},
+	deleteNotification: function(req,res){
+
+		db.cypher({
+			query: 'MATCH (n:Notification) WHERE ID(n) = {id} OPTIONAL MATCH (u:User)-[r:HAS_NOTIFICATION]-(n) DELETE n,r RETURN u',
+			params: {
+				id: parseInt(req.query.id)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No success in deliting notification');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true, null, 4));
+				res.end();
+			}
+		});
+	},
+	searchCoursePostsByTag : function(req,res){
+
+		var query = "MATCH (p:Post), (c:Course {name:{name}})";
+			for(var i = 0; i < req.query.tags.length; i++)
+			{
+				if(i == 0)
+				{
+					query = query + " WHERE (c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+				else{
+					query = query + " OR (c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+
+				if(i+1 == req.query.tags.length)
+				{
+					query = query + " RETURN p";
+				}
+			}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['p']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							posts.push(results[i]);
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+	searchCourseEventsByTag : function(req,res){
+
+		var query = "MATCH (e:Event), (c:Course {name:{name}})";
+		for(var i = 0; i < req.query.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE (c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR (c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.query.tags.length)
+			{
+				query = query + " RETURN e";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['e']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							events.push(results[i]);
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(events, null, 4));
+				res.end();
+			}
+		});
+	},
+	searchCoursePollsByTag : function(req,res){
+
+		var query = "MATCH (p:Poll),(o:Option), (c:Course {name:{name}})";
+		for(var i = 0; i < req.query.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"}) AND (c)-[:HAS_POLL]->(p))";
+			}
+			else{
+				query = query + " OR ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"}) AND (c)-[:HAS_POLL]->(p))";
+			}
+
+			if(i+1 == req.query.tags.length)
+			{
+				query = query + " RETURN p,o";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['p']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							var obj = new Object();
+							obj._id = parseInt(results[i]['p']['_id']);
+							obj.time = results[i]['p']['properties']['time'];
+							obj.date = results[i]['p']['properties']['date'];
+							obj.text = results[i]['p']['properties']['text'];
+							obj.tags = results[i]['p']['properties']['tags'];
+							obj.picture = results[i]['p']['properties']['picture'];
+							obj.username = results[i]['p']['properties']['username'];
+							var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+							var options = [];
+							for(var k = i; k < i+optionNum; k++)
+							{
+								options.push(results[k]['o']['properties']);
+							}
+							i = i + optionNum;
+							obj.options = options;
+							polls.push(obj)
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(polls, null, 4));
+				res.end();
+			}
+		});
+	},
+	
+	getAllUsersNewsFeedItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				username: req.query.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				thisModule.getUsersNewsFeedEventsItems({items: posts, username: req.query.username},res);
+			}
+		});
+	},
+	getUsersNewsFeedEventsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				username: req.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = req.items;
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				thisModule.getUsersNewsFeedPollsItems({items: events, username: req.username},res);
+			}
+		});
+	},
+	getUsersNewsFeedPollsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (User {username:{username}})-[f:FOLLOW]->(c:Course)-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
+			params: {
+				username: req.username,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = req.items;
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
+				res.end();
+			}
+		});
+	},
+
+	getAllCourseItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POST]->(p:Post) RETURN p',
+			params: {
+				name: req.query.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				thisModule.getAllCourseEventsItems({items: posts, name: req.query.name},res);
+			}
+		});
+	},
+	getAllCourseEventsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_EVENT]->(e:Event) RETURN e',
+			params: {
+				name: req.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = req.items;
+
+				for(var i =0; i< results.length; i++)
+				{
+					events.push(results[i]['e']);
+				}
+
+				thisModule.getAllCoursePollsItems({items: events, name: req.name},res);
+			}
+		});
+	},
+	getAllCoursePollsItems : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (Course {name:{name}})-[r:HAS_POLL]->(p:Poll)-[:HAS_OPTION]->(o:Option) RETURN p,o',
+			params: {
+				name: req.name,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = req.items;
+
+				for(var i =0; i< results.length;) {
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var j = i; j < i+optionNum; j++)
+					{
+						options.push(results[j]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
+				res.end();
+			}
+		});
+	},
 };

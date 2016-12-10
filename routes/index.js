@@ -17,5 +17,12 @@ module.exports = {
 
 	coursePosts: function(req, res){
 		  res.render('coursePosts'); 
-	}	
+	},	
+	
+	aboutPage: function(req, res){
+			res.render('aboutPage', { title: 'CSBook' }); 
+	},
+	coursePage: function(req, res){
+			res.render('coursePage', { title: 'CSBook' }); 
+	},
 };
