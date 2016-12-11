@@ -1,4 +1,14 @@
-
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 
 function getAllPosts() {
@@ -7,7 +17,8 @@ function getAllPosts() {
 		url: '/getAllPosts',
 		dataType: 'json',
 		success: function(data){
-		alert(JSON.stringify(data));
+		//alert(JSON.stringify(data));
+		//alert(JSON.stringify(data));
 			addPosts(data);
 		}
 	});
@@ -132,13 +143,13 @@ function getAllPolls() {
 		
 		// var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + Event.courseName+ "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		
-		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Opis: " + "Opis" + "</div><div>Predmet: " + tagList[0] + "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Opis: " + Event.text + "</div><div>Predmet: " + Event.courseName + "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		$("#posts").append(eventStr);	
 	}
 	
 function courseClicked(courseName)
 	{
-		$('.post').remove();
+	
 		getAllElementsByCourse(courseName);
 	}
 	
@@ -180,15 +191,21 @@ function courseClicked(courseName)
 		  },
 		success: function(data){
 		//alert(JSON.stringify(data));
-			addVoting(data);
+			addVotings(data);
 		}
 	});
 	}
 	
 	$( document ).ready(function() {
-		getAllPosts();
-		getAllPolls();
-		getAllEvents();
+		
+		var course  = getParameterByName('course');
+		if(course!=null){
+			courseClicked(course);
+		}else{
+			getAllPosts();
+			getAllPolls();
+			getAllEvents();
+		}
 });
 
 

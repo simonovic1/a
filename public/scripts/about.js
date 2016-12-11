@@ -1,31 +1,44 @@
-function getCourseInfo() {
+function getCourseInfo(course) {
 	$.ajax({
 		type: 'GET',
 		url: '/getCourseByName', // ime f-je sa servera
 		dataType: 'json', // sta vraca
 		data:{
-			'name': "Sistemi baza podataka",
+			'name': course,
 		},
 		success: function(data){
-		alert(JSON.stringify(data));
+	//	alert(JSON.stringify(data));
 			addCourseInfo(data); // poziv moje f-je u js
 		}
 	});
 }
-function getAllReviews() {
+function getAllReviews(course) {
 	$.ajax({
 		type: 'GET',
 		url: '/getAllCourseReviews', // ime f-je sa servera
 		dataType: 'json', // sta vraca
 		data:{
-			'name': "Sistemi baza podataka",
+			'name': course,
 		},
 		success: function(data){
-		alert(JSON.stringify(data));
+	//	alert(JSON.stringify(data));
 			addReviews(data); // poziv moje f-je u js
 		}
 	});
 }
+
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 ////////////////////////////////////////////////////////////////// functions for implementation///////////////////////////////////////////////////////////////////////////////
 function addCourseInfo(course)
 {
@@ -83,6 +96,9 @@ function mapDay(dayNumber)
 //getting all reviews
 function addReviews(reviews)
 {
+	if(reviews.length==0){
+		$("#about").append("<div>Trenutno nema recenzija kursa.</div>");	
+	}
 	$.each(reviews , function(i, val) { 
 		addReview(reviews[i]);
 	});	
@@ -92,7 +108,7 @@ function addReview(json)
 	//subject name je hard kodirano
 	
 	var review = json.properties;
-	var string = "<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">" + "Sistemi baza podataka" + "</h3><div class=\"panel-date\"></div></div></div><div class=\"panel-body\">" + review.text + "</div> <div class=\"panel-footer\"><div class=\"container\"><span><div style=\"float:left color:#2C3E50\">" + review.upvote + "<a class=\"like\" style=\"margin-right:10px; color:#2C3E50\" onclick=\"upvote(this.id)\" id=" + json._id + "><i class=\"glyphicon glyphicon-thumbs-up\" style=\"margin-left:10px\" ></i>  Like    </a>" + review.downvote + "<a class=\"dislike\" style=\"color:#2C3E50\"><i class=\"glyphicon glyphicon-thumbs-down\"  style=\"margin-left:10px\"></i> Dislike </a></div></span></div></div></div></div>";
+	var string = "<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">" + review.creatorName + "</h3><div class=\"panel-date\"></div></div></div><div class=\"panel-body\">" + review.text + "</div> <div class=\"panel-footer\"><div class=\"container\"><span><div style=\"float:left color:#2C3E50\">" + review.upvote + "<a class=\"like\" style=\"margin-right:10px; color:#2C3E50\" onclick=\"upvote(this.id)\" id=" + json._id + "><i class=\"glyphicon glyphicon-thumbs-up\" style=\"margin-left:10px\" ></i>  Like    </a>" + review.downvote + "<a class=\"dislike\" style=\"color:#2C3E50\"><i class=\"glyphicon glyphicon-thumbs-down\"  style=\"margin-left:10px\"></i> Dislike </a></div></span></div></div></div></div>";
 	$("#about").append(string);	
 }
 $('#clickedUpvote').click(function() {
@@ -104,7 +120,7 @@ function upvote(reviewId)
 	var upvote = {};
 	
 	
-	upvote['username'] = "djolej@elfak.rs";
+	upvote['username'] = localStorage.getItem("Username");
 	upvote['id'] =  reviewId;
 	
 		$.ajax({
@@ -120,7 +136,7 @@ function upvote(reviewId)
 		},
 		error:function(jqXHR, textStatus){
 				alert("Creating review unsuccessful.");
-			alert(JSON.stringify(review));
+			//alert(JSON.stringify(review));
 		}
 	});
 	
@@ -149,9 +165,13 @@ function addNewReview(){
 
 	var review = {};
 	
-	review['text'] =  $('#review-text').val();;
-	review['username'] = "djolej@elfak.rs";
-	review['name'] = "Sistemi baza podataka";
+	review['text'] =  $('#review-text').val();
+	review['name'] = localStorage.getItem('Course');
+	review['creatorName'] = localStorage.getItem('Username');
+	review['username'] = localStorage.getItem('Username');
+	review['name'] = localStorage.getItem('Course');
+	
+	alert(JSON.stringify(review));
 	
 		$.ajax({
 		type: 'GET',
@@ -161,12 +181,13 @@ function addNewReview(){
 		success: function(data){
 			
 				alert("Review created!");
+				$('#review-modal').modal('hide');
 				getAllReviews();
 			
 		},
 		error:function(jqXHR, textStatus){
 				alert("Creating review unsuccessful.");
-			alert(JSON.stringify(review));
+			
 		}
 	});
 	
@@ -249,8 +270,11 @@ function addNewReview(){
 
 	
 $( document ).ready(function() {
-	getCourseInfo();
-	getAllReviews();
+	
+	var course = getParameterByName('course');
+	localStorage.setItem("Course", course);
+	getCourseInfo(course);
+	getAllReviews(course);
 	//addNewReview();
 });
 

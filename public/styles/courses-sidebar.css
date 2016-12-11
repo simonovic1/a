@@ -1,12 +1,12 @@
 #all-courses{
-  height: 270px;
+  max-height: 270px;
   overflow: scroll;
 }
 /*Chrome and Safari*/
 #all-courses::-webkit-scrollbar { width: 0 !important }
 
 #my-courses{
-  height: 270px;
+  max-height: 270px;
   overflow: scroll;
 }
 #my-courses::-webkit-scrollbar { width: 0 !important }

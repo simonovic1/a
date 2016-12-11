@@ -60,12 +60,15 @@ var events = [
        
                 var num = $('.clonedInput').length;
                 // how many "duplicatable" input fields we currently have
+				if(num>1)
                 $('#entry' + num).slideUp('slow', function () {$(this).remove(); 
                 // if only one element remains, disable the "remove" button
-                    if (num -1 === 1)
+                   /* if (num -1 === 1)
                 $('#btnDel').attr('disabled', true);
                 // enable the "add" button
-                $('#btnAdd').attr('disabled', false).prop('value', "add section");});
+                $('#btnAdd').attr('disabled', false).prop('value', "add section");*/
+				
+				});
   
     });
  
@@ -82,12 +85,14 @@ function addNewStatus(){
 	var tagsArray = selectize.getValue().split(',');
 	status['text'] = $('#status-text').val();
 	status['tags'] = tagsArray;
-	status['username'] = "Djordje Jovic";
-	status['courseName'] = "Sistemi baza podataka";
+
 	status['date'] = moment().format('DD.M.YYYY.');
 	status['time'] = new moment().format('HH:mm');
-	status['indexNo'] = 285;
-	status['picture'] = 285;
+	
+	status['username'] = localStorage.getItem("Username");
+	status['courseName'] = localStorage.getItem("Course");
+	status['indexNo'] = localStorage.getItem("Index");
+	status['picture'] = localStorage.getItem("imgUrl");
 	
 		$.ajax({
 		type: 'GET',
@@ -96,12 +101,13 @@ function addNewStatus(){
 		data: status,
 		success: function(data){
 			
-				alert("Status created!");
+				//alert("Status kreiran!");
 				$('#status-modal').modal('hide');
+				window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("Creating post unsuccessful.");
-			alert(JSON.stringify(status));
+			//alert(JSON.stringify(status));
 		}
 	});
 		
@@ -119,15 +125,18 @@ function addNewPoll(){
 	}
 	var poll={};
 	poll['text'] = $("#poll-text").val();
-	poll['date'] = moment($("#poll-deadline").val()).format('DD.M.YYYY.');
-	poll['time'] = moment($("#poll-deadline").val()).format('HH:mm');
+	poll['deadline'] = moment($("#poll-deadline").val()).format('DD.M.YYYY.HH:mm');
+	poll['date'] = moment().format('DD.M.YYYY.');
+	poll['time'] = new moment().format('HH:mm');
 	poll['options'] = options;
-	poll['username'] = "Djordje Jovic";
-	poll['courseName'] = "Sistemi baza podataka"
+
 	poll['tags'] =  selectize.getValue().split(',');
 	
-	poll['indexNo'] = 285;
-	poll['picture'] = 285;
+	
+	poll['username'] = localStorage.getItem("Username");
+	poll['courseName'] = localStorage.getItem("Course");
+	poll['indexNo'] = localStorage.getItem("Index");
+	poll['picture'] = localStorage.getItem("imgUrl");
 	
 	$('#poll-modal').modal('hide');
 	alert(JSON.stringify(poll));
@@ -141,12 +150,13 @@ function addNewPoll(){
 		data: poll,
 		success: function(data){
 			
-				alert("Poll created!");
+				//alert("Poll created!");
 				$('#poll-modal').modal('hide');
+					window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("Creating post unsuccessful.");
-			alert(JSON.stringify(poll));
+			//alert(JSON.stringify(poll));
 		}
 	});
 	
@@ -160,7 +170,8 @@ function addNewEvent(){
     return this.getItem(this.getValue()).text();
 };
 	var event={};
-	//event['text'] = $("#event-text").val();
+	event['text'] = $("#event-text").val();
+	event['type'] = 'urgent';
 	
 	event['title'] = selectizeEventType.getText();
 
@@ -170,16 +181,13 @@ function addNewEvent(){
 	event['time'] = new moment().format('HH:mm');
 	event['eventDate'] = moment($("#event-deadline").val()).format('DD.M.YYYY.');
 	event['eventTime'] = moment($("#event-deadline").val()).format('HH:mm');
-
-	event['username'] = "Djordje Jovic";
-	event['courseName'] = "Sistemi baza podataka"
-
 	
-	event['indexNo'] = 285;
-	event['picture'] = 285;
+	event['username'] = localStorage.getItem("Username");
+	event['courseName'] = localStorage.getItem("Course");
+	event['indexNo'] = localStorage.getItem("Index");
+	event['picture'] = localStorage.getItem("imgUrl");
 	
 	$('#event-modal').modal('hide');
-	alert(JSON.stringify(event));
 	
 
 		$.ajax({
@@ -189,12 +197,13 @@ function addNewEvent(){
 		data: event,
 		success: function(data){
 			
-				alert("Event created!");
+				//alert("Event created!");
 				$('#event-modal').modal('hide');
+					window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("Creating post unsuccessful.");
-			alert(JSON.stringify(event));
+			//alert(JSON.stringify(event));
 		}
 	});
 
