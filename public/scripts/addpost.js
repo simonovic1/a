@@ -100,7 +100,7 @@ function addNewStatus(){
 		dataType: 'json',
 		data: status,
 		success: function(data){
-			
+				alert(JSON.stringify(status));
 				//alert("Status kreiran!");
 				$('#status-modal').modal('hide');
 				window.location.reload(true);

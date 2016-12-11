@@ -209,27 +209,32 @@ function courseClicked(courseName)
 	{
 		// debugger;
 		
-		// var selectize = $('#search-input')[0].selectize;
+		 var selectize = $('#search-input')[0].selectize;
 
-		 // var tagsArray = selectize.getValue().split(',');
-		 // search = $('#search-input').val();
+		  var tagsArray = selectize.getValue().split(',');
+		  //search = $('#search-input').val();
  
 		// //var search = "[" + $("#search-input").val() + "]";
 		
-		// var course = localStorage.getItem("Course");
+		 var course = localStorage.getItem("Course");
 		
-		// $.ajax({
-		// type: 'GET',
-		// url: '/searchAllCourseItemsByTag', 
-		  // dataType: 'json',
-		  // data:{
-		   // 'tags': tagsArray,
-		   // 'name': course
-		  // },
-		// success: function(data){
-			// conslole.log(data);
-		// }
-	// });
+		var query={};
+		query['tags'] = tagsArray;
+		query['name'] = course;
+		
+		alert(JSON.stringify(query));
+		
+		 $.ajax({
+		 type: 'GET',
+		 url: '/searchAllCourseItemsByTag', 
+		   dataType: 'json',
+		   data:query,
+		 success: function(data){
+	
+			alert(JSON.stringify(data));
+		 }
+	 });
+	
 	}
 	
 	function PerformNewsfeedSearch()
@@ -242,11 +247,11 @@ function courseClicked(courseName)
 	
 	$( document ).ready(function() {
 		
-		 // $('#search-input').selectize({
-     // persist: false,
-     // createOnBlur: true,
-     // create: true
-    // });
+	$('#search-input').selectize({
+      persist: false,
+      createOnBlur: true,
+      create: true
+     });
 	
 		var course  = getParameterByName('course');
 		if(course!=null){
