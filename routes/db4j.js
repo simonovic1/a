@@ -2501,6 +2501,389 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
+		searchAllCourseItemsByTag : function(req,res){
+
+		var query = "MATCH (p:Post), (c:Course {name:{name}})";
+			for(var i = 0; i < req.query.tags.length; i++)
+			{
+				if(i == 0)
+				{
+					query = query + " WHERE (c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+				else{
+					query = query + " OR (c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+
+				if(i+1 == req.query.tags.length)
+				{
+					query = query + " RETURN p";
+				}
+			}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var i = 0; i< results.length; i++)
+				{
+					posts.push(results[i]);
+				}
+
+				thisModule.searchAllCourseEventsByTag({tags: tagList, name: req.query.name, combinations: combinations, items: posts }, res);
+			}
+		});
+	},
+	searchAllCourseEventsByTag : function(req,res){
+
+		var query = "MATCH (e:Event), (c:Course {name:{name}})";
+		for(var i = 0; i < req.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE (c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR (c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.tags.length)
+			{
+				query = query + " RETURN e";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = req.items;
+
+				for(var i = 0; i< results.length; i++)
+				{
+					events.push(results[i]);
+				}
+
+				thisModule.searchAllCoursePollsByTag({tags: req.tags, name: req.name, combinations: req.combinations, items: events }, res);
+			}
+		});
+	},
+	searchAllCoursePollsByTag : function(req,res){
+
+		var query = "MATCH (p:Poll),(o:Option), (c:Course {name:{name}})";
+		for(var i = 0; i < req.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"}) AND (c)-[:HAS_POLL]->(p))";
+			}
+			else{
+				query = query + " OR ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"}) AND (c)-[:HAS_POLL]->(p))";
+			}
+
+			if(i+1 == req.tags.length)
+			{
+				query = query + " RETURN p,o";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = req.items;
+				var items = [];
+				for(var i =0; i < results.length/2; i++)
+				{
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var k = i; k < i+optionNum; k++)
+					{
+						options.push(results[k]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+				var tagList = req.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < polls.length; i++) {
+						var array = [];
+						if(polls[i]['p'] != null) {
+							array = polls[i]['p']['properties']['tags'];
+						}
+						else if(polls[i]['e'] != null)
+						{
+							array = polls[i]['e']['properties']['tags'];
+						}
+						else
+						{
+							array = polls[i]['tags'];
+						}
+						if(thisModule.contains(array,combinations[j])){
+							items.push(polls[i]);
+							polls.splice(polls.indexOf(polls[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(items, null, 4));
+				res.end();
+			}
+		});
+	},
+	
+	searchAllNewsFeedItemsByTag : function(req,res){
+
+		var query = "MATCH (p:Post), (c:Course), (u:User {username:{username}})";
+			for(var i = 0; i < req.query.tags.length; i++)
+			{
+				if(i == 0)
+				{
+					query = query + " WHERE (u)-[:FOLLOW]->(c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+				else{
+					query = query + " OR (u)-[:FOLLOW]->(c)-[:HAS_POST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+				}
+
+				if(i+1 == req.query.tags.length)
+				{
+					query = query + " RETURN p";
+				}
+			}
+
+		db.cypher({
+			query: query,
+			params: {
+				username: req.query.username
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var i = 0; i< results.length; i++)
+				{
+					posts.push(results[i]);
+				}
+
+				thisModule.searchAllNewsFeedEventsByTag({username: req.query.username, tags: tagList, combinations: combinations, items: posts }, res);
+			}
+		});
+	},
+	searchAllNewsFeedEventsByTag : function(req,res){
+
+		var query = "MATCH (e:Event), (c:Course), (u:User {username:{username}})";
+		for(var i = 0; i < req.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE (u)-[:FOLLOW]->(c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR (u)-[:FOLLOW]->(c)-[:HAS_EVENT]->(e)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.tags.length)
+			{
+				query = query + " RETURN e";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				username: req.username
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No events found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var events = req.items;
+
+				for(var i = 0; i< results.length; i++)
+				{
+					events.push(results[i]);
+				}
+
+				thisModule.searchAllNewsFeedPollsByTag({username : req.username, tags: req.tags, combinations: req.combinations, items: events }, res);
+			}
+		});
+	},
+	searchAllNewsFeedPollsByTag : function(req,res){
+
+		var query = "MATCH (p:Poll),(o:Option), (c:Course), (u:User {username:{username}})";
+		for(var i = 0; i < req.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"}) AND (u)-[:FOLLOW]->(c)-[:HAS_POLL]->(p))";
+			}
+			else{
+				query = query + " OR ((o)<-[:HAS_OPTION]-(p)-[:HAS_TAG]->(:Tag{name:\""+req.tags[i]+"\"}) AND (u)-[:FOLLOW]->(c)-[:HAS_POLL]->(p))";
+			}
+
+			if(i+1 == req.tags.length)
+			{
+				query = query + " RETURN p,o";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				username: req.username
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No polls found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var polls = req.items;
+				var items = [];
+				for(var i =0; i < results.length/2; i++)
+				{
+					var obj = new Object();
+					obj._id = parseInt(results[i]['p']['_id']);
+					obj.time = results[i]['p']['properties']['time'];
+					obj.date = results[i]['p']['properties']['date'];
+					obj.text = results[i]['p']['properties']['text'];
+					obj.tags = results[i]['p']['properties']['tags'];
+					obj.picture = results[i]['p']['properties']['picture'];
+					obj.username = results[i]['p']['properties']['username'];
+					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
+					var options = [];
+					for(var k = i; k < i+optionNum; k++)
+					{
+						options.push(results[k]['o']['properties']);
+					}
+					i = i + optionNum;
+					obj.options = options;
+					polls.push(obj)
+				}
+				var tagList = req.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < polls.length; i++) {
+						var array = [];
+						if(polls[i]['p'] != null) {
+							array = polls[i]['p']['properties']['tags'];
+						}
+						else if(polls[i]['e'] != null)
+						{
+							array = polls[i]['e']['properties']['tags'];
+						}
+						else
+						{
+							array = polls[i]['tags'];
+						}
+						if(thisModule.contains(array,combinations[j])){
+							items.push(polls[i]);
+							polls.splice(polls.indexOf(polls[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(items, null, 4));
+				res.end();
+			}
+		});
+	},
 
 	getAllCourseItems : function(req,res){
 

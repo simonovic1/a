@@ -157,6 +157,10 @@ app.get('/getAllNotificationsForUser', db4j.getAllNotificationsForUser);
 
 app.get('/deleteNotification', db4j.deleteNotification);
 
+app.get('/searchAllCourseItemsByTag', db4j.searchAllCourseItemsByTag );
+
+app.get('/searchAllNewsFeedItemsByTag', db4j.searchAllNewsFeedItemsByTag);
+
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
 });

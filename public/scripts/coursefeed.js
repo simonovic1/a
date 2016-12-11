@@ -11,11 +11,14 @@ function getParameterByName(name, url) {
 }
 
 
-function getAllPosts() {
+function getAllPosts(useremail) {
 	$.ajax({
 		type: 'GET',
-		url: '/getAllPosts',
+		url: '/getUsersNewsFeedPosts',
 		dataType: 'json',
+		 data:{
+		   'username': useremail
+		  },
 		success: function(data){
 		//alert(JSON.stringify(data));
 		//alert(JSON.stringify(data));
@@ -24,11 +27,14 @@ function getAllPosts() {
 	});
 }
 
-function getAllEvents() {
+function getAllEvents(useremail) {
 	$.ajax({
 		type: 'GET',
-		url: '/getAllEvents',
+		url: '/getUsersNewsFeedEvents',
 		dataType: 'json',
+		 data:{
+		   'username': useremail
+		  },
 		success: function(data){
 			addEvents(data);
 		}
@@ -36,11 +42,14 @@ function getAllEvents() {
 }
 
 
-function getAllPolls() {
+function getAllPolls(useremail) {
 	$.ajax({
 		type: 'GET',
-		url: '/getAllPolls',
+		url: '/getUsersNewsFeedPolls',
 		dataType: 'json',
+		 data:{
+		   'username': useremail
+		  },
 		success: function(data){
 			addVotings(data);
 		}
@@ -149,7 +158,6 @@ function getAllPolls() {
 	
 function courseClicked(courseName)
 	{
-	
 		getAllElementsByCourse(courseName);
 	}
 	
@@ -196,15 +204,59 @@ function courseClicked(courseName)
 	});
 	}
 	
+	
+	function PerformCourseSearch()
+	{
+		// debugger;
+		
+		// var selectize = $('#search-input')[0].selectize;
+
+		 // var tagsArray = selectize.getValue().split(',');
+		 // search = $('#search-input').val();
+ 
+		// //var search = "[" + $("#search-input").val() + "]";
+		
+		// var course = localStorage.getItem("Course");
+		
+		// $.ajax({
+		// type: 'GET',
+		// url: '/searchAllCourseItemsByTag', 
+		  // dataType: 'json',
+		  // data:{
+		   // 'tags': tagsArray,
+		   // 'name': course
+		  // },
+		// success: function(data){
+			// conslole.log(data);
+		// }
+	// });
+	}
+	
+	function PerformNewsfeedSearch()
+	{
+		var searchText = $("#search-input").val();
+		
+		
+	}
+
+	
 	$( document ).ready(function() {
 		
+		 // $('#search-input').selectize({
+     // persist: false,
+     // createOnBlur: true,
+     // create: true
+    // });
+	
 		var course  = getParameterByName('course');
 		if(course!=null){
 			courseClicked(course);
 		}else{
-			getAllPosts();
-			getAllPolls();
-			getAllEvents();
+			var userEmail = localStorage.getItem("Username");
+			
+			getAllPosts(userEmail);
+			getAllPolls(userEmail);
+			getAllEvents(userEmail);
 		}
 });
 
