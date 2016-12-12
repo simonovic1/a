@@ -42,7 +42,7 @@ function loadUserProfile(){
 		document.getElementById("profileImage").src = imgUrlNoExtension; //in case img has already .png, .jpg
 	else
 		document.getElementById("profileImage").src = imgUrl3;
-
+	
 }
 
 function changeProfilePicture(){

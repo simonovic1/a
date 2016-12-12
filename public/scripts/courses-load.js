@@ -23,7 +23,7 @@ function showMyCourses(data){
 		for(i=0;i<data.length;i++)
 		{
 			var link = "/course-page?course=" + data[i].properties.name;
-			$("#my-courses").append('<a href="'+link+'" class="list-group-item">'+data[i].properties.name+'</a>');     
+			$("#my-courses").append('<a href="'+link+'" class="list-group-item" onclick="setCurrentCourse(\''+ data[i].properties.name +'\')">'+data[i].properties.name+'</a>');     
 		}
 	}else{
 		$("#my-courses").append('<a href="#" class="list-group-item">Ne pratite nijedan kurs.</a>');
@@ -34,12 +34,53 @@ function showAllCourses(data){
 		for(i=0;i<data.length;i++)
 		{
 			var link = "/course-page?course=" + data[i].properties.name;
-			$("#all-courses").append('<a href="'+link+'" class="list-group-item">'+data[i].properties.name+'</a>');
+			$("#all-courses").append('<a href="'+link+'" class="list-group-item" onclick="setCurrentCourse(\''+ data[i].properties.name +'\')">'+data[i].properties.name+'</a>');
 		}
 	}else{
 		$("#my-courses").append('<a href="#" class="list-group-item">No courses in database.</a>');
 	}
 }
+
+function setCurrentCourse(course){
+	localStorage.setItem("currentCourse", course);
+}
+
+function addFileElement(item, currCourse, parent, i){
+	var tr = document.createElement("tr");
+	var td = document.createElement("td");
+	td.innerHTML = i + 1;
+	var td2 = document.createElement("td");
+	var a = document.createElement("a");
+	a.innerHTML = item;
+	a.href="courses/" + currCourse + "/" + item;
+	a.download="courses/" + currCourse + "/" + item;
+	td2.appendChild(a);
+	tr.appendChild(td);
+	tr.appendChild(td2);
+	parent.appendChild(tr);
+}
+
 $(document).ready(function(){
     getAllCourses();
+	
+	//ukoliko smo u kursu nekom, setujemo to, i popunjavamo fajlove....
+	var docTable = document.getElementById("fileItems");
+	var currCourse = localStorage.getItem("currentCourse");
+	if(docTable){
+		$.ajax({
+		type: 'GET',
+		url: '/getFilesForCourse',
+		dataType: 'json',
+		data: { 'course': localStorage.getItem("currentCourse")},
+		success: function(data){
+			if(data) {
+				for(var i = 0; i< data.length; i++){
+					addFileElement(data[i], currCourse, docTable, i);
+				}
+			}
+			else
+				alert("Error occured while trying to fetch files for current course");
+		}
+	});
+	}
 });

@@ -55,6 +55,19 @@ app.get('/loginCheck', function(req, res) {
 	res.end();
 });
 
+app.get('/getFilesForCourse', function(req,res){
+	var course = req.query.course;
+	var files = fs.readdirSync('public/courses/'+ course);
+	console.log(files);
+	
+	res.writeHead(200, {
+		'Content-Type': 'application/json',
+		"Access-Control-Allow-Origin":"*",
+		});
+		res.write(JSON.stringify(files));
+	res.end();
+});
+
 app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
