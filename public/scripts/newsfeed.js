@@ -145,14 +145,14 @@ function getNotifications()
 		];
 	
 	$.ajax({
-       type: 'POST',
+       type: 'GET',
        url: '/getAllNotificationsForUser',
        dataType: 'json',
 	   data: {
 		    'username': localStorage.getItem("Username") 
 		},
        success: function (data) {
-           if (data && data.length > 0) {
+           if (data) {
 				for (var i = 0; i < data.length; i++)
 				{
 					var div = document.createElement('div');
@@ -179,7 +179,7 @@ function getNotifications()
 function removeNotification(id)
 {
 	$.ajax({
-       type: 'POST',
+       type: 'GET',
        url: '/deleteNotification',
        dataType: 'json',
 	   data: {
