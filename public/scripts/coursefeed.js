@@ -210,19 +210,14 @@ function courseClicked(courseName)
 		// debugger;
 		
 		 var selectize = $('#search-input')[0].selectize;
-
-		  var tagsArray = selectize.getValue().split(',');
-		  //search = $('#search-input').val();
- 
-		// //var search = "[" + $("#search-input").val() + "]";
-		
+		 var tagsArray = selectize.getValue().split(',');
 		 var course = localStorage.getItem("Course");
 		
 		var query={};
 		query['tags'] = tagsArray;
 		query['name'] = course;
 		
-		alert(JSON.stringify(query));
+		console.log(JSON.stringify(query));
 		
 		 $.ajax({
 		 type: 'GET',
@@ -231,7 +226,18 @@ function courseClicked(courseName)
 		   data:query,
 		 success: function(data){
 	
-			alert(JSON.stringify(data));
+			$(".post").remove();
+			
+			$.each(data , function(i, val) { 
+			if(data[i].e != undefined)
+				addEvent(data[i].e);
+			else if (data[i].p != undefined)
+				addPost(data[i].p);
+			else 
+				addVoting(data[i]);
+		});
+		
+			console.log(JSON.stringify(data));
 		 }
 	 });
 	
@@ -239,7 +245,37 @@ function courseClicked(courseName)
 	
 	function PerformNewsfeedSearch()
 	{
-		var searchText = $("#search-input").val();
+		
+		 var selectize = $('#search-input')[0].selectize;
+		 var tagsArray = selectize.getValue().split(',');
+		
+		var query={};
+		query['tags'] = tagsArray;
+		query['username'] = localStorage.getItem("Username");
+		
+		console.log(JSON.stringify(query));
+		
+		 $.ajax({
+		 type: 'GET',
+		 url: '/searchAllNewsFeedItemsByTag', 
+		   dataType: 'json',
+		   data:query,
+		 success: function(data){
+	
+			$(".post").remove();
+			
+			$.each(data , function(i, val) { 
+			if(data[i].e != undefined)
+				addEvent(data[i].e);
+			else if (data[i].p != undefined)
+				addPost(data[i].p);
+			else 
+				addVoting(data[i]);
+		});
+		
+			console.log(JSON.stringify(data));
+		 }
+	 });
 		
 		
 	}
