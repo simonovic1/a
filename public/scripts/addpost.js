@@ -1,8 +1,8 @@
 $(function () {	
 var events = [
-						{id: 1, type: 'Ispit'},
-						{id: 2, type: 'Kolokvijum'},
-						{id: 3, type: 'Termin nastave'}
+						{id: 0, type: 'Ispit'},
+						{id: 1, type: 'Kolokvijum'},
+						{id: 2, type: 'Termin nastave'}
 					];
 	$('#event-tags').selectize({
 					persist: false,
@@ -89,7 +89,7 @@ function addNewStatus(){
 	status['date'] = moment().format('DD.M.YYYY.');
 	status['time'] = new moment().format('HH:mm');
 	
-	status['username'] = localStorage.getItem("Username");
+	status['username'] = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	status['courseName'] = localStorage.getItem("Course");
 	status['indexNo'] = localStorage.getItem("Index");
 	status['picture'] = localStorage.getItem("imgUrl");
@@ -100,7 +100,7 @@ function addNewStatus(){
 		dataType: 'json',
 		data: status,
 		success: function(data){
-				alert(JSON.stringify(status));
+				//alert(JSON.stringify(status));
 				//alert("Status kreiran!");
 				$('#status-modal').modal('hide');
 				window.location.reload(true);
@@ -133,13 +133,13 @@ function addNewPoll(){
 	poll['tags'] =  selectize.getValue().split(',');
 	
 	
-	poll['username'] = localStorage.getItem("Username");
+	poll['username'] = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	poll['courseName'] = localStorage.getItem("Course");
 	poll['indexNo'] = localStorage.getItem("Index");
 	poll['picture'] = localStorage.getItem("imgUrl");
 	
 	$('#poll-modal').modal('hide');
-	alert(JSON.stringify(poll));
+	//alert(JSON.stringify(poll));
 
 	
 
@@ -174,8 +174,11 @@ function addNewEvent(){
 	event['text'] = $("#event-text").val();
 	event['type'] = selectizeEventType.getValue();
 	
+	
 	event['title'] = selectizeEventType.getText();
-
+	if(event['type']==event['title']){
+		event['type']=3;
+	}
 	event['tags'] = selectizeTags.getValue().split(',');;
 	
 	event['date'] = moment().format('DD.M.YYYY.');
@@ -183,7 +186,7 @@ function addNewEvent(){
 	event['eventDate'] = moment($("#event-deadline").val()).format('DD.M.YYYY.');
 	event['eventTime'] = moment($("#event-deadline").val()).format('HH:mm');
 	
-	event['username'] = localStorage.getItem("Username");
+	event['username'] = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	event['courseName'] = localStorage.getItem("Course");
 	event['indexNo'] = localStorage.getItem("Index");
 	event['picture'] = localStorage.getItem("imgUrl");

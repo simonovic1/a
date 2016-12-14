@@ -1225,22 +1225,23 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 				var id = results[0]['ID(e)'];
-				thisModule.createNotification({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags, title: req.query.title, text:req.query.text, type: req.query.type},res);
+				thisModule.createNotification({date : req.query.eventDate, indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags, title: req.query.title, text:req.query.text, type: req.query.type},res);
 			}
 		});
 	},
 	createNotification : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (u:User)-[s:SUBSCRIBE]->(c:Course{name:{courseName}})WHERE (u.indexNumber <> {indexNo}) ' +
-			'CREATE (u)-[:HAS_NOTIFICATION]->(n:Notification {name:{title}, text:{text}, type:{type}, courseName:{courseName}, eventID: {postID}}) RETURN u',
+			query: 'MATCH (u:User)-[s:SUBSCRIBE]->(c:Course{name:{courseName}}) ' +
+			'CREATE (u)-[:HAS_NOTIFICATION]->(n:Notification {name:{title}, text:{text}, type:{type}, courseName:{courseName}, eventID: {postID}, date:{date}}) RETURN u',
 			params: {
 				courseName : req.courseName,
 				indexNo: req.indexNo,
 				title: req.title,
 				text: req.text,
 				type: req.type,
-				postID: req.postID
+				postID: req.postID,
+				date : req.date
 			},
 		}, function (err, results) {
 			if (err) throw err;

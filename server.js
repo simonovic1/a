@@ -55,6 +55,8 @@ app.get('/loginCheck', function(req, res) {
 	res.end();
 });
 
+
+
 app.get('/getFilesForCourse', function(req,res){
 	var course = req.query.course;
 	var files = fs.readdirSync('public/courses/'+ course);
@@ -75,7 +77,7 @@ app.post('/pictureUpload', function(req, res) {
   console.log(req.files.file.name);
 
   fs.readFile(req.files.file.path, function (err, data) {
-    var new_path = __dirname + "/users/pictures/" + req.files.file.name;
+    var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
     fs.writeFile(new_path, data, function (err) {
       res.redirect("back");
     });
@@ -173,6 +175,10 @@ app.get('/deleteNotification', db4j.deleteNotification);
 app.get('/searchAllCourseItemsByTag', db4j.searchAllCourseItemsByTag );
 
 app.get('/searchAllNewsFeedItemsByTag', db4j.searchAllNewsFeedItemsByTag);
+
+app.get('/:default', function(req, res){
+ res.redirect('');
+});
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

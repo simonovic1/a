@@ -163,17 +163,22 @@ function getNotifications()
 					$(button).attr("class", "close");
 					$(button).attr("data-dismiss", "alert");
 					button.innerHTML = "&times;";
-					$(button).attr("onclick", "removeNotification(" + data[i]["_id"] +")");
+					//$(button).attr("onclick", "removeNotification(" + data[i]["_id"] 
+					appendOnClick($(button),data[i]);
 					$(div).append(button);
 					div.innerHTML
 						+= "<strong>" + data[i]["properties"].courseName + "</strong>" + ": "
 						+ data[i]["properties"].text + "<br>"
-						+ "<h6 align='right'> Postavljeno: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
+						+ "<h6 align='right'> Datum: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
 					$(notification_pane).append(div);
 				}
 			}
 		}
     });
+}
+
+function appendOnClick(elem, data){
+	elem.attr("onclick", "removeNotification(" + data["_id"] +")");
 }
 
 function removeNotification(id)
@@ -183,11 +188,11 @@ function removeNotification(id)
        url: '/deleteNotification',
        dataType: 'json',
 	   data: {
-		    '_id': id 
+		    'id': id 
 		},
        success: function (data) {
            if (data) {
-               alert("deleted!");
+				//alert("deleted!");
            }
        }
     });
