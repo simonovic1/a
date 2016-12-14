@@ -318,6 +318,7 @@ function follow(){
 		},
 		success: function(data){
 			alert('Follow');
+			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("unsuccessful.");
@@ -340,6 +341,7 @@ function subscribe(){
 		},
 		success: function(data){
 			alert('Subscribe');
+			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("unsuccessful.");
@@ -359,6 +361,7 @@ function unfollow(){
 		},
 		success: function(data){
 			alert('Unfollow');
+			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("Unsuccessful.");
@@ -377,6 +380,7 @@ function unsubscribe(){
 		},
 		success: function(data){
 			alert('Unsubscribe');
+			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
 				alert("Unsuccessful.");

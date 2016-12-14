@@ -169,9 +169,10 @@ function addNewEvent(){
 	Selectize.prototype.getText = function () {
     return this.getItem(this.getValue()).text();
 };
+
 	var event={};
 	event['text'] = $("#event-text").val();
-	event['type'] = 'urgent';
+	event['type'] = selectizeEventType.getValue();
 	
 	event['title'] = selectizeEventType.getText();
 
@@ -186,7 +187,7 @@ function addNewEvent(){
 	event['courseName'] = localStorage.getItem("Course");
 	event['indexNo'] = localStorage.getItem("Index");
 	event['picture'] = localStorage.getItem("imgUrl");
-	
+
 	$('#event-modal').modal('hide');
 	
 

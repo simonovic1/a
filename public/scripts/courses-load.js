@@ -12,7 +12,7 @@ function getAllCourses(){
 	  var username = localStorage.getItem("Username");
 	  $.ajax({
         type: "GET",
-        url: '/getAllSubscribedCourses?username='+username,
+        url: '/getAllFollowedCourses?username='+username,
         success:function(data){
 			showMyCourses(data);
 		}
