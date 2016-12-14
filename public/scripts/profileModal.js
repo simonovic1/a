@@ -43,6 +43,11 @@ function loadUserProfile(){
 	else
 		document.getElementById("profileImage").src = imgUrl3;
 	
+	//nabavi kurs na osnovu url-a
+	window.location.href
+	localStorage.setItem("currentCourse", decodeURIComponent(window.location.href.split('=')[1]));
+	console.log(decodeURIComponent(window.location.href.split('=')[1]));
+	
 }
 
 function changeProfilePicture(){
