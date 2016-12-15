@@ -1,7 +1,10 @@
-var neo4j = require('neo4j');
+var neo4j = require('neo4j')
+  , jwt 	= require('jsonwebtoken');
 
 //var db = new neo4j.GraphDatabase('http://neo4j:neo4j@localhost:7474');
 var db = new neo4j.GraphDatabase("http://csbook:dcjRP6fx3SASr7qahZAm@hobby-pfdkjfjnbmnagbkehhfjddnl.dbs.graphenedb.com:24789");
+var jwtTokenSecret = "csbook92";
+
 
 var thisModule = module.exports = {
 
@@ -72,9 +75,11 @@ var thisModule = module.exports = {
   		} else {
   			var user = result['u'];
   			console.log(JSON.stringify(user, null, 4));
+  			var token = jwt.sign({ iss: 'CsBook' }, jwtTokenSecret, {expiresIn: '120'});
   			res.writeHead(200, {
   				'Content-Type': 'application/json',
   				"Access-Control-Allow-Origin":"*",
+  				'Authorization': token
   			});
 
   			res.write(JSON.stringify(true));

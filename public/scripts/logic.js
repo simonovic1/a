@@ -27,10 +27,15 @@ function checkIfProfileExists(name,pass) {
 		type: 'GET',
 		url: '/checkIfProfileExists',
 		dataType: 'json',
+		/*headers: {
+	        'Authorization':'get token from locat storage',
+	    },*/
 		data: { 'username': name, 'password': pass},
-		success: function(data){
+		success: function(response, data){
 			if(data == true)
 			{
+				console.log(response.getResponseHeader('authorization'));
+				// localStorage.setItem("token", response.getResponseHeader('authorization'));
 				SetUpLocalStorageSettings(name);
 			}
 			else if(data == false)
@@ -52,7 +57,6 @@ function SetUpLocalStorageSettings(username){
 		success: function(data){
 			if(data){
 				user_data = data["properties"];
-
 				localStorage.setItem("Ime", user_data.firstName);
 				localStorage.setItem("Prezime", user_data.lastName);
 				localStorage.setItem("Index", user_data.indexNumber);
