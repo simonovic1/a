@@ -148,6 +148,10 @@ function getNotifications()
        type: 'GET',
        url: '/getAllNotificationsForUser',
        dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 	   data: {
 		    'username': localStorage.getItem("Username") 
 		},
@@ -187,6 +191,10 @@ function removeNotification(id)
        type: 'GET',
        url: '/deleteNotification',
        dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 	   data: {
 		    'id': id 
 		},

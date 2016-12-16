@@ -49,11 +49,15 @@ app.get('/loginCheck', function(req, res) {
 	res.end();
 });
 
+app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
+
 app.get('/:default', function(req, res, next){ 
 	jwt.verify(req.headers.authorization, jwtTokenSecret, function(err, decoded) {
 		if (err) {
+			console.log(err);
 			res.redirect('');
 		} else {
+			console.log(decoded);
 			next();
 		}
 	}) 
@@ -78,7 +82,6 @@ app.get('/getFilesForCourse', function(req,res){
 	res.end();
 });
 
-app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {

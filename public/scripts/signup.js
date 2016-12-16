@@ -38,10 +38,14 @@ function CreateUserAccount() {
 		url: '/createProfile',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass, 'indexNumber': indexNo, 'firstName' : firstName, 'lastName': lastName, 'picture' : imgUrl},
-		success: function(data){
+		success: function(data, text, response){
 			if(data == true)
 			{
 				console.log("Sign up successfull");
+
+				// auth token
+				localStorage.setItem("token", response.getResponseHeader('authorization'));
+
 				localStorage.setItem("Ime", firstName);
 				localStorage.setItem("Prezime", lastName);
 				localStorage.setItem("Index", indexNo);

@@ -4,6 +4,10 @@ function getAllCourses(){
 	$.ajax({
         type: "GET",
         url: '/getAllCourses',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
         success:function(data){
 			showAllCourses(data);
 		}
@@ -13,6 +17,10 @@ function getAllCourses(){
 	  $.ajax({
         type: "GET",
         url: '/getAllFollowedCourses?username='+username,
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
         success:function(data){
 			showMyCourses(data);
 		}
@@ -71,6 +79,10 @@ $(document).ready(function(){
 		type: 'GET',
 		url: '/getFilesForCourse',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: { 'course': localStorage.getItem("currentCourse")},
 		success: function(data){
 			if(data) {

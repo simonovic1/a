@@ -60,6 +60,10 @@ function changeProfilePicture(){
 		type: 'GET',
 		url: '/editUserProfilePicture',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: { 'username': username, 'picture': pic},
 		success: function(data){
 			if(data == true) {

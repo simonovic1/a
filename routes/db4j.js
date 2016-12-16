@@ -75,11 +75,12 @@ var thisModule = module.exports = {
   		} else {
   			var user = result['u'];
   			console.log(JSON.stringify(user, null, 4));
-  			var token = jwt.sign({ iss: 'CsBook' }, jwtTokenSecret, {expiresIn: '120'});
+  			var token = jwt.sign({ iss: 'CsBook' }, jwtTokenSecret, {expiresIn: '1000000000'});
+			console.log(token);
   			res.writeHead(200, {
   				'Content-Type': 'application/json',
   				"Access-Control-Allow-Origin":"*",
-  				'Authorization': token
+  				'authorization': token
   			});
 
   			res.write(JSON.stringify(true));
@@ -115,9 +116,12 @@ var thisModule = module.exports = {
   			res.write(JSON.stringify(false));
   			res.end();
   		} else {
+  			var token = jwt.sign({ iss: 'CsBook' }, jwtTokenSecret, {expiresIn: '1000000000'});
+			console.log(token);
   			res.writeHead(200, {
   				'Content-Type': 'application/json',
   				"Access-Control-Allow-Origin":"*",
+  				'authorization': token
   			});
 
   			res.write(JSON.stringify(true));
