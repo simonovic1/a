@@ -141,19 +141,153 @@ function getNotifications()
 					"text": " opis neki",
 					"name": "Prvi kolokvijum test"
 				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
+			},
+			{
+				"_id": 85,
+				"labels": [
+					"Notification"
+				],
+				"properties": {
+					"eventID": 60,
+					"courseName": "Sistemi baza podataka",
+					"type": 0,
+					"text": " opis neki",
+					"name": "Prvi kolokvijum test"
+				}
 			}
 		];
-	
-	$.ajax({
-       type: 'GET',
-       url: '/getAllNotificationsForUser',
-       dataType: 'json',
-	   data: {
-		    'username': localStorage.getItem("Username") 
-		},
-       success: function (data) {
-           if (data) {
-				for (var i = 0; i < data.length; i++)
+
+		for (var i = 0; i < data.length; i++)
 				{
 					var div = document.createElement('div');
 					$(div).attr("class", "alert alert-dismissible alert-" + type[data[i]["properties"].type]);
@@ -171,9 +305,37 @@ function getNotifications()
 						+ "<h6 align='right'> Postavljeno: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
 					$(notification_pane).append(div);
 				}
-			}
-		}
-    });
+	
+	// $.ajax({
+    //    type: 'GET',
+    //    url: '/getAllNotificationsForUser',
+    //    dataType: 'json',
+	//    data: {
+	// 	    'username': localStorage.getItem("Username") 
+	// 	},
+    //    success: function (data) {
+    //        if (data) {
+	// 			for (var i = 0; i < data.length; i++)
+	// 			{
+	// 				var div = document.createElement('div');
+	// 				$(div).attr("class", "alert alert-dismissible alert-" + type[data[i]["properties"].type]);
+	// 				$(div).attr("style", "margin-bottom: 10px;padding-bottom: 5px;padding-top: 5px;");
+	// 				var button = document.createElement('button');
+	// 				$(button).attr("type", "button");
+	// 				$(button).attr("class", "close");
+	// 				$(button).attr("data-dismiss", "alert");
+	// 				button.innerHTML = "&times;";
+	// 				$(button).attr("onclick", "removeNotification(" + data[i]["_id"] +")");
+	// 				$(div).append(button);
+	// 				div.innerHTML
+	// 					+= "<strong>" + data[i]["properties"].courseName + "</strong>" + ": "
+	// 					+ data[i]["properties"].text + "<br>"
+	// 					+ "<h6 align='right'> Postavljeno: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
+	// 				$(notification_pane).append(div);
+	// 			}
+	// 		}
+	// 	}
+    // });
 }
 
 function removeNotification(id)
