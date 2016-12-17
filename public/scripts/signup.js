@@ -5,6 +5,9 @@ $(document).ready(function(){
 	//file upload section
 	 Dropzone.options.dropzonePicture = {
 		url: '/pictureUpload',
+		headers: {
+			'authorization': localStorage.getItem('token')
+		},
 		dictDefaultMessage: 'Upload picture',
 		addRemoveLinks: 'dictRemoveFile',
 		maxFilesize: '30', //MB

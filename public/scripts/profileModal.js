@@ -7,6 +7,9 @@ $(document).ready(function(){
 	//file upload section
 	 Dropzone.options.dropzoneProfileChange = {
 		url: '/pictureUpload',
+		headers: {
+			'authorization': localStorage.getItem('token')
+		},
 		dictDefaultMessage: 'Change picture',
 		autoProcessQueue: false,
 		addRemoveLinks: 'dictRemoveFile',
@@ -45,9 +48,7 @@ function loadUserProfile(){
 	
 	//nabavi kurs na osnovu url-a
 	window.location.href
-	localStorage.setItem("currentCourse", decodeURIComponent(window.location.href.split('=')[1]));
-	console.log(decodeURIComponent(window.location.href.split('=')[1]));
-	
+	localStorage.setItem("currentCourse", decodeURIComponent(window.location.href.split('&')[0].split('=')[1]));
 }
 
 function changeProfilePicture(){
