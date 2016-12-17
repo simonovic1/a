@@ -327,6 +327,10 @@ function courseClicked(courseName)
 		   data:{
 		   'username':  localStorage.getItem("Username")
 		  },
+		  	beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		 success: function(data){
 			//alert(JSON.stringify(data));
 	
@@ -357,6 +361,10 @@ function courseClicked(courseName)
 		   data:{
 		   'name': courseName
 		  },
+		  	beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		 success: function(data){
 
 			$(".post").remove();

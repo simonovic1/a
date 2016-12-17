@@ -7,6 +7,10 @@ function getCourseInfo(course) {
 		data:{
 			'name': course,
 		},
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		success: function(data){
 	//	alert(JSON.stringify(data));
 			addCourseInfo(data); // poziv moje f-je u js
@@ -20,6 +24,10 @@ function getAllReviews(course) {
 		dataType: 'json', // sta vraca
 		data:{
 			'name': course,
+		},
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 		//alert(JSON.stringify(data));
@@ -547,7 +555,7 @@ $( document ).ready(function() {
 	
 	isFollowing();
 	isSubscribed();
-	//checkIfUserReviewed();
+	checkIfUserReviewed();
 	//checkIfUserVoted();
 	getCourseInfo(course);
 	getAllReviews(course);
