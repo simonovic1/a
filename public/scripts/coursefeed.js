@@ -69,8 +69,9 @@ function getAllPolls(useremail) {
 		var tagList = post.tags;
 					
 		var tagarray = "";		
-			tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+			
 		$.each(tagList , function(i, val) { 
+		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
 		});
 		
 	    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img src=\"" + post.picture + "\"/></div><h3 class=\"panel-title\">" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
@@ -158,7 +159,8 @@ function getAllPolls(useremail) {
 	
 function courseClicked(courseName)
 	{
-		getAllElementsByCourse(courseName);
+		//getAllElementsByCourse(courseName);
+		getCourseFeed(courseName);
 	}
 	
 	
@@ -281,6 +283,65 @@ function courseClicked(courseName)
 	}
 
 	
+	function getNewsFeed(){
+		 $.ajax({
+		 type: 'GET',
+		 url: '/getAllUsersNewsFeedItems', 
+		   dataType: 'json',
+		   data:{
+		   'username':  localStorage.getItem("Username")
+		  },
+		 success: function(data){
+			//alert(JSON.stringify(data));
+	
+			$(".post").remove();
+			
+			
+			$.each(data , function(i, val) { 
+			if(data[i].labels == undefined)
+				addVoting(data[i]);
+			else if(data[i].labels[0] == 'Event')
+				addEvent(data[i]);
+			else if (data[i].labels[0] == 'Post')
+				addPost(data[i]);
+		});
+		
+			console.log(JSON.stringify(data));
+		 }
+	 });
+		
+	}
+	
+	function getCourseFeed(courseName){
+		
+		 $.ajax({
+		 type: 'GET',
+		 url: '/getAllCourseItems', 
+		   dataType: 'json',
+		   data:{
+		   'name': courseName
+		  },
+		 success: function(data){
+
+			$(".post").remove();
+			
+			$.each(data , function(i, val) { 
+			if(data[i].labels == undefined)
+				addVoting(data[i]);
+			else if(data[i].labels[0] == 'Event')
+				addEvent(data[i]);
+			else if (data[i].labels[0] == 'Post')
+				addPost(data[i]);
+			 
+				
+		});
+		
+			console.log(JSON.stringify(data));
+		 }
+	 });
+	}
+
+	
 	$( document ).ready(function() {
 		
 	$('#search-input').selectize({
@@ -290,7 +351,7 @@ function courseClicked(courseName)
      });
 	
 		var course  = getParameterByName('course');
-		if(course!=null){
+		/*if(course!=null){
 			courseClicked(course);
 		}else{
 			var userEmail = localStorage.getItem("Username");
@@ -298,6 +359,11 @@ function courseClicked(courseName)
 			getAllPosts(userEmail);
 			getAllPolls(userEmail);
 			getAllEvents(userEmail);
+		}*/
+		if(course!=null){
+			courseClicked(course);
+		}else{
+			getNewsFeed();
 		}
 });
 

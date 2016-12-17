@@ -175,6 +175,8 @@ app.get('/deleteNotification', db4j.deleteNotification);
 app.get('/searchAllCourseItemsByTag', db4j.searchAllCourseItemsByTag );
 
 app.get('/searchAllNewsFeedItemsByTag', db4j.searchAllNewsFeedItemsByTag);
+app.get('/getAllCourseItems', db4j.getAllCourseItems);
+app.get('/getAllUsersNewsFeedItems', db4j.getAllUsersNewsFeedItems);
 
 app.get('/:default', function(req, res){
  res.redirect('');

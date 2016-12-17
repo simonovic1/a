@@ -1,3 +1,4 @@
+var voted, reviewed;
 function getCourseInfo(course) {
 	$.ajax({
 		type: 'GET',
@@ -21,7 +22,7 @@ function getAllReviews(course) {
 			'name': course,
 		},
 		success: function(data){
-	//	alert(JSON.stringify(data));
+		//alert(JSON.stringify(data));
 			addReviews(data); // poziv moje f-je u js
 		}
 	});
@@ -106,9 +107,9 @@ function addReviews(reviews)
 function addReview(json)
 {
 	//subject name je hard kodirano
-	
+
 	var review = json.properties;
-	var string = "<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">" + review.creatorName + "</h3><div class=\"panel-date\"></div></div></div><div class=\"panel-body\">" + review.text + "</div> <div class=\"panel-footer\"><div class=\"container\"><span><div style=\"float:left color:#2C3E50\"><span id=" + json._id + "u" + ">" + review.upvote + "</span><a class=\"like\" style=\"margin-right:10px; cursor:pointer; color:#2C3E50\" onclick=\"upvote(this.id)\" id=" + json._id + "><i class=\"glyphicon glyphicon-thumbs-up\" style=\"margin-left:10px\" ></i>  Like    </a><span id=" + json._id + "d" + ">" + review.downvote + "</span><a class=\"dislike\" style=\"cursor:pointer; color:#2C3E50\" onclick=\"downvote(this.id)\" id=" + json._id + "><i class=\"glyphicon glyphicon-thumbs-down\"  style=\"margin-left:10px\"></i> Dislike </a></div></span></div></div></div></div>";
+	var string = "<div class=\"review\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">" + review.creatorName + "</h3><div class=\"panel-date\"></div></div></div><div class=\"panel-body\">" + review.text + "</div> <div class=\"panel-footer\"><div class=\"container\"><span><div style=\"float:left color:#2C3E50\"><span id=" + json._id + "u" + ">" + review.upvote + "</span><a class=\"like\" style=\"margin-right:10px; cursor:pointer; color:#2C3E50\" onclick=\"upvote(this.id)\" id=" + json._id + "><i class=\"glyphicon glyphicon-thumbs-up\" style=\"margin-left:10px\" ></i>  Like    </a><span id=" + json._id + "d" + ">" + review.downvote + "</span><a class=\"dislike\" style=\"cursor:pointer; color:#2C3E50\" onclick=\"downvote(this.id)\" id=" + json._id + "><i class=\"glyphicon glyphicon-thumbs-down\"  style=\"margin-left:10px\"></i> Dislike </a></div></span></div></div></div></div>";
 	$("#about").append(string);	
 }
 $('#clickedUpvote').click(function() {
@@ -119,6 +120,8 @@ $('#clickedUpvote').click(function() {
 // upvote
 function upvote(reviewId)
 {
+	
+	if(!voted){
 	var upvote = {};
 	
 	
@@ -138,7 +141,9 @@ function upvote(reviewId)
 
 		}
 	});
-	
+	}else{
+		alert('Već ste glasali!');
+	}
 }
 //get all upvotes
 function getAllUpvotes(reviewId)
@@ -159,6 +164,7 @@ function getAllUpvotes(reviewId)
 //downvote
 function downvote(reviewId)
 {
+	if(!voted){
 	var upvote = {};
 	
 	
@@ -179,7 +185,9 @@ function downvote(reviewId)
 				alert("Creating review unsuccessful.");
 		}
 	});
-	
+	}else{
+		alert('Već ste glasali!');
+	}
 }
 //get all downvotes
 function getAllDownvotes(reviewId)
@@ -201,6 +209,7 @@ function getAllDownvotes(reviewId)
 	
 function addNewReview(){
 
+if(!reviewed){
 	var review = {};
 	
 	review['text'] =  $('#review-text').val();
@@ -209,7 +218,7 @@ function addNewReview(){
 	review['username'] = localStorage.getItem('Username');
 	review['name'] = localStorage.getItem('Course');
 	
-	alert(JSON.stringify(review));
+	//alert(JSON.stringify(review));
 	
 		$.ajax({
 		type: 'GET',
@@ -229,7 +238,9 @@ function addNewReview(){
 		}
 	});
 	
-	
+}else{
+		alert('Već ste postavili recenziju!');
+	}
 	
 
 }
@@ -317,8 +328,9 @@ function follow(){
 			name: localStorage.getItem('Course')
 		},
 		success: function(data){
-			alert('Follow');
+			//alert('Follow');
 			window.location.reload(true);
+
 		},
 		error:function(jqXHR, textStatus){
 				alert("unsuccessful.");
@@ -340,7 +352,7 @@ function subscribe(){
 			name: localStorage.getItem('Course')
 		},
 		success: function(data){
-			alert('Subscribe');
+			//alert('Subscribe');
 			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
@@ -360,7 +372,7 @@ function unfollow(){
 			name: localStorage.getItem('Course')
 		},
 		success: function(data){
-			alert('Unfollow');
+			//alert('Unfollow');
 			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
@@ -379,7 +391,7 @@ function unsubscribe(){
 			name: localStorage.getItem('Course')
 		},
 		success: function(data){
-			alert('Unsubscribe');
+			//alert('Unsubscribe');
 			window.location.reload(true);
 		},
 		error:function(jqXHR, textStatus){
@@ -388,11 +400,103 @@ function unsubscribe(){
 		}
 	});
 }
-	
+
+function isFollowing(){
+	$.ajax({
+		type: 'GET',
+		url: '/IsFollowing',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			name: localStorage.getItem('Course')
+		},
+		success: function(data){
+			if(data){
+				$('#follow').html('Unfollow');
+				$('#follow').attr('onclick','unfollow()');
+			}else{
+				$('#follow').html('Follow');
+				$('#follow').attr('onclick','follow()');
+
+			}
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}
+
+function isSubscribed(){
+	$.ajax({
+		type: 'GET',
+		url: '/Subscribed',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			name: localStorage.getItem('Course')
+		},
+		success: function(data){
+			if(data){
+				$('#subscribe').html('Unsubscribe');
+				$('#subscribe').attr('onclick','unsubscribe()');
+			}else{
+				$('#subscribe').html('Subscribe');
+				$('#subscribe').attr('onclick','subscribe()');
+
+			}
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}
+function checkIfUserVoted(){
+	$.ajax({
+		type: 'GET',
+		url: '/checkIfUserVoted',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			name: localStorage.getItem('Course')
+		},
+		success: function(data){
+			voted = data;
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}
+	function checkIfUserReviewed(){
+	$.ajax({
+		type: 'GET',
+		url: '/checkIfUserPostedReview',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			name: localStorage.getItem('Course')
+		},
+		success: function(data){
+			reviewed = data;
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}
 $( document ).ready(function() {
 	
 	var course = getParameterByName('course');
 	localStorage.setItem("Course", course);
+	
+	isFollowing();
+	isSubscribed();
+	checkIfUserReviewed();
+	checkIfUserVoted();
 	getCourseInfo(course);
 	getAllReviews(course);
 	//addNewReview();

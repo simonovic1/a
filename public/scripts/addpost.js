@@ -85,7 +85,7 @@ function addNewStatus(){
 	var tagsArray = selectize.getValue().split(',');
 	status['text'] = $('#status-text').val();
 	status['tags'] = tagsArray;
-
+	status['tags'].unshift(localStorage.getItem("Course").toLowerCase());
 	status['date'] = moment().format('DD.M.YYYY.');
 	status['time'] = new moment().format('HH:mm');
 	
@@ -93,7 +93,7 @@ function addNewStatus(){
 	status['courseName'] = localStorage.getItem("Course");
 	status['indexNo'] = localStorage.getItem("Index");
 	status['picture'] = localStorage.getItem("imgUrl");
-	
+	alert(JSON.stringify(status));
 		$.ajax({
 		type: 'GET',
 		url: '/createPost',
@@ -131,7 +131,7 @@ function addNewPoll(){
 	poll['options'] = options;
 
 	poll['tags'] =  selectize.getValue().split(',');
-	
+	poll['tags'].unshift(localStorage.getItem("Course").toLowerCase());
 	
 	poll['username'] = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	poll['courseName'] = localStorage.getItem("Course");
@@ -180,7 +180,7 @@ function addNewEvent(){
 		event['type']=3;
 	}
 	event['tags'] = selectizeTags.getValue().split(',');;
-	
+	event['tags'].unshift(localStorage.getItem("Course").toLowerCase());
 	event['date'] = moment().format('DD.M.YYYY.');
 	event['time'] = new moment().format('HH:mm');
 	event['eventDate'] = moment($("#event-deadline").val()).format('DD.M.YYYY.');
