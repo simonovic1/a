@@ -12,7 +12,7 @@ module.exports = {
 	},
 	
 	newsFeed: function(req, res){
-		res.render('newsFeed', { title: 'CSBook' }); 
+		res.render('newsfeed', { title: 'CSBook' }); 
 	},
 
 	coursePosts: function(req, res){

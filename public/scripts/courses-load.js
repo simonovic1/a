@@ -4,6 +4,10 @@ function getAllCourses(){
 	$.ajax({
         type: "GET",
         url: '/getAllCourses',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
         success:function(data){
 			showAllCourses(data);
 		}
@@ -13,6 +17,10 @@ function getAllCourses(){
 	  $.ajax({
         type: "GET",
         url: '/getAllFollowedCourses?username='+username,
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
         success:function(data){
 			showMyCourses(data);
 		}
@@ -22,7 +30,7 @@ function showMyCourses(data){
 	if(data=="undefined"||data.length!==0){
 		for(i=0;i<data.length;i++)
 		{
-			var link = "/course-page?course=" + data[i].properties.name;
+			var link = "/course-page?course=" + data[i].properties.name + "&authorization=" + localStorage.getItem('token');
 			$("#my-courses").append('<a href="'+link+'" class="list-group-item" onclick="setCurrentCourse(\''+ data[i].properties.name +'\')">'+data[i].properties.name+'</a>');     
 		}
 	}else{
@@ -33,7 +41,7 @@ function showAllCourses(data){
 	if(data=="undefined"||data.length!==0){
 		for(i=0;i<data.length;i++)
 		{
-			var link = "/course-page?course=" + data[i].properties.name;
+			var link = "/course-page?course=" + data[i].properties.name + "&authorization=" + localStorage.getItem('token');
 			$("#all-courses").append('<a href="'+link+'" class="list-group-item" onclick="setCurrentCourse(\''+ data[i].properties.name +'\')">'+data[i].properties.name+'</a>');
 		}
 	}else{
@@ -71,6 +79,10 @@ $(document).ready(function(){
 		type: 'GET',
 		url: '/getFilesForCourse',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: { 'course': localStorage.getItem("currentCourse")},
 		success: function(data){
 			if(data) {

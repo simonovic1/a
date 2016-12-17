@@ -28,9 +28,14 @@ function checkIfProfileExists(name,pass) {
 		url: '/checkIfProfileExists',
 		dataType: 'json',
 		data: { 'username': name, 'password': pass},
-		success: function(data){
+		success: function(data, text, response){
 			if(data == true)
 			{
+				//console.log(response.getResponseHeader('authorization'));
+				
+				// auth token
+				localStorage.setItem("token", response.getResponseHeader('authorization'));
+
 				SetUpLocalStorageSettings(name);
 			}
 			else if(data == false)
@@ -48,17 +53,21 @@ function SetUpLocalStorageSettings(username){
 		type: 'GET',
 		url: '/getUserByUsername',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: { 'username': username },
 		success: function(data){
 			if(data){
 				user_data = data["properties"];
-
 				localStorage.setItem("Ime", user_data.firstName);
 				localStorage.setItem("Prezime", user_data.lastName);
 				localStorage.setItem("Index", user_data.indexNumber);
 				localStorage.setItem("Username", username);
 				localStorage.setItem("imgUrl", user_data.picture);
-				window.location = "newsFeed";
+
+				window.location = "newsFeed?authorization=" + localStorage.getItem('token');
 			}
 			else{
 				alert("Couldn't load profile info.")
@@ -66,19 +75,6 @@ function SetUpLocalStorageSettings(username){
 			}
 		}
 	});
-}
-
-
-
-
-function CheckCookieSession() {
-	/*var hasSession = document.cookie;
-	var hasUserName = $.cookie("username");
-	if(hasSession == "" && hasUserName != "")
-	{
-		window.location = "login.html";
-		alert("Your session has expired");
-	}*/
 }
 
 function loginLoad(){

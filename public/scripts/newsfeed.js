@@ -24,7 +24,10 @@ $(document).ready(function(){
 	//file upload section
 	 Dropzone.options.dropzoneForm = {
 		url: '/uploadFiles',
-		headers: {'subfolder': 'newsFeed'}, //TEMPLATE FOR OTHER UPLOADS
+		headers: {
+			'subfolder': localStorage.getItem('currentCourse'),
+			'authorization': localStorage.getItem('token')
+		}, //TEMPLATE FOR OTHER UPLOADS
 		dictDefaultMessage: 'Click here to transfer files',
 		autoProcessQueue: false,
 		addRemoveLinks: 'dictRemoveFile',
@@ -148,6 +151,10 @@ function getNotifications()
        type: 'GET',
        url: '/getAllNotificationsForUser',
        dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 	   data: {
 		    'username': localStorage.getItem("Username") 
 		},
@@ -187,6 +194,10 @@ function removeNotification(id)
        type: 'GET',
        url: '/deleteNotification',
        dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 	   data: {
 		    'id': id 
 		},

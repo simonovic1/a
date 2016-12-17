@@ -16,6 +16,10 @@ function getAllPosts(useremail) {
 		type: 'GET',
 		url: '/getUsersNewsFeedPosts',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		 data:{
 		   'username': useremail
 		  },
@@ -32,6 +36,10 @@ function getAllEvents(useremail) {
 		type: 'GET',
 		url: '/getUsersNewsFeedEvents',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		 data:{
 		   'username': useremail
 		  },
@@ -47,6 +55,10 @@ function getAllPolls(useremail) {
 		type: 'GET',
 		url: '/getUsersNewsFeedPolls',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		 data:{
 		   'username': useremail
 		  },
@@ -86,7 +98,11 @@ function getAllPolls(useremail) {
 		$.ajax({
 		type: 'GET',
 		  url: '/voteOption', // ime f-je sa servera
-		  dataType: 'json', // sta vraca
+		  dataType: 'json',
+			beforeSend: function (xhr) {
+					/* authorization header with token */
+					xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+			},
 		  data:{
 		   'id': poll_id,
 		   'name': poll_name,
@@ -170,6 +186,10 @@ function courseClicked(courseName)
 		type: 'GET',
 		url: '/getAllCoursePosts', 
 		  dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		  data:{
 		   'name': courseName
 		  },
@@ -183,6 +203,10 @@ function courseClicked(courseName)
 		type: 'GET',
 		url: '/getAllCourseEvents', 
 		  dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		  data:{
 		   'name': courseName
 		  },
@@ -196,6 +220,10 @@ function courseClicked(courseName)
 		type: 'GET',
 		url: '/getAllCoursePolls', 
 		  dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		  data:{
 		   'name': courseName
 		  },
@@ -225,6 +253,10 @@ function courseClicked(courseName)
 		 type: 'GET',
 		 url: '/searchAllCourseItemsByTag', 
 		   dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		   data:query,
 		 success: function(data){
 	
@@ -261,6 +293,10 @@ function courseClicked(courseName)
 		 type: 'GET',
 		 url: '/searchAllNewsFeedItemsByTag', 
 		   dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		   data:query,
 		 success: function(data){
 	

@@ -4,7 +4,10 @@ $(document).ready(function(){
 		//file upload section
 	 Dropzone.options.dropzoneForm = {
 		url: '/uploadFiles',
-		headers: {'subfolder': 'sistemiBaza'}, //TEMPLATE FOR OTHER UPLOADS
+		headers: {
+			'subfolder': 'sistemiBaza',
+			'authorization': localStorage.getItem('token')
+		}, //TEMPLATE FOR OTHER UPLOADS
 		dictDefaultMessage: 'Click here to transfer files',
 		autoProcessQueue: false,
 		addRemoveLinks: 'dictRemoveFile',

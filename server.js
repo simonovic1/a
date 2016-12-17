@@ -1,6 +1,7 @@
 var express = require('express')
   , http    = require('http')
   , fs      = require('fs')
+  , jwt 	= require('jsonwebtoken')
   //, curl    = require('curlrequest') // TODO: if there's no way authentication.dll is working properly
 
   // csbook routes
@@ -14,6 +15,7 @@ var server = http.createServer(app);
 
 //constants
 var userNameCookieName = "username";
+var jwtTokenSecret = "csbook92";
 
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -29,14 +31,6 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', index.landing);
 app.get('/signUp', index.signUp);
-app.get('/coursePosts', index.coursePosts);
-
- // //new newsfeed-page added by Simon
-	app.get('/newsFeed', index.newsFeed);
-
-// //about-page
-// app.get('/about-page', index.aboutPage);
-app.get('/course-page', index.coursePage);
 
 app.get('/loginCheck', function(req, res) {
 	console.log("Started login");
@@ -55,7 +49,35 @@ app.get('/loginCheck', function(req, res) {
 	res.end();
 });
 
+app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 
+app.get('/:default', function(req, res, next){
+	
+	var token;
+	
+	if (req.headers.authorization)
+		token = req.headers.authorization;
+	else
+		token = req.query.authorization;
+
+	console.log(req.query.authorization);
+
+	jwt.verify(token, jwtTokenSecret, function(err, decoded) {
+		if (err) {
+			console.log(err);
+			res.redirect('');
+		} else {
+			console.log(decoded);
+			next();
+		}
+	}) 
+});
+
+app.get('/coursePosts', index.coursePosts);
+
+app.get('/newsFeed', index.newsFeed);
+
+app.get('/course-page', index.coursePage);
 
 app.get('/getFilesForCourse', function(req,res){
 	var course = req.query.course;
@@ -70,7 +92,6 @@ app.get('/getFilesForCourse', function(req,res){
 	res.end();
 });
 
-app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {
@@ -177,10 +198,6 @@ app.get('/searchAllCourseItemsByTag', db4j.searchAllCourseItemsByTag );
 app.get('/searchAllNewsFeedItemsByTag', db4j.searchAllNewsFeedItemsByTag);
 app.get('/getAllCourseItems', db4j.getAllCourseItems);
 app.get('/getAllUsersNewsFeedItems', db4j.getAllUsersNewsFeedItems);
-
-app.get('/:default', function(req, res){
- res.redirect('');
-});
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

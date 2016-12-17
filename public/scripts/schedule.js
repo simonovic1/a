@@ -359,6 +359,10 @@ fill_schedule_query = function(username) {
 		type: 'GET',
 		url: '/getTimetableInfo',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: { 'username': username },
 		success: function(data){
         schedule_data = data;

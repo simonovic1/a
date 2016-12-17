@@ -3,7 +3,11 @@ function getCourseInfo(course) {
 	$.ajax({
 		type: 'GET',
 		url: '/getCourseByName', // ime f-je sa servera
-		dataType: 'json', // sta vraca
+		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data:{
 			'name': course,
 		},
@@ -17,7 +21,11 @@ function getAllReviews(course) {
 	$.ajax({
 		type: 'GET',
 		url: '/getAllCourseReviews', // ime f-je sa servera
-		dataType: 'json', // sta vraca
+		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data:{
 			'name': course,
 		},
@@ -132,6 +140,10 @@ function upvote(reviewId)
 		type: 'GET',
 		url: '/upvoteReview',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: upvote,
 		success: function(data){
 				getAllUpvotes(reviewId);
@@ -152,7 +164,11 @@ function getAllUpvotes(reviewId)
 	$.ajax({
 		type: 'GET',
 		url: '/totalUpvotes', // ime f-je sa servera
-		dataType: 'json', // sta vraca
+		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data:{
 			'id': reviewId,
 		},
@@ -175,6 +191,10 @@ function downvote(reviewId)
 		type: 'GET',
 		url: '/downvoteReview',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: upvote,
 		success: function(data){
 
@@ -196,7 +216,11 @@ function getAllDownvotes(reviewId)
 	$.ajax({
 		type: 'GET',
 		url: '/totalDownvotes', // ime f-je sa servera
-		dataType: 'json', // sta vraca
+		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data:{
 			'id': reviewId,
 		},
@@ -224,6 +248,10 @@ if(!reviewed){
 		type: 'GET',
 		url: '/createReview',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: review,
 		success: function(data){
 			
@@ -323,6 +351,10 @@ function follow(){
 		type: 'GET',
 		url: '/userFollow',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
@@ -347,6 +379,10 @@ function subscribe(){
 		type: 'GET',
 		url: '/userSubscribe',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
@@ -367,6 +403,10 @@ function unfollow(){
 		type: 'GET',
 		url: '/userUnfollow',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
@@ -386,6 +426,10 @@ function unsubscribe(){
 		type: 'GET',
 		url: '/userUnsubscribe',
 		dataType: 'json',
+		beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
