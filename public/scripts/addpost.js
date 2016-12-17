@@ -98,11 +98,11 @@ function addNewStatus(){
 		type: 'GET',
 		url: '/createPost',
 		dataType: 'json',
-		beforeSend: function (xhr) {
+		data: status,
+			beforeSend: function (xhr) {
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: status,
 		success: function(data){
 				//alert(JSON.stringify(status));
 				//alert("Status kreiran!");
@@ -151,11 +151,11 @@ function addNewPoll(){
 		type: 'GET',
 		url: '/createPoll',
 		dataType: 'json',
-		beforeSend: function (xhr) {
+		data: poll,
+			beforeSend: function (xhr) {
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: poll,
 		success: function(data){
 			
 				//alert("Poll created!");
@@ -206,11 +206,11 @@ function addNewEvent(){
 		type: 'GET',
 		url: '/createEvent',
 		dataType: 'json',
-		beforeSend: function (xhr) {
+		data: event,
+			beforeSend: function (xhr) {
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: event,
 		success: function(data){
 			
 				//alert("Event created!");

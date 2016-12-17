@@ -3,11 +3,7 @@ function getCourseInfo(course) {
 	$.ajax({
 		type: 'GET',
 		url: '/getCourseByName', // ime f-je sa servera
-		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
+		dataType: 'json', // sta vraca
 		data:{
 			'name': course,
 		},
@@ -21,11 +17,7 @@ function getAllReviews(course) {
 	$.ajax({
 		type: 'GET',
 		url: '/getAllCourseReviews', // ime f-je sa servera
-		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
+		dataType: 'json', // sta vraca
 		data:{
 			'name': course,
 		},
@@ -140,11 +132,11 @@ function upvote(reviewId)
 		type: 'GET',
 		url: '/upvoteReview',
 		dataType: 'json',
-		beforeSend: function (xhr) {
+		data: upvote,
+			beforeSend: function (xhr) {
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: upvote,
 		success: function(data){
 				getAllUpvotes(reviewId);
 		},
@@ -164,13 +156,13 @@ function getAllUpvotes(reviewId)
 	$.ajax({
 		type: 'GET',
 		url: '/totalUpvotes', // ime f-je sa servera
-		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
+		dataType: 'json', // sta vraca
 		data:{
 			'id': reviewId,
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 			$('#' + reviewId + 'u').html(data);
@@ -191,11 +183,11 @@ function downvote(reviewId)
 		type: 'GET',
 		url: '/downvoteReview',
 		dataType: 'json',
-		beforeSend: function (xhr) {
+		data: upvote,
+			beforeSend: function (xhr) {
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: upvote,
 		success: function(data){
 
 				getAllDownvotes(reviewId);
@@ -216,13 +208,13 @@ function getAllDownvotes(reviewId)
 	$.ajax({
 		type: 'GET',
 		url: '/totalDownvotes', // ime f-je sa servera
-		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
+		dataType: 'json', // sta vraca
 		data:{
 			'id': reviewId,
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 			$('#' + reviewId + 'd').html(data);
@@ -248,11 +240,11 @@ if(!reviewed){
 		type: 'GET',
 		url: '/createReview',
 		dataType: 'json',
-		beforeSend: function (xhr) {
+		data: review,
+			beforeSend: function (xhr) {
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: review,
 		success: function(data){
 			
 				alert("Review created!");
@@ -351,13 +343,13 @@ function follow(){
 		type: 'GET',
 		url: '/userFollow',
 		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 			//alert('Follow');
@@ -379,13 +371,13 @@ function subscribe(){
 		type: 'GET',
 		url: '/userSubscribe',
 		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 			//alert('Subscribe');
@@ -403,13 +395,13 @@ function unfollow(){
 		type: 'GET',
 		url: '/userUnfollow',
 		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 			//alert('Unfollow');
@@ -426,10 +418,6 @@ function unsubscribe(){
 		type: 'GET',
 		url: '/userUnsubscribe',
 		dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
@@ -437,6 +425,10 @@ function unsubscribe(){
 		success: function(data){
 			//alert('Unsubscribe');
 			window.location.reload(true);
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		error:function(jqXHR, textStatus){
 				alert("Unsuccessful.");
@@ -453,6 +445,10 @@ function isFollowing(){
 		data: {
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		success: function(data){
 			if(data){
@@ -480,6 +476,10 @@ function isSubscribed(){
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
 		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		success: function(data){
 			if(data){
 				$('#subscribe').html('Unsubscribe');
@@ -505,6 +505,10 @@ function checkIfUserVoted(){
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
 		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		success: function(data){
 			voted = data;
 		},
@@ -523,6 +527,10 @@ function checkIfUserVoted(){
 			username: localStorage.getItem('Username'),
 			name: localStorage.getItem('Course')
 		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
 		success: function(data){
 			reviewed = data;
 		},
@@ -539,8 +547,8 @@ $( document ).ready(function() {
 	
 	isFollowing();
 	isSubscribed();
-	checkIfUserReviewed();
-	checkIfUserVoted();
+	//checkIfUserReviewed();
+	//checkIfUserVoted();
 	getCourseInfo(course);
 	getAllReviews(course);
 	//addNewReview();
