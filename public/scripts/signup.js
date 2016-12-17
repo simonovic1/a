@@ -51,7 +51,7 @@ function CreateUserAccount() {
 				localStorage.setItem("Index", indexNo);
 				localStorage.setItem("Username", name);
 				localStorage.setItem("imgUrl", imgUrl);
-				window.location = "newsFeed";
+				window.location = "newsFeed?authorization=" + localStorage.getItem('token');
 			}
 			else
 				alert("User is not created");

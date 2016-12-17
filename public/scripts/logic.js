@@ -27,9 +27,6 @@ function checkIfProfileExists(name,pass) {
 		type: 'GET',
 		url: '/checkIfProfileExists',
 		dataType: 'json',
-		/*headers: {
-	        'Authorization':localStorage.getItem('token'),
-	    },*/
 		data: { 'username': name, 'password': pass},
 		success: function(data, text, response){
 			if(data == true)
@@ -70,27 +67,7 @@ function SetUpLocalStorageSettings(username){
 				localStorage.setItem("Username", username);
 				localStorage.setItem("imgUrl", user_data.picture);
 
-				/*var xhr = new XMLHttpRequest();
-				xhr.open('GET', "/newsFeed");
-				xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-				xhr.responseType = "blob";
-
-				xhr.onload = function() {
-					
-					console.log(this.response);
-
-					var url = URL.createObjectURL(this.response);
-            		//window.location = url;
-
-					document.open("text/html", "replace");
-					document.write(this.response);
-					document.close();
-				}
-
-				xhr.send();
-				*/
-
-				//window.location = "newsFeed";
+				window.location = "newsFeed?authorization=" + localStorage.getItem('token');
 			}
 			else{
 				alert("Couldn't load profile info.")

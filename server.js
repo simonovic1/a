@@ -51,8 +51,18 @@ app.get('/loginCheck', function(req, res) {
 
 app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 
-app.get('/:default', function(req, res, next){ 
-	jwt.verify(req.headers.authorization, jwtTokenSecret, function(err, decoded) {
+app.get('/:default', function(req, res, next){
+	
+	var token;
+	
+	if (req.headers.authorization)
+		token = req.headers.authorization;
+	else
+		token = req.query.authorization;
+
+	console.log(req.query.authorization);
+
+	jwt.verify(token, jwtTokenSecret, function(err, decoded) {
 		if (err) {
 			console.log(err);
 			res.redirect('');

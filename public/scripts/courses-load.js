@@ -30,7 +30,7 @@ function showMyCourses(data){
 	if(data=="undefined"||data.length!==0){
 		for(i=0;i<data.length;i++)
 		{
-			var link = "/course-page?course=" + data[i].properties.name;
+			var link = "/course-page?course=" + data[i].properties.name + "&authorization=" + localStorage.getItem('token');
 			$("#my-courses").append('<a href="'+link+'" class="list-group-item" onclick="setCurrentCourse(\''+ data[i].properties.name +'\')">'+data[i].properties.name+'</a>');     
 		}
 	}else{
@@ -41,7 +41,7 @@ function showAllCourses(data){
 	if(data=="undefined"||data.length!==0){
 		for(i=0;i<data.length;i++)
 		{
-			var link = "/course-page?course=" + data[i].properties.name;
+			var link = "/course-page?course=" + data[i].properties.name + "&authorization=" + localStorage.getItem('token');
 			$("#all-courses").append('<a href="'+link+'" class="list-group-item" onclick="setCurrentCourse(\''+ data[i].properties.name +'\')">'+data[i].properties.name+'</a>');
 		}
 	}else{
