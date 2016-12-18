@@ -143,7 +143,7 @@ function getAllPolls(useremail) {
 			tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
 		});
 		
-		var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\">	<div class=\"panel-image\"><img src=\""+ voting.image +"\"/></div><h3 class=\"panel-title\">"+ voting.text+"?</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+""+"</div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
+		var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ voting.text+"</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+"Rok za glasanje: <b>"+voting.deadline +"</b></div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
 		$("#posts").append(poolStr);	
 	}
 	
@@ -169,7 +169,7 @@ function getAllPolls(useremail) {
 		
 		// var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + Event.courseName+ "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		
-		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Opis: " + Event.text + "</div><div>Predmet: " + Event.courseName + "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3><div class=\"panel-date\">" + Event.date + "</div></div> </div> <div class=\"panel-body\"><div>Datum: <b>" + Event.eventDate + " " + Event.eventTime  + "</b></div><div>Opis: "+ Event.text +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		$("#posts").append(eventStr);	
 	}
 	
