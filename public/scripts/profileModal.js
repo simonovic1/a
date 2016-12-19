@@ -27,6 +27,8 @@ $(document).ready(function(){
 //Postavlja ime, prezime, index i sliku u myProfile sekciji.
 //Treba pozvati prilikom inicijalizacije newsFeed strane.
 function loadUserProfile(){
+	document.getElementById("a-logo").href = '/newsFeed?authorization=' + localStorage.getItem("token");
+
 	document.getElementById("profileNameSurname").innerHTML = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
 	var index = localStorage.getItem("Index");
 	//document.getElementById("profileIndex").innerHTML = index;
