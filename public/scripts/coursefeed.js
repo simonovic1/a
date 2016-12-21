@@ -249,32 +249,39 @@ function courseClicked(courseName)
 		
 		console.log(JSON.stringify(query));
 		
-		 $.ajax({
-		 type: 'GET',
-		 url: '/searchAllCourseItemsByTag', 
-		   dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
-		   data:query,
-		 success: function(data){
-	
-			$(".post").remove();
-			
-			$.each(data , function(i, val) { 
-			if(data[i].e != undefined)
-				addEvent(data[i].e);
-			else if (data[i].p != undefined)
-				addPost(data[i].p);
-			else 
-				addVoting(data[i]);
-		});
+		if(query["tags"][0] == "")
+		{
+			getCourseFeed(course);
+		}
+		else
+		{
 		
-			console.log(JSON.stringify(data));
-		 }
-	 });
-	
+			 $.ajax({
+			 type: 'GET',
+			 url: '/searchAllCourseItemsByTag', 
+			   dataType: 'json',
+			beforeSend: function (xhr) {
+					/* authorization header with token */
+					xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+			},
+			   data:query,
+			 success: function(data){
+		
+				$(".post").remove();
+				
+				$.each(data , function(i, val) { 
+				if(data[i].e != undefined)
+					addEvent(data[i].e);
+				else if (data[i].p != undefined)
+					addPost(data[i].p);
+				else 
+					addVoting(data[i]);
+			});
+			
+				console.log(JSON.stringify(data));
+			 }
+		 });
+		}
 	}
 	
 	function PerformNewsfeedSearch()
@@ -289,32 +296,38 @@ function courseClicked(courseName)
 		
 		console.log(JSON.stringify(query));
 		
-		 $.ajax({
-		 type: 'GET',
-		 url: '/searchAllNewsFeedItemsByTag', 
-		   dataType: 'json',
-		beforeSend: function (xhr) {
-                /* authorization header with token */
-                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
-		},
-		   data:query,
-		 success: function(data){
-	
-			$(".post").remove();
+		if(query["tags"][0] == "")
+		{
+			getNewsFeed();
+		}
+			else{
 			
-			$.each(data , function(i, val) { 
-			if(data[i].e != undefined)
-				addEvent(data[i].e);
-			else if (data[i].p != undefined)
-				addPost(data[i].p);
-			else 
-				addVoting(data[i]);
-		});
+			 $.ajax({
+			 type: 'GET',
+			 url: '/searchAllNewsFeedItemsByTag', 
+			   dataType: 'json',
+			beforeSend: function (xhr) {
+					/* authorization header with token */
+					xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+			},
+			   data:query,
+			 success: function(data){
 		
-			console.log(JSON.stringify(data));
-		 }
-	 });
-		
+				$(".post").remove();
+				
+				$.each(data , function(i, val) { 
+				if(data[i].e != undefined)
+					addEvent(data[i].e);
+				else if (data[i].p != undefined)
+					addPost(data[i].p);
+				else 
+					addVoting(data[i]);
+			});
+			
+				console.log(JSON.stringify(data));
+			 }
+		 });
+		}	
 		
 	}
 
