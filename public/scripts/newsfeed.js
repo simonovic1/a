@@ -35,7 +35,13 @@ $(document).ready(function(){
 		init: function() {
 		   myDropzone = this;
 		   this.on('complete', function(file) {
+			   //Takodje odmah dodajemo u spisak foldera...
+			   var docTable = document.getElementById("fileItems");
+			   addFileElement(file.name, localStorage.getItem('currentCourse'), docTable, docTable.children.length);
+			   
 			   myDropzone.removeFile(file);
+			   
+			   
 		   });
 		   //catch other events here...
 		}

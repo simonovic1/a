@@ -249,7 +249,7 @@ function addNewReview(){
 			
 				//alert("Review created!");
 				$('#review-modal').modal('hide');
-				getAllReviews();
+				getAllReviews(localStorage.getItem("Course"));
 			
 		},
 		error:function(jqXHR, textStatus){
