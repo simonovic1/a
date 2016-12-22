@@ -175,7 +175,7 @@ function getNotifications()
 					$(div).append(button);
 					div.innerHTML
 						+= "<strong>" + data[i]["properties"].courseName + "</strong>" + ": "
-						+ data[i]["properties"].text + "<br>"
+						+ data[i]["properties"].name + "<br>"
 						+ "<h6 align='right'> Datum: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
 					$(notification_pane).append(div);
 				}
