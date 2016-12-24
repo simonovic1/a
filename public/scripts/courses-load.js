@@ -58,13 +58,31 @@ function addFileElement(item, currCourse, parent, i){
 	var td = document.createElement("td");
 	td.innerHTML = i + 1;
 	var td2 = document.createElement("td");
+	td2.style.overflow = "hidden";
+	td2.style.maxWidth = "200px"; //MISIC
+	
 	var a = document.createElement("a");
 	a.innerHTML = item;
 	a.href="courses/" + currCourse + "/" + item;
 	a.download="courses/" + currCourse + "/" + item;
+	a.onclick = function(){
+		//MISIC
+		//LikeFile(item); --> Stavi onaj tvoj HTTP req, napravio sam ti f-ju u server, samo me mrzelo da stavljam headere (tokene).
+		alert("Liked this");
+	}
+	
+	
+	var tdOpis = document.createElement("td");
+	tdOpis.innerHTML = "Neka tamo deskripcija 123 123 123"; //MISIC
+	var tdLajkovi = document.createElement("td");
+	tdLajkovi.innerHTML = i + 10; //MISIC
+	
+	
 	td2.appendChild(a);
 	tr.appendChild(td);
 	tr.appendChild(td2);
+	tr.appendChild(tdOpis);
+	tr.appendChild(tdLajkovi);
 	parent.appendChild(tr);
 }
 
@@ -72,6 +90,7 @@ $(document).ready(function(){
     getAllCourses();
 	
 	//ukoliko smo u kursu nekom, setujemo to, i popunjavamo fajlove....
+	//MISIC:
 	var docTable = document.getElementById("fileItems");
 	var currCourse = localStorage.getItem("currentCourse");
 	if(docTable){

@@ -1,4 +1,6 @@
 var myDropzone;
+var newName;
+var newDesc;
 
 $(document).ready(function(){
 
@@ -7,7 +9,7 @@ $(document).ready(function(){
 
 	vph = $(window).height();
 	$('#side').css({'height': vph + 'px'});
-
+	
 	drawPanels(1, "Panel", "Sadrzaj lalalalalalal", "home-panel");
 	drawPanels(2, "Panel", "Sadrzaj djoiaw", "home-panel");
 	drawPanels(3, "Panel", "Sadrzaj lalalaawdwfdwflalalal", "home-panel");
@@ -37,20 +39,41 @@ $(document).ready(function(){
 		   this.on('complete', function(file) {
 			   //Takodje odmah dodajemo u spisak foldera...
 			   var docTable = document.getElementById("fileItems");
-			   addFileElement(file.name, localStorage.getItem('currentCourse'), docTable, docTable.children.length);
+			   addFileElement(newName, localStorage.getItem('currentCourse'), docTable, docTable.children.length);
 			   
 			   myDropzone.removeFile(file);
 			   
 			   
 		   });
 		   //catch other events here...
-		}
+		},
+		sending: function(file, xhr, formData){
+			formData.append("newName", newName);
+			formData.append("newDesc", newDesc);
+		},
+		renameFilename: function (filename) {
+			var splitedName = filename.split('.');
+			var extension = splitedName[splitedName.length - 1];
+			newName = newName + "." + extension;
+			return newName}
     };
 	
 });
 
 function beginUpload(){
-	myDropzone.processQueue();
+	newName = document.getElementById("noviNaziv").value;
+	newDesc = document.getElementById("deskripcija").value;
+	var table = document.getElementById("fileItems").innerHTML;
+	if(table.includes(">"+newName)){
+		alert("Ime je vec zauzeto");
+	}
+	else{		
+		if(newName == "" || newDesc == ""){
+			alert("Molimo popunite naziv i deskripciju!")
+		}
+		else		
+			myDropzone.processQueue();
+	}
 }
 
 function createTags(names)

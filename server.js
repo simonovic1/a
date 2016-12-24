@@ -80,6 +80,11 @@ app.get('/newsFeed', index.newsFeed);
 app.get('/course-page', index.coursePage);
 
 app.get('/getFilesForCourse', function(req,res){
+	
+	//MISIC:
+	//Sada umesto da pribavimo iz foldera, zovemo funkciju, i vracamo, ime, desc i likes u SORTIRANOM REDOSLEDU!
+	//getOrderedFilesForCourse(course)
+	
 	var course = req.query.course;
 	var files = fs.readdirSync('public/courses/'+ course);
 	console.log(files);
@@ -92,11 +97,13 @@ app.get('/getFilesForCourse', function(req,res){
 	res.end();
 });
 
+app.get('/LikeFile', db4j.LikeFile); //MISIC
+
 app.get('/createProfile', db4j.createProfile);
 
 app.post('/pictureUpload', function(req, res) {
   console.log(req.files.file.name);
-
+  
   fs.readFile(req.files.file.path, function (err, data) {
     var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
     fs.writeFile(new_path, data, function (err) {
@@ -108,6 +115,8 @@ app.post('/pictureUpload', function(req, res) {
 
 app.post('/uploadFiles', function(req, res){
 	console.log(req.files.file.name);
+	console.log(req.body.newName);
+	console.log(req.body.newDesc);
 	
 	fs.readFile(req.files.file.path, function (err, data) {
 		var new_path = __dirname + "/public/courses/" + req.header('subfolder') + "/" + req.files.file.name;
@@ -116,6 +125,9 @@ app.post('/uploadFiles', function(req, res){
 		  res.redirect("back");
 		});
 	});
+	
+	//MISIC:
+	//db4j.uploadFile(req.body.newName, req.body.newDesc);
 	
 });
 
