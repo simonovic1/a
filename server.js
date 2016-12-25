@@ -43,7 +43,7 @@ app.get('/loginCheck', function(req, res) {
 	res.writeHead(200, {
 		'Content-Type': 'application/json',
 		"Access-Control-Allow-Origin":"*",
-		});.unbind('click')
+		});
 
 	res.write(JSON.stringify(toRet));
 	res.end();
@@ -70,7 +70,7 @@ app.get('/:default', function(req, res, next){
 			console.log(decoded);
 			next();
 		}
-	}) 
+	})
 });
 
 app.get('/coursePosts', index.coursePosts);
@@ -210,6 +210,12 @@ app.get('/searchAllCourseItemsByTag', db4j.searchAllCourseItemsByTag );
 app.get('/searchAllNewsFeedItemsByTag', db4j.searchAllNewsFeedItemsByTag);
 app.get('/getAllCourseItems', db4j.getAllCourseItems);
 app.get('/getAllUsersNewsFeedItems', db4j.getAllUsersNewsFeedItems);
+
+app.get('/getEventById', db4j.getEventById);
+
+app.get('/createFilePost', db4j.createFilePost);
+app.get('/getAllCourseFilePosts', db4j.getAllCourseFilePosts);
+app.get('/searchAllCourseFilePostsByTag', db4j.searchAllCourseFilePostsByTag);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

@@ -3014,4 +3014,280 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
+	getEventById : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event) WHERE ID(e)={id} return e',
+			params: {
+				id: parseInt(req.query.id)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error get all event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(results[0], null, 4));
+				res.end();
+
+			}
+		});
+	},
+
+	createFilePost : function(req,res){
+
+		db.cypher({
+			query: 'CREATE (p:FilePost {fileName: {fileName}, description: {description}, username: {username}, date: {date}, time: {time}, tags: {tags}}) RETURN ID(p)',
+			params: {
+				fileName : req.query.fileName,
+				description : req.query.description,
+				username : req.query.username,
+				date : req.query.date,
+				time : req.query.time,
+				tags: req.query.tags,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(p)'];
+				thisModule.userPostedFilePost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+			}
+		});
+	},
+
+	userPostedFilePost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(u:User{indexNumber: {indexNo}}) WHERE ID(p)={id} CREATE (u)-[:POSTED_FILEPOST]->(p)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasFilePost({postID : req.postID, courseName: req.courseName, tags: req.tags},res);
+			}
+		});
+	},
+	courseHasFilePost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(c:Course{name: {courseName}}) WHERE ID(p)={id} CREATE (c)-[:HAS_FILEPOST]->(p)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTag({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTag : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(t)'];
+				thisModule.filePostHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+	filePostHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[:HAS_TAG]->(t)',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+			}
+		});
+	},
+
+	getAllCourseFilePosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(c:Course {name: {name}}) WHERE (c)-[:HAS_FILEPOST]->(p) return p',
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+
+			}
+		});
+	},
+	searchAllCourseFilePostsByTag : function(req,res){
+
+		var query = "MATCH (p:FilePost), (c:Course {name:{name}})";
+		for(var i = 0; i < req.query.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE (c)-[:HAS_FILEPOST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR (c)-[:HAS_FILEPOST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.query.tags.length)
+			{
+				query = query + " RETURN p";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['p']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							posts.push(results[i]);
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
 };
