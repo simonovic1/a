@@ -89,6 +89,12 @@ function addFileElement(item, currCourse, parent, i){
 $(document).ready(function(){
     getAllCourses();
 	
+	$('#tags-file').selectize({
+		persist: false,
+		createOnBlur: true,
+		create: true
+	});
+	
 	//ukoliko smo u kursu nekom, setujemo to, i popunjavamo fajlove....
 	//MISIC:
 	var docTable = document.getElementById("fileItems");

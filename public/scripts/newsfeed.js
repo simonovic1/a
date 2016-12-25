@@ -1,6 +1,7 @@
 var myDropzone;
 var newName;
 var newDesc;
+var tags;
 
 $(document).ready(function(){
 
@@ -50,12 +51,30 @@ $(document).ready(function(){
 		sending: function(file, xhr, formData){
 			formData.append("newName", newName);
 			formData.append("newDesc", newDesc);
+			formData.append("tags", tags);
 		},
 		renameFilename: function (filename) {
 			var splitedName = filename.split('.');
 			var extension = splitedName[splitedName.length - 1];
 			newName = newName + "." + extension;
-			return newName}
+			return newName
+		},
+		complete: function(){
+			
+			//dodamo status
+			addFilePost();
+			
+			//brisemo sve predhodne vrednosti
+			newName =  "";
+			document.getElementById("noviNaziv").value = "";
+			newDesc = "";
+			document.getElementById("deskripcija").value = "";
+			tags = "";
+			var $select = $('#tags-file').selectize();
+			var control = $select[0].selectize;
+			control.clear();
+			
+		}
     };
 	
 });
@@ -63,13 +82,14 @@ $(document).ready(function(){
 function beginUpload(){
 	newName = document.getElementById("noviNaziv").value;
 	newDesc = document.getElementById("deskripcija").value;
+	tags = document.getElementById("tags-file").value;
 	var table = document.getElementById("fileItems").innerHTML;
 	if(table.includes(">"+newName)){
 		alert("Ime je vec zauzeto");
 	}
 	else{		
-		if(newName == "" || newDesc == ""){
-			alert("Molimo popunite naziv i deskripciju!")
+		if(newName == "" || newDesc == "" || tags == ""){
+			alert("Molimo popunite naziv, deskripciju i tagove!")
 		}
 		else		
 			myDropzone.processQueue();
@@ -236,4 +256,41 @@ function removeNotification(id)
            }
        }
     });
+}
+
+function addFilePost(){
+	var status = {};
+	var selectize = $('#tags-file')[0].selectize;
+	var downloadStr = "courses/"+localStorage.getItem("Course")+"/"+ newName;
+
+	var tagsArray = selectize.getValue().split(',');
+	status['text'] = "Novi fajl: <a href=\""+ downloadStr + "\" download=\""+ downloadStr + "\">"+ newName+"</a> <br/> " + newDesc;
+	
+	status['tags'] = tagsArray;
+	status['tags'].unshift(localStorage.getItem("Course").toLowerCase());
+	status['date'] = moment().format('DD.M.YYYY.');
+	status['time'] = new moment().format('HH:mm');
+	
+	status['username'] = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
+	status['courseName'] = localStorage.getItem("Course");
+	status['indexNo'] = localStorage.getItem("Index");
+	status['picture'] = localStorage.getItem("imgUrl");
+	
+	$.ajax({
+		type: 'GET',
+		url: '/createPost',
+		dataType: 'json',
+		data: status,
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+				$('#status-modal').modal('hide');
+				window.location.reload(true);
+		},
+		error:function(jqXHR, textStatus){
+				alert("Creating post unsuccessful.");
+		}
+	});
 }

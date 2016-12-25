@@ -97,7 +97,7 @@ app.get('/getFilesForCourse', function(req,res){
 	res.end();
 });
 
-app.get('/LikeFile', db4j.LikeFile); //MISIC
+//app.get('/LikeFile', db4j.LikeFile); //MISIC
 
 app.get('/createProfile', db4j.createProfile);
 
@@ -127,7 +127,7 @@ app.post('/uploadFiles', function(req, res){
 	});
 	
 	//MISIC:
-	//db4j.uploadFile(req.body.newName, req.body.newDesc);
+	//db4j.uploadFile(req.body.newName, req.body.newDesc, req.body.tags, new Date()); //new Date() == trenutni datum, nema potrebe da se radi ovo na klijentu.
 	
 });
 
