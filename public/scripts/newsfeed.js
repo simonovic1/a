@@ -224,13 +224,105 @@ function getNotifications()
 					$(div).append(button);
 					div.innerHTML
 						+= "<strong>" + data[i]["properties"].courseName + "</strong>" + ": "
-						+ data[i]["properties"].text + "<br>"
-						+ "<h6 align='right'> Datum: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
+						+ "<a class='not-content' href='#' data-postid='" + data[i]["properties"].eventID + "'>" + data[i]["properties"].text + "</a><br>"
+						+ "<h6 align='right'> Datum: " + "<a class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
 					$(notification_pane).append(div);
+
+					$('.not-content').unbind('click');
+					$('.not-content').on('click', div, function() {
+						getSinglePost($(this).data('postid'));
+					});
 				}
 			}
 		}
     });
+}
+
+function getSinglePost(postId) {
+	var data = {
+        "_id": 464,
+        "labels": [
+            "Event"
+        ],
+        "properties": {
+            "courseName": "Algoritmi i programiranje",
+            "type": "1",
+            "eventTime": "11:51",
+            "eventDate": "24.12.2016.",
+            "title": "Kolokvijum",
+            "time": "11:51",
+            "date": "22.12.2016.",
+            "text": "dasdsa",
+            "tags": [
+                "algoritmi i programiranje",
+                "tag"
+            ],
+            "picture": "aca.jpg",
+            "username": "Stefan Simonovic"
+        }
+    };
+
+	//ajax to get post, in success show post in modal
+	$('#singlePostModalBody').empty();
+
+	if(data.labels == undefined)
+		addVotingModal(data);
+	else if(data.labels[0] == 'Event')
+		addEventModal(data);
+	else if (data.labels[0] == 'Post')
+		addPostModal(data);
+
+	$('#singlePostModal').modal('show');
+}
+
+function addVotingModal(voting){
+	var progressList = voting.options;
+	var tagList = voting.tags;
+			
+	var userEmail = localStorage.getItem("Username");
+
+	var progressArray = "";		
+	$.each(progressList , function(i, val) { 
+		progressArray += "<div id=\"" + voting._id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting._id + "\', \'" + progressList[i].name + "\', \'" + userEmail + "\');\">+</button></div></div>";
+	});
+	
+	var tagarray = "";		
+	$.each(tagList , function(i, val) { 
+		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+	});
+	
+	var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ voting.text+"</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+"Rok za glasanje: <b>"+voting.deadline +"</b></div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
+	$("#singlePostModalBody").append(poolStr);	
+}
+
+function addEventModal(ev){
+	var Event = ev.properties;
+	var tagList = Event.tags;
+				
+	var tagarray = "";		
+	$.each(tagList , function(i, val) { 
+		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+	});
+	
+	// var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + Event.courseName+ "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+	
+	var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3><div class=\"panel-date\">" + Event.date + "</div></div> </div> <div class=\"panel-body\"><div>Datum: <b>" + Event.eventDate + " " + Event.eventTime  + "</b></div><div>Opis: "+ Event.text +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+	$("#singlePostModalBody").append(eventStr);	
+}
+
+function addPost(json){
+	var post = json.properties;
+	var tagList = post.tags;
+				
+	var tagarray = "";		
+		
+	$.each(tagList , function(i, val) { 
+	tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+	});
+	
+    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img src=\"" + post.picture + "\"/></div><h3 class=\"panel-title\">" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
+
+	$("#singlePostModalBody").append(str);	
 }
 
 function appendOnClick(elem, data){
