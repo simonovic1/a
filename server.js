@@ -53,24 +53,24 @@ app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 
 app.get('/:default', function(req, res, next){
 	
-	var token;
+	//var token;
 	
-	if (req.headers.authorization)
-		token = req.headers.authorization;
-	else
-		token = req.query.authorization;
+	//if (req.headers.authorization)
+		//token = req.headers.authorization;
+	//else
+	//	token = req.query.authorization;
 
-	console.log(req.query.authorization);
+	//console.log(req.query.authorization);
 
-	jwt.verify(token, jwtTokenSecret, function(err, decoded) {
-		if (err) {
-			console.log(err);
-			res.redirect('');
-		} else {
-			console.log(decoded);
+	//jwt.verify(token, jwtTokenSecret, function(err, decoded) {
+	//	if (err) {
+	//		console.log(err);
+	//		res.redirect('');
+	//	} else {
+	//		console.log(decoded);
 			next();
-		}
-	})
+	//	}
+	//})
 });
 
 app.get('/coursePosts', index.coursePosts);
@@ -216,6 +216,18 @@ app.get('/getEventById', db4j.getEventById);
 app.get('/createFilePost', db4j.createFilePost);
 app.get('/getAllCourseFilePosts', db4j.getAllCourseFilePosts);
 app.get('/searchAllCourseFilePostsByTag', db4j.searchAllCourseFilePostsByTag);
+
+app.get('/ratePost', db4j.ratePost);
+app.get('/checkIfUserRatedPost', db4j.checkIfUserRatedPost);
+app.get('/getUserPostRating', db4j.getUserPostRating);
+
+app.get('/rateEvent', db4j.rateEvent);
+app.get('/checkIfUserRatedEvent', db4j.checkIfUserRatedEvent);
+app.get('/getUserEventRating', db4j.getUserEventRating);
+
+app.get('/ratePoll', db4j.ratePoll);
+app.get('/checkIfUserRatedPoll', db4j.checkIfUserRatedPoll);
+app.get('/getUserPollRating', db4j.getUserPollRating);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));
