@@ -1,0 +1,20 @@
+#my-courses{
+  max-height: 390px;
+  overflow: scroll;
+}
+#my-courses-collapse{
+margin-top:20px;
+}
+#all-courses{
+  height: 350px;
+  overflow: scroll;
+}
+/*Chrome and Safari*/
+#my-courses::-webkit-scrollbar { width: 0 !important }
+#all-courses::-webkit-scrollbar { width: 0 !important }
+
+
+.panel-default>.panel-heading {
+    color: #ffffff;
+    background-color: #2c3e50;
+}

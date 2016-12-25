@@ -1,0 +1,35 @@
+.heading-table
+{
+	display:table;
+	position:relative;
+	width:100%;
+}
+
+.panel-title
+{
+	display:table-cell;
+}
+
+.panel-image
+{
+	display:table-cell;
+	width:8%;
+}
+
+
+.panel-image img
+{
+	display:block;
+	max-height:30px;
+}
+
+
+.panel-date
+{
+	display:table-cell;
+	position:absolute;
+	right:10px;
+	bottom:0;
+}
+
+

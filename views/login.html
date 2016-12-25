@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>CSBook SignUp</title>
+
+    <!-- Custom Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top" class="animated fadeIn" onload="loginLoad()">
+    <header>
+		
+        <div class="row">
+            <div class="signin-header">
+                <div class="container text-center">
+                    <section class="logo">
+                        <h1 class="animated slideInUp">CSBook</h1>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="row header-content">
+            <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-10 col-xs-offset-1 header-content-inner">
+                <span class="line-thru"></span>
+
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-envelope"></span>
+                            </span>
+                            <input type="text" id="inputName" class="form-control" placeholder="Email">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                            </span>
+                            <input type="password" id="inputPassword" class="form-control" placeholder="Password">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <a href="#" id="LoginBtn" onclick="checkIfExists()" class="btn btn-primary btn-block btn-lg">Log in</a>
+                    </div>
+                </div>
+
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="terms-text">
+                            <p><a>Forgot your password?</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row signUp-row animated fadeInDown">
+                    <div class="col-lg-12">
+                        <div class="terms-text">
+                            <p>Don't have an account yet? <a href="signup">Sign up</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="line-thru"></span>
+				
+				<div class="row loader" id="loader" style="visibility:hidden">
+					<div class="col-sm-offset-5 col-md-offset-5"></div><!-- LOADING SPINNER -->
+				</div>
+				
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>

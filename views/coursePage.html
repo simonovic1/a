@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CsBook</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/styles/bootstrap.min.css">
+ <link rel="stylesheet" href="/styles/newsfeed-page.css"> 
+  <link rel="stylesheet" href="/styles/courses-sidebar.css"> 
+  <link rel="stylesheet" href="/styles/coursefeed.css">
+ 
+</head>
+<body onload="loadUserProfile()" style="overflow-y: auto;">
+
+
+	<!-- Modal -->
+	  <div class="modal fade" id="user-schedule-modal" tabindex="-1" role="dialog" aria-labelledby="user-schedule-modal-label" aria-hidden="true">
+	    <div class="modal-dialog modal-lg" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	            <span aria-hidden="true">&times;</span>
+	          </button>
+	          <h4 class="modal-title" id="user-schedule-modal-label">Raspored</h4>
+	        </div> <!-- modal-header -->
+
+	        <div class="modal-body">
+	          <div id="schedule"></div>
+	        </div> <!-- modal-body -->
+
+	        <div class="modal-footer">
+	          <button type="button" class="btn btn-secondary" onclick="toggleLecture()">Predavanja</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleExcercise()">Računske Vežbe</button>
+	          <button type="button" class="btn btn-secondary" onclick="toggleLabExcercise()">Laboratorijske Vežbe</button>
+
+	          <button type="button" class="btn btn-primary" data-dismiss="modal">Zatvori</button>
+	          <!-- TODO: if we are going to edit through the schedule  -->
+	          <!-- <button type="button" class="btn btn-primary">Zapamti Promene</button> -->
+
+	        </div> <!-- modal-footer -->
+	      </div> <!-- modal-content -->
+	    </div> <!-- modal-dialog -->
+	  </div> <!-- modal -->
+
+	  <!-- Change profile modal -->
+	  <div id="changeProfileModal" class="modal fade" role="dialog">
+		  <div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+			  <div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Izmeni profil</h4>
+			  </div>
+			  <div class="modal-body">
+				<div class="dropzone" id="dropzone-profile-change"></div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal" onclick="changeProfilePicture()">Save</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+   <div class="navbar navbar-default navbar-fixed-top"> 
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+       <a href="/newsFeed" id="a-logo">
+        <img class="logo" src="/images/CSBplavo.png" alt="Logo" width="80" height="60" > </a>
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input id="search-input" type="text" class="" style="width:300px !important" placeholder="Search">
+          </div>
+          <button class="btn btn-default" onclick="PerformCourseSearch();return false;">Search</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">  
+          <li>
+            <a id="profileNameSurname" href="#">Ime Prezime</a> 
+          </li>  
+          <li> 
+            <div class="img-profile">
+              <span class="helper"></span>
+              <img src="/images/user.png" id="profileImage" class="img-circle" alt="Profile image" width="40" height="40">
+            </div> 
+          </li> 
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#" data-toggle="modal" data-target="#user-schedule-modal">Raspored</a></li>
+			  <li class="divider"></li>
+              <li><a href="#" data-toggle="modal" data-target="#changeProfileModal">Izmeni profil</a></li>
+              <li class="divider"></li>
+              <li><a href="#" onclick="signOut()">Odjava</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div> 
+    </div>
+  </div>
+  <div class="container">
+    <div class="row main-content">
+      <div class="col-lg-3 bs-component">
+	   <div> <a href="#" class="list-group-item active">Moji predmeti</a>
+        </div>
+             <div id="my-courses" class="list-group"></div>
+		 <div >
+          <a href="#" class="list-group-item active">Svi predmeti</a>
+		</div>
+        <div id="all-courses" class="list-group"></div>
+      </div>
+      <div class="content col-lg-6">
+        <div class="bs-component">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#posts" data-toggle="tab" aria-expanded="true">Objave</a></li>
+			  <li ><a href="#files" data-toggle="tab" aria-expanded="true">Dokumenti</a></li>
+			<li ><a href="#about" data-toggle="tab" aria-expanded="true">Recenzije</a></li>
+          </ul>
+          <div class="tab-content">
+		   <div class="tab-pane fade active in" id="posts">
+             <div class="btn-group" style="margin-bottom:10px" >
+  <a  class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Novi post <span class="caret"></span></a>
+  <ul class="dropdown-menu">
+    <li><a  class="activebtn-link" data-toggle="modal"data-target="#status-modal">Status</a></li>
+    <li><a  class="activebtn-link" data-toggle="modal"data-target="#poll-modal">Anketa</a></li>
+    <li><a  class="activebtn-link" data-toggle="modal"data-target="#event-modal">Događaj</a></li>
+  </ul>
+</div>
+         </div>
+			 <div class="tab-pane fade" id="files">
+				<div id="fileupload" class="col-sm-12 col-md-12" >
+					<div class="dropzone" id="dropzone-form"></div>
+					<br/>
+					<input type="text" id="noviNaziv" class="form-control" placeholder="Novi naziv fajla" />
+					<br class="col-sm-12 col-md-12" />
+					<input type="text" id="tags-file"  value="" placeholder="Tagovi">
+					<br class="col-sm-12 col-md-12" />
+					<textarea id="deskripcija" cols="3" class="form-control" maxlength="200" placeholder="Kratak opis fajla"></textarea>
+					<br/>
+					<div class="btn btn-default pull-right" onclick="beginUpload()">Submit</div>
+					
+					<div class="col-md-12 col-sm-12">
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr style="overflow-x:hidden">
+								  <th>#</th>
+								  <th>Naziv</th>
+								  <th>Deskripcija</th>
+								  <th>Br. Lajkova</th>
+								</tr>
+							</thead>
+							<tbody id="fileItems">
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+            </div>
+            <div class="tab-pane fade " id="about">
+			     <div class="btn-group" style="margin-bottom:10px" >
+  <a  class="btn btn-primary" data-toggle="modal"data-target="#review-modal">Dodaj recenziju</a>
+</div>
+
+
+</div>
+    </div>
+			
+	
+          </div> 
+         </div>  
+  		 
+      <div class="col-lg-3">
+                  
+
+<!--  Subject name -->
+				<div class="row">
+					<div class="col-lg-12" style="text-align:center">
+						<div id="subject-name" class="page-header">
+						</div>
+					</div>
+				</div>
+				<!--              -->
+			<div class="row" style="margin-bottom: 5px; text-align:center">
+				<a  class="btn btn-default" id="follow" onclick="follow()">Follow</a>
+				<a href="#" class="btn btn-primary" id="subscribe" onclick="subscribe()" >Subscribe</a></div>
+				<!--  Subject details -->
+				<div class="row">
+					<div class="col-lg-4">
+						<h5 style="float:left;">Termin predavanja:</h5>
+					</div>
+					<div id="class-time" class="col-lg-8">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+						<h5>Termin vežbi:</h5>
+					</div>
+					<div id="exercises-time" class="col-lg-8">
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-4">
+						<h5>Profesor:</h5>
+					</div>
+					<div id="professor" class="col-lg-8">
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+						<h5>Asistent:</h5>
+					</div>
+					<div id="assistant" class="col-lg-8">
+						
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-4">
+						<h5>Šifra predmeta:</h5>
+					</div>
+					<div id="enrolmentKey" class="col-lg-8">
+						
+					</div>
+				</div>
+
+				<!--              -->
+	 
+      </div>
+    
+
+</div>     
+ </div>
+ 	<div class="modal"id="event-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj događaj</h4>
+	</div>
+
+	<div class="modal-body">
+	 <div class="form-group">
+	
+	
+     <div class="control-group">
+	 <div>
+					<label for="select-event">Tip događaja</label><div>
+					<select id="select-event"  placeholder="Izaberi ili unesi tip događaja...">
+			
+					</select>
+				</div>
+			
+		</div>
+	<div class="form-group">
+		<label for="event-text"class="control-label">Opis</label>
+		<textarea class="form-control"rows="3"id="event-text"></textarea>
+		
+	</div>
+<div class="form-group">
+		 <label for="event-deadline"class="control-label">Datum</label>
+		  <div class='input-group' >
+                    <input type='text' class="form-control" id='event-deadline'/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+		
+	</div>
+	<div class="control-group">
+					<div><label for="event-tags">Tagovi</label></div>
+					<input type="text" id="event-tags"  value="">
+				</div>
+				
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewEvent()">Dodaj događaj</button>
+		<button type="reset" class="btn btn-default"data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+			</div>
+			</div>
+			</div>
+			</div>
+			</div>
+			
+			
+			<div class="modal"id="poll-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj anketu</h4>
+	</div>
+
+	<div class="modal-body" >
+	
+	<div class="form-group">
+		<label for="poll-text"class="control-label">Pitanje</label>
+		<input class="form-control"rows="3"id="poll-text"></textarea>
+		
+	</div>
+
+	<div class="form-group">
+		 <div id="addDelButtons">
+		 <label for="poll-options"class="control-label">Opcije</label>
+		<span class="glyphicon glyphicon-plus" aria-hidden="true" id="btnAdd"></span>
+		<span class="glyphicon glyphicon-minus" aria-hidden="true" id= "btnDel"></span>
+	
+            </div>
+ 
+		
+		<div id = "poll-options" class="accordion-body"> 
+              <div id="entry1" class="clonedInput"> 
+                <fieldset>
+                    <input class="input_answeroption form-control" type="text" name="answer_option" id="ID1_option" value="" style = "margin-bottom:10px">
+                </fieldset>
+            </div>
+  			
+	</div>
+	</div>
+	<div class="form-group">
+		 <label for="poll-deadline"class="control-label">Rok za glasanje</label>
+		  <div class='input-group' >
+                    <input type='text' class="form-control" id='poll-deadline'/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar  glyphicon-nonescaped"></span>
+                    </span>
+                </div>
+		
+	</div>
+	<div class="control-group">
+					<div><label for="poll-tags">Tagovi</label></div>
+					<input type="text" id="poll-tags"  value="">
+				</div>
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewPoll()">Dodaj anketu</button>
+		<button type="reset" class="btn btn-default"data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+		
+			</div>
+			</div>
+				</div>
+		
+			
+			<div class="modal"id="status-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj status</h4>
+	</div>
+
+	<div class="modal-body">
+	
+	<div class="form-group">
+		<label for="status-text"class="control-label">Tekst</label>
+		<textarea class="form-control"rows="3"id="status-text"></textarea>
+		
+	</div>
+<div class="control-group">
+					<div><label for="status-tags">Tagovi</label></div>
+					<input type="text" id="status-tags"  value="">
+				</div>
+
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewStatus()">Dodaj status</button>
+		<button type="reset" class="btn btn-default"data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+			</div>
+			</div>        
+            </div>
+	<div class="modal"id="review-modal">
+	<div class="modal-dialog">
+	<div class="modal-content">
+	<div class="modal-header">
+	<button type="button"class="close"data-dismiss="modal"aria-hidden="true">&times;
+</button>
+<h4 class="modal-title">Dodaj recenziju</h4>
+	</div>
+
+	<div class="modal-body">
+	 <div class="form-group">
+	
+	
+     <div class="control-group">
+
+	<div class="form-group">
+		<label for="event-text"class="control-label">Tekst:</label>
+		<textarea class="form-control"rows="3"id="review-text"></textarea>
+		
+	</div>
+	
+	</div>
+
+	<div class="modal-footer">
+
+		<button type="button" class="btn btn-primary" onclick="addNewReview()">Dodaj recenziju</button>
+		<button type="reset" class="btn btn-default" data-dismiss="modal">Zatvori</button>
+	</div>
+			 
+
+			</div>
+			</div>
+			</div>
+			</div>
+			</div>
+</body>
+</html>

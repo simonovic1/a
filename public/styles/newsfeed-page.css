@@ -1,0 +1,120 @@
+html, body { 
+	background-color: #F7F7F7;
+    overflow: hidden;	
+}
+
+
+.label
+{
+	margin-right:10px;
+}
+
+.logo {
+	cursor: pointer; 	
+}
+
+.img-profile {
+    height: 40px;      /* equals max image height */
+    width: 40px; 
+    white-space: nowrap;
+    text-align: center;  
+    margin-top: 10px; 
+    margin-left: 10px;
+	cursor: pointer; 
+}
+
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.img-circle { 
+    vertical-align: middle;
+    float: left;margin: 
+    max-height: 40px;
+    max-width: 40px;
+} 
+
+#user-name {
+	font-size: 18px;
+}
+
+.dropdown-menu {
+	padding: 0 !important;
+}
+
+.divider {
+	margin: 0 !important;
+}
+
+.dropdown-menu > li > a {
+	padding-top: 8px !important;
+	padding-bottom: 8px !important;
+} 
+
+.search-input {
+	width: 350px !important;
+	margin-left: 180px !important;
+}
+
+.main-content {
+	margin-top: 4em; 
+	height: 100% !important; 
+} 
+
+.bs-component {
+	margin-top: 1em;
+}
+
+.tab-content {
+	height: 89vh !important;
+    overflow: hidden !important;
+}
+
+.tab-pane {
+	overflow-y: scroll !important; 
+	height: 89vh !important;
+	padding-top: 30px;	
+    padding-right: 20px;
+	padding-bottom: 50px;
+}
+
+.progress
+{
+	margin-bottom:0 !important;
+}
+
+.vote-item
+{
+	padding:10px;
+	padding-top:0px;
+	display:table;
+	width:100%;
+}
+
+.vote-name{
+	display:table-cell;
+}
+
+.vote-progress 
+{
+	padding: 0 10px;
+	display:table-cell;
+	width:90%;
+}
+
+.vote-percent
+{
+	display:table-cell;
+	padding-right:10px;
+}
+
+.vote-button
+{
+	display:table-cell;
+}
+
+.not-content {
+	color: white !important;
+}
