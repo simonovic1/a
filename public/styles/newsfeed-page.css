@@ -114,3 +114,7 @@ html, body {
 {
 	display:table-cell;
 }
+
+.not-content {
+	color: white !important;
+}

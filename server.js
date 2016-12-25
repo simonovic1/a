@@ -43,7 +43,7 @@ app.get('/loginCheck', function(req, res) {
 	res.writeHead(200, {
 		'Content-Type': 'application/json',
 		"Access-Control-Allow-Origin":"*",
-		});
+		});.unbind('click')
 
 	res.write(JSON.stringify(toRet));
 	res.end();
