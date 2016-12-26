@@ -3117,16 +3117,17 @@ checkIfUserDownvoted : function(req, res){
 	},
 
 	createFilePost : function(req,res){
-
+//KERI: Odavde pocinju promene, prvo umesto req.query sam koristio req.body, nadam se da to nije prob, jer ja nisam znao da drugacije posaljem parametre. 
+//Mozda bih i mogo, ali msm da to nije source of the prob.
 		db.cypher({
 			query: 'CREATE (p:FilePost {fileName: {fileName}, description: {description}, username: {username}, date: {date}, time: {time}, tags: {tags}}) RETURN ID(p)',
 			params: {
-				fileName : req.query.fileName,
-				description : req.query.description,
-				username : req.query.username,
-				date : req.query.date,
-				time : req.query.time,
-				tags: req.query.tags,
+				fileName : req.body.fileName,
+				description : req.body.description,
+				username : req.body.username,
+				date : req.body.date,
+				time : req.body.time,
+				tags: req.body.tags,
 			},
 		}, function (err, results) {
 			if (err) throw err;
@@ -3143,7 +3144,9 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 				var id = results[0]['ID(p)'];
-				thisModule.userPostedFilePost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+				var ttags = [];
+				ttags.push(req.body.tags); //KERI: Ako ovo ne uradim tags mi cita kao "fieUpload" => "f", "i", "l".... Tj char po char?
+				thisModule.userPostedFilePost({indexNo: req.body.indexNo, postID : id, courseName: req.body.courseName, tags: ttags},res);
 			}
 		});
 	},
@@ -3198,11 +3201,13 @@ checkIfUserDownvoted : function(req, res){
 			} else {
 				for(var i =0; i < req.tags.length; i++)
 				{
+					//KERI do ovde sam logovao, da ti ne prikazujem sad, ali do ovde 100% radi, i prebacuje parametre
 					thisModule.createTag({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
 				}
-
-				res.write(JSON.stringify(true));
-				res.end();
+				
+				//KERI: Error je da ja pokusavam write nakon sto je pozvan res.end(); Zato sam zakomentarisao ovde, i sve radi
+				//res.write(JSON.stringify(true));
+				//res.end();
 			}
 		});
 	},
@@ -3214,6 +3219,7 @@ checkIfUserDownvoted : function(req, res){
 				tagName : req.tagName,
 			},
 		}, function (err, results) {
+			console.log("CREATE TAG" + req.tagName); //KERI ovo se ne zove, tj ne vidim log. Sta to znaci, da je puklo/nije puklo?
 			if (err) throw err;
 
 			if (!results) {
@@ -3227,6 +3233,7 @@ checkIfUserDownvoted : function(req, res){
 				res.write(JSON.stringify(false));
 				res.end();
 			} else {
+				console.log("ceateTagPass");
 				var id = results[0]['ID(t)'];
 				thisModule.filePostHasTag({postID : req.postID, tagID: id},res);
 			}
@@ -3254,7 +3261,7 @@ checkIfUserDownvoted : function(req, res){
 				res.write(JSON.stringify(false));
 				res.end();
 			} else {
-
+				
 			}
 		});
 	},

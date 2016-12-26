@@ -79,23 +79,7 @@ app.get('/newsFeed', index.newsFeed);
 
 app.get('/course-page', index.coursePage);
 
-app.get('/getFilesForCourse', function(req,res){
-	
-	//MISIC:
-	//Sada umesto da pribavimo iz foldera, zovemo funkciju, i vracamo, ime, desc i likes u SORTIRANOM REDOSLEDU!
-	//getOrderedFilesForCourse(course)
-	
-	var course = req.query.course;
-	var files = fs.readdirSync('public/courses/'+ course);
-	console.log(files);
-	
-	res.writeHead(200, {
-		'Content-Type': 'application/json',
-		"Access-Control-Allow-Origin":"*",
-		});
-		res.write(JSON.stringify(files));
-	res.end();
-});
+app.get('/getFilesForCourse', db4j.getAllCourseFilePosts);
 
 //app.get('/LikeFile', db4j.LikeFile); //MISIC
 
@@ -114,9 +98,8 @@ app.post('/pictureUpload', function(req, res) {
 });
 
 app.post('/uploadFiles', function(req, res){
-	console.log(req.files.file.name);
-	console.log(req.body.newName);
-	console.log(req.body.newDesc);
+	//DJOLE
+	db4j.createFilePost(req, res);	
 	
 	fs.readFile(req.files.file.path, function (err, data) {
 		var new_path = __dirname + "/public/courses/" + req.header('subfolder') + "/" + req.files.file.name;
@@ -125,9 +108,6 @@ app.post('/uploadFiles', function(req, res){
 		  res.redirect("back");
 		});
 	});
-	
-	//MISIC:
-	//db4j.uploadFile(req.body.newName, req.body.newDesc, req.body.tags, new Date()); //new Date() == trenutni datum, nema potrebe da se radi ovo na klijentu.
 	
 });
 

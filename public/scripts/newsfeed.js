@@ -49,14 +49,28 @@ $(document).ready(function(){
 		   //catch other events here...
 		},
 		sending: function(file, xhr, formData){
-			formData.append("newName", newName);
-			formData.append("newDesc", newDesc);
-			formData.append("tags", tags);
+			var today = new Date();
+			var tagsTranslated = [];
+			tagsTranslated.push(tags);
+			
+			var splitedName = file.name.split('.');
+			var extension = splitedName[splitedName.length - 1];
+			newName = newName + "." + extension;
+			
+			formData.append("fileName", newName);
+			formData.append("description", newDesc);
+			formData.append("username", localStorage.getItem("Username"));
+			formData.append("date", new Date(today.getFullYear() , today.getMonth(), today.getDate()));
+			formData.append("time", today.getHours() + ":" + today.getMinutes());
+			formData.append("tags", tagsTranslated);
+			
+			formData.append("indexNo", localStorage.getItem("Index"));
+			formData.append("courseName", localStorage.getItem('currentCourse'));
 		},
 		renameFilename: function (filename) {
 			var splitedName = filename.split('.');
 			var extension = splitedName[splitedName.length - 1];
-			newName = newName + "." + extension;
+			//newName = newName + "." + extension;
 			return newName
 		},
 		complete: function(){

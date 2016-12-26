@@ -59,12 +59,12 @@ function addFileElement(item, currCourse, parent, i){
 	td.innerHTML = i + 1;
 	var td2 = document.createElement("td");
 	td2.style.overflow = "hidden";
-	td2.style.maxWidth = "200px"; //MISIC
+	td2.style.maxWidth = "200px";
 	
 	var a = document.createElement("a");
-	a.innerHTML = item;
-	a.href="courses/" + currCourse + "/" + item;
-	a.download="courses/" + currCourse + "/" + item;
+	a.innerHTML = item.fileName;
+	a.href="courses/" + currCourse + "/" + item.fileName;
+	a.download="courses/" + currCourse + "/" + item.fileName;
 	a.onclick = function(){
 		//MISIC
 		//LikeFile(item); --> Stavi onaj tvoj HTTP req, napravio sam ti f-ju u server, samo me mrzelo da stavljam headere (tokene).
@@ -73,16 +73,15 @@ function addFileElement(item, currCourse, parent, i){
 	
 	
 	var tdOpis = document.createElement("td");
-	tdOpis.innerHTML = "Neka tamo deskripcija 123 123 123"; //MISIC
-	var tdLajkovi = document.createElement("td");
-	tdLajkovi.innerHTML = i + 10; //MISIC
+	tdOpis.innerHTML = item.description;
+	// var tdLajkovi = document.createElement("td");
+	// tdLajkovi.innerHTML = i + 10; //to delete
 	
 	
 	td2.appendChild(a);
 	tr.appendChild(td);
 	tr.appendChild(td2);
 	tr.appendChild(tdOpis);
-	tr.appendChild(tdLajkovi);
 	parent.appendChild(tr);
 }
 
@@ -95,8 +94,6 @@ $(document).ready(function(){
 		create: true
 	});
 	
-	//ukoliko smo u kursu nekom, setujemo to, i popunjavamo fajlove....
-	//MISIC:
 	var docTable = document.getElementById("fileItems");
 	var currCourse = localStorage.getItem("currentCourse");
 	if(docTable){
@@ -108,11 +105,11 @@ $(document).ready(function(){
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: { 'course': localStorage.getItem("currentCourse")},
+		data: { 'name': localStorage.getItem("currentCourse")},
 		success: function(data){
 			if(data) {
 				for(var i = 0; i< data.length; i++){
-					addFileElement(data[i], currCourse, docTable, i);
+					addFileElement(data[i].properties, currCourse, docTable, i);
 				}
 			}
 			else
