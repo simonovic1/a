@@ -2493,6 +2493,8 @@ checkIfUserDownvoted : function(req, res){
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
 					obj.deadline = results[i]['p']['properties']['deadline'];
+					obj.rating = results[i]['p']['properties']['rating'];
+					obj.usersVoted = results[i]['p']['properties']['usersVoted'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var j = i; j < i+optionNum; j++)
@@ -2534,7 +2536,16 @@ checkIfUserDownvoted : function(req, res){
 							bUsersVoted = b.usersVoted;
 						}
 
-						return (bUsersVoted / (bUsersVoted + 1)) * bRatings + (1 / (bUsersVoted + 1)) * 2.5 - (aUsersVoted / (aUsersVoted + 1)) * aRatings + (1 / (aUsersVoted + 1)) * 2.5;
+						if(bRatings == 0)
+							bRatings = 1;
+						if(bUsersVoted == 0)
+							bUsersVoted = 1;
+						if(aRatings == 0)
+							aRatings = 1;
+						if(aUsersVoted == 0)
+							aUsersVoted = 1;
+
+						return (bRatings/bUsersVoted) - (aRatings/aUsersVoted);
 					});
 
 					res.write(JSON.stringify(polls, null, 4));
@@ -3462,12 +3473,11 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
-	getUserPostRating : function(req,res){
+	getPostRating : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (u:User {username:{username}})-[d1:RATED_POST]->(p:Post) WHERE ID(p)={id} RETURN d1',
-			params: {
-				username: req.query.username,
+			query: 'MATCH (p:Post) WHERE ID(p)={id} RETURN p',
+			params:{
 				id: parseInt(req.query.id),
 			},
 		}, function (err, results) {
@@ -3485,9 +3495,10 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 
-				var rating = results[0]['d1']['properties']['rating'];
-
-				res.write(JSON.stringify(rating));
+				var rating = parseInt(results[0]['p']['properties']['rating']);
+				var usersVoted = parseInt(results[0]['p']['properties']['usersVoted']);
+				var postRating = rating/usersVoted;
+				res.write(JSON.stringify(postRating));
 				res.end();
 			}
 		});
@@ -3587,12 +3598,11 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
-	getUserEventRating : function(req,res){
+	getEventRating : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (u:User {username:{username}})-[d1:RATED_EVENT]->(e:Event) WHERE ID(e)={id} RETURN d1',
+			query: 'MATCH (p:Event) WHERE ID(p)={id} RETURN p',
 			params: {
-				username: req.query.username,
 				id: parseInt(req.query.id),
 			},
 		}, function (err, results) {
@@ -3610,9 +3620,10 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 
-				var rating = results[0]['d1']['properties']['rating'];
-
-				res.write(JSON.stringify(rating));
+				var rating = parseInt(results[0]['p']['properties']['rating']);
+				var usersVoted = parseInt(results[0]['p']['properties']['usersVoted']);
+				var postRating = rating/usersVoted;
+				res.write(JSON.stringify(postRating));
 				res.end();
 			}
 		});
@@ -3712,12 +3723,11 @@ checkIfUserDownvoted : function(req, res){
 			}
 		});
 	},
-	getUserPollRating : function(req,res){
+	getPollRating : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (u:User {username:{username}})-[d1:RATED_POLL]->(p:Poll) WHERE ID(p)={id} RETURN d1',
+			query: 'MATCH (p:Poll) WHERE ID(p)={id} RETURN p',
 			params: {
-				username: req.query.username,
 				id: parseInt(req.query.id),
 			},
 		}, function (err, results) {
@@ -3735,9 +3745,10 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 
-				var rating = results[0]['d1']['properties']['rating'];
-
-				res.write(JSON.stringify(rating));
+				var rating = parseInt(results[0]['p']['properties']['rating']);
+				var usersVoted = parseInt(results[0]['p']['properties']['usersVoted']);
+				var postRating = rating/usersVoted;
+				res.write(JSON.stringify(postRating));
 				res.end();
 			}
 		});

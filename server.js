@@ -97,7 +97,7 @@ app.get('/getFilesForCourse', db4j.getAllCourseFilePosts);
 
 app.post('/uploadFiles', function(req, res){
 	//DJOLE
-	db4j.createFilePost(req, res);	
+	//db4j.createFilePost(req, res);	
 	
 	fs.readFile(req.files.file.path, function (err, data) {
 		var new_path = __dirname + "/public/courses/" + req.header('subfolder') + "/" + req.files.file.name;
@@ -197,15 +197,15 @@ app.get('/searchAllCourseFilePostsByTag', db4j.searchAllCourseFilePostsByTag);
 
 app.get('/ratePost', db4j.ratePost);
 app.get('/checkIfUserRatedPost', db4j.checkIfUserRatedPost);
-app.get('/getUserPostRating', db4j.getUserPostRating);
+app.get('/getPostRating', db4j.getPostRating);
 
 app.get('/rateEvent', db4j.rateEvent);
 app.get('/checkIfUserRatedEvent', db4j.checkIfUserRatedEvent);
-app.get('/getUserEventRating', db4j.getUserEventRating);
+app.get('/getEventRating', db4j.getEventRating);
 
 app.get('/ratePoll', db4j.ratePoll);
 app.get('/checkIfUserRatedPoll', db4j.checkIfUserRatedPoll);
-app.get('/getUserPollRating', db4j.getUserPollRating);
+app.get('/getPollRating', db4j.getPollRating);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

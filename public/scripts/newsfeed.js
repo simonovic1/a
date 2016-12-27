@@ -53,7 +53,7 @@ $(document).ready(function(){
 		sending: function(file, xhr, formData){
 			var today = new Date();
 			var tagsTranslated = [];
-			tagsTranslated.push(tags);
+			tagsTranslated.push(tags.split(','));
 			
 			var splitedName = file.name.split('.');
 			var extension = splitedName[splitedName.length - 1];
