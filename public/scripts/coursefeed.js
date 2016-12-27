@@ -88,7 +88,8 @@ function getAllPolls(useremail) {
 		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
 		});
 		
-	    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img class=\"img-circle\" width=30 height=30 src=\"users/pictures/" + post.picture + "\"/></div><h3 class=\"panel-title\"   >" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
+
+	    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img class=\"img-circle\" width=30 height=30 src=\"users/pictures/" + post.picture + "\"/></div><h3 class=\"panel-title\"   >" + post.username + "</h3><div class=\"rating " + json._id + "\"></div></div><div class=\"panel-date\">" + post.date + "</div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
 
 		$("#posts").append(str);	
 	}
@@ -145,7 +146,7 @@ function getAllPolls(useremail) {
 			tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
 		});
 		
-		var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ voting.text+"</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+"Rok za glasanje: <b>"+voting.deadline +"</b></div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
+		var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ voting.text+"</h3><div class=\"rating " + voting._id + "\"></div></div><div class=\"panel-date\">"+voting.date+"</div></div><div class=\"panel-body\">"+"Rok za glasanje: <b>"+voting.deadline +"</b></div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
 		$("#posts").append(poolStr);	
 	}
 	
@@ -171,7 +172,7 @@ function getAllPolls(useremail) {
 		
 		// var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + Event.courseName+ "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		
-		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3><div class=\"panel-date\">" + Event.date + "</div></div> </div> <div class=\"panel-body\"><div>Datum: <b>" + Event.eventDate + " " + Event.eventTime  + "</b></div><div>Opis: "+ Event.text +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+		var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3><div class=\"rating " + ev._id + "\"></div></div><div class=\"panel-date\">" + Event.date + "</div> </div> <div class=\"panel-body\"><div>Datum: <b>" + Event.eventDate + " " + Event.eventTime  + "</b></div><div>Opis: "+ Event.text +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
 		$("#posts").append(eventStr);	
 	}
 	
@@ -360,6 +361,9 @@ function courseClicked(rating)
 				addEvent(data[i]);
 			else if (data[i].labels[0] == 'Post')
 				addPost(data[i]);
+			
+			clas = ".rating." + data[i]._id;
+			$(clas).stars();
 		});
 		
 			console.log(JSON.stringify(data));
@@ -546,7 +550,8 @@ function checkIfUserRatedAndRateEvent(postId, rating){
 				addEvent(data[i]);
 			else if (data[i].labels[0] == 'Post')
 				addPost(data[i]);
-			 
+			 clas = ".rating." + data[i]._id;
+			$(clas).stars();
 				
 		});
 		
@@ -556,8 +561,10 @@ function checkIfUserRatedAndRateEvent(postId, rating){
 	}
 
 	
+
+	
 	$( document ).ready(function() {
-		
+			
 	$('#search-input').selectize({
       persist: false,
       createOnBlur: true,
@@ -579,6 +586,7 @@ function checkIfUserRatedAndRateEvent(postId, rating){
 		}else{
 			getNewsFeed(false);
 		}
+		
 });
 
 
