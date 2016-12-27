@@ -3117,17 +3117,15 @@ checkIfUserDownvoted : function(req, res){
 	},
 
 	createFilePost : function(req,res){
-//KERI: Odavde pocinju promene, prvo umesto req.query sam koristio req.body, nadam se da to nije prob, jer ja nisam znao da drugacije posaljem parametre. 
-//Mozda bih i mogo, ali msm da to nije source of the prob.
 		db.cypher({
 			query: 'CREATE (p:FilePost {fileName: {fileName}, description: {description}, username: {username}, date: {date}, time: {time}, tags: {tags}}) RETURN ID(p)',
 			params: {
-				fileName : req.body.fileName,
-				description : req.body.description,
-				username : req.body.username,
-				date : req.body.date,
-				time : req.body.time,
-				tags: req.body.tags,
+				fileName : req.query.fileName,
+				description : req.query.description,
+				username : req.query.username,
+				date : req.query.date,
+				time : req.query.time,
+				tags: req.query.tags,
 			},
 		}, function (err, results) {
 			if (err) throw err;
@@ -3144,9 +3142,7 @@ checkIfUserDownvoted : function(req, res){
 				res.end();
 			} else {
 				var id = results[0]['ID(p)'];
-				var ttags = [];
-				ttags.push(req.body.tags); //KERI: Ako ovo ne uradim tags mi cita kao "fieUpload" => "f", "i", "l".... Tj char po char?
-				thisModule.userPostedFilePost({indexNo: req.body.indexNo, postID : id, courseName: req.body.courseName, tags: ttags},res);
+				thisModule.userPostedFilePost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
 			}
 		});
 	},
@@ -3201,17 +3197,16 @@ checkIfUserDownvoted : function(req, res){
 			} else {
 				for(var i =0; i < req.tags.length; i++)
 				{
-					//KERI do ovde sam logovao, da ti ne prikazujem sad, ali do ovde 100% radi, i prebacuje parametre
-					thisModule.createTag({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+					thisModule.createTagForFilePost({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
 				}
 				
-				//KERI: Error je da ja pokusavam write nakon sto je pozvan res.end(); Zato sam zakomentarisao ovde, i sve radi
-				//res.write(JSON.stringify(true));
-				//res.end();
+
+				res.write(JSON.stringify(true));
+				res.end();
 			}
 		});
 	},
-	createTag : function(req,res){
+	createTagForFilePost : function(req,res){
 
 		db.cypher({
 			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
@@ -3242,7 +3237,7 @@ checkIfUserDownvoted : function(req, res){
 	filePostHasTag : function(req,res){
 
 		db.cypher({
-			query: 'MATCH (p:FilePost),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[:HAS_TAG]->(t)',
+			query: 'MATCH (p:FilePost),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[h:HAS_TAG]->(t) RETURN h',
 			params: {
 				postID : req.postID,
 				tagID : req.tagID,

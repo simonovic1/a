@@ -53,24 +53,24 @@ app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
 
 app.get('/:default', function(req, res, next){
 	
-	//var token;
+	var token;
 	
-	//if (req.headers.authorization)
-		//token = req.headers.authorization;
-	//else
-	//	token = req.query.authorization;
+	if (req.headers.authorization)
+		token = req.headers.authorization;
+	else
+		token = req.query.authorization;
 
-	//console.log(req.query.authorization);
+	console.log(req.query.authorization);
 
-	//jwt.verify(token, jwtTokenSecret, function(err, decoded) {
-	//	if (err) {
-	//		console.log(err);
-	//		res.redirect('');
-	//	} else {
-	//		console.log(decoded);
+	jwt.verify(token, jwtTokenSecret, function(err, decoded) {
+		if (err) {
+			console.log(err);
+			res.redirect('');
+		} else {
+			console.log(decoded);
 			next();
-	//	}
-	//})
+		}
+	})
 });
 
 app.get('/coursePosts', index.coursePosts);
