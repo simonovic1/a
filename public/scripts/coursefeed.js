@@ -354,22 +354,47 @@ function courseClicked(rating)
 			$(".post").remove();
 			
 			
-			$.each(data , function(i, val) { 
+			$.each(data , function(i, val) {
+				
+			clas = ".rating." + data[i]._id;			
+				
 			if(data[i].labels == undefined)
+			{
 				addVoting(data[i]);
+				$(clas).stars({ 
+				//value: data[i].properties.rating,
+				click: function(i) {
+					checkIfUserRatedAndRatePoll(data[i]._id, i);
+					}
+				});
+
+			}
+				
 			else if(data[i].labels[0] == 'Event')
+			{
 				addEvent(data[i]);
+				$(clas).stars({ 
+				value: data[i].properties.rating,
+				click: function(i) {
+					checkIfUserRatedAndRateEvent(data[i]._id, i);
+					}
+				});
+			}
 			else if (data[i].labels[0] == 'Post')
+			{
 				addPost(data[i]);
-			
-			clas = ".rating." + data[i]._id;
-			$(clas).stars();
-		});
+				$(clas).stars({ 
+				value: data[i].properties.rating,
+				click: function(i) {
+					checkIfUserRatedAndRateStatus(data[i]._id, i);
+					}
+				});	
+			}
 		
 			console.log(JSON.stringify(data));
-		 }
-	 });
+		 });
 		
+		 }});
 	}
 	
 function rateStatus(postId, rating)
@@ -544,18 +569,45 @@ function checkIfUserRatedAndRateEvent(postId, rating){
 			$(".post").remove();
 			
 			$.each(data , function(i, val) { 
+			
+						clas = ".rating." + data[i]._id;
+						
+						
 			if(data[i].labels == undefined)
+			{
 				addVoting(data[i]);
-			else if(data[i].labels[0] == 'Event')
-				addEvent(data[i]);
-			else if (data[i].labels[0] == 'Post')
-				addPost(data[i]);
-			 clas = ".rating." + data[i]._id;
-			$(clas).stars();
+				$(clas).stars({ 
+				//value: data[i].properties.rating,
+				click: function(i) {
+					checkIfUserRatedAndRatePoll(data[i]._id, i);
+					}
+				});
+
+			}
 				
+			else if(data[i].labels[0] == 'Event')
+			{
+				addEvent(data[i]);
+				$(clas).stars({ 
+				value: data[i].properties.rating,
+				click: function(i) {
+					checkIfUserRatedAndRateEvent(data[i]._id, i);
+					}
+				});
+			}
+			else if (data[i].labels[0] == 'Post')
+			{
+				addPost(data[i]);
+				$(clas).stars({ 
+				value: data[i].properties.rating,
+				click: function(i) {
+					checkIfUserRatedAndRateStatus(data[i]._id, i);
+					}
+				});	
+			}
+					
 		});
 		
-			console.log(JSON.stringify(data));
 		 }
 	 });
 	}
