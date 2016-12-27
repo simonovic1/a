@@ -276,38 +276,34 @@ function getSinglePost(postId) {
         }
     };
 
-	//ajax to get post, in success show post in modal
-	$('#singlePostModalBody').empty();
+	
+	$.ajax({
+		type: 'GET',
+		url: '/getEventById',
+		dataType: 'json',
+		data: {
+			id:postId
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+			$('#singlePostModalBody').empty();
 
-	if(data.labels == undefined)
-		addVotingModal(data);
-	else if(data.labels[0] == 'Event')
-		addEventModal(data);
-	else if (data.labels[0] == 'Post')
-		addPostModal(data);
+	
+		addEventModal(data.e);
 
 	$('#singlePostModal').modal('show');
-}
-
-function addVotingModal(voting){
-	var progressList = voting.options;
-	var tagList = voting.tags;
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
 			
-	var userEmail = localStorage.getItem("Username");
-
-	var progressArray = "";		
-	$.each(progressList , function(i, val) { 
-		progressArray += "<div id=\"" + voting._id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting._id + "\', \'" + progressList[i].name + "\', \'" + userEmail + "\');\">+</button></div></div>";
+		}
 	});
 	
-	var tagarray = "";		
-	$.each(tagList , function(i, val) { 
-		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
-	});
-	
-	var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ voting.text+"</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+"Rok za glasanje: <b>"+voting.deadline +"</b></div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
-	$("#singlePostModalBody").append(poolStr);	
 }
+
 
 function addEventModal(ev){
 	var Event = ev.properties;
@@ -324,20 +320,6 @@ function addEventModal(ev){
 	$("#singlePostModalBody").append(eventStr);	
 }
 
-function addPost(json){
-	var post = json.properties;
-	var tagList = post.tags;
-				
-	var tagarray = "";		
-		
-	$.each(tagList , function(i, val) { 
-	tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
-	});
-	
-    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img src=\"" + post.picture + "\"/></div><h3 class=\"panel-title\">" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
-
-	$("#singlePostModalBody").append(str);	
-}
 
 function appendOnClick(elem, data){
 	elem.attr("onclick", "removeNotification(" + data["_id"] +")");

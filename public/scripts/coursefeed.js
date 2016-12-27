@@ -175,10 +175,10 @@ function getAllPolls(useremail) {
 		$("#posts").append(eventStr);	
 	}
 	
-function courseClicked(courseName)
+function courseClicked(rating)
 	{
 		//getAllElementsByCourse(courseName);
-		getCourseFeed(courseName);
+		getCourseFeed( getParameterByName('course'), rating);
 	}
 	
 	
@@ -253,7 +253,7 @@ function courseClicked(courseName)
 		
 		if(query["tags"][0] == "")
 		{
-			getCourseFeed(course);
+			getCourseFeed(course,false);
 		}
 		else
 		{
@@ -334,13 +334,14 @@ function courseClicked(courseName)
 	}
 
 	
-	function getNewsFeed(){
+	function getNewsFeed(rating){
 		 $.ajax({
 		 type: 'GET',
 		 url: '/getAllUsersNewsFeedItems', 
 		   dataType: 'json',
 		   data:{
-		   'username':  localStorage.getItem("Username")
+		   'username':  localStorage.getItem("Username"),
+		   'rating': rating
 		  },
 		  	beforeSend: function (xhr) {
                 /* authorization header with token */
@@ -367,14 +368,168 @@ function courseClicked(courseName)
 		
 	}
 	
-	function getCourseFeed(courseName){
+function rateStatus(postId, rating)
+{
+	var rate = {};
+	rate['rating'] = rating;
+	rate['username'] = localStorage.getItem("Username");
+	rate['id'] =  postId;
+	
+		$.ajax({
+		type: 'GET',
+		url: '/ratePost',
+		dataType: 'json',
+		data: rate,
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+				
+		},
+		error:function(jqXHR, textStatus){
+		}
+	});	
+}
+
+function rateEvent(postId, rating)
+{
+	var rate = {};
+	rate['rating'] = rating;
+	rate['username'] = localStorage.getItem("Username");
+	rate['id'] =  postId;
+	
+		$.ajax({
+		type: 'GET',
+		url: '/rateEvent',
+		dataType: 'json',
+		data: rate,
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+				
+		},
+		error:function(jqXHR, textStatus){
+		}
+	});	
+}
+
+function ratePoll(postId, rating)
+{
+	var rate = {};
+	rate['rating'] = rating;
+	rate['username'] = localStorage.getItem("Username");
+	rate['id'] =  postId;
+	
+		$.ajax({
+		type: 'GET',
+		url: '/ratePoll',
+		dataType: 'json',
+		data: rate,
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+				
+		},
+		error:function(jqXHR, textStatus){
+		}
+	});	
+}
+
+function checkIfUserRatedAndRateStatus(postId, rating){
+
+	$.ajax({
+		type: 'GET',
+		url: '/checkIfUserRatedPost',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			id:postId
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+			if(!data){
+				rateStatus(postId, rating);
+			}else{
+				alert('Već ste glasali!');
+			}	
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}
+function checkIfUserRatedAndRatePoll(postId, rating){
+
+	$.ajax({
+		type: 'GET',
+		url: '/checkIfUserRatedPoll',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			id:postId
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+			if(!data){
+				ratePoll(postId, rating);
+			}else{
+				alert('Već ste glasali!');
+			}	
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}	
+function checkIfUserRatedAndRateEvent(postId, rating){
+
+	$.ajax({
+		type: 'GET',
+		url: '/checkIfUserRatedEvent',
+		dataType: 'json',
+		data: {
+			username: localStorage.getItem('Username'),
+			id:postId
+		},
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+			if(!data){
+				rateEvent(postId, rating);
+			}else{
+				alert('Već ste glasali!');
+			}	
+		},
+		error:function(jqXHR, textStatus){
+				alert("Unsuccessful.");
+			
+		}
+	});
+}		
+	function getCourseFeed(courseName, rating){
 		
 		 $.ajax({
 		 type: 'GET',
 		 url: '/getAllCourseItems', 
 		   dataType: 'json',
 		   data:{
-		   'name': courseName
+		   'name': courseName,
+		   'rating': rating
 		  },
 		  	beforeSend: function (xhr) {
                 /* authorization header with token */
@@ -420,9 +575,9 @@ function courseClicked(courseName)
 			getAllEvents(userEmail);
 		}*/
 		if(course!=null){
-			courseClicked(course);
+			courseClicked();
 		}else{
-			getNewsFeed();
+			getNewsFeed(false);
 		}
 });
 
