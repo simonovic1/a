@@ -50,6 +50,18 @@ app.get('/loginCheck', function(req, res) {
 });
 
 app.get('/checkIfProfileExists', db4j.checkIfProfileExists);
+app.get('/createProfile', db4j.createProfile);
+app.post('/pictureUpload', function(req, res) {
+  console.log(req.files.file.name);
+
+  fs.readFile(req.files.file.path, function (err, data) {
+    var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
+    fs.writeFile(new_path, data, function (err) {
+      res.redirect("back");
+    });
+  });
+
+});
 
 app.get('/:default', function(req, res, next){
 	
@@ -92,19 +104,7 @@ app.get('/getFilesForCourse', function(req,res){
 	res.end();
 });
 
-app.get('/createProfile', db4j.createProfile);
 
-app.post('/pictureUpload', function(req, res) {
-  console.log(req.files.file.name);
-
-  fs.readFile(req.files.file.path, function (err, data) {
-    var new_path = __dirname + "/public/users/pictures/" + req.files.file.name;
-    fs.writeFile(new_path, data, function (err) {
-      res.redirect("back");
-    });
-  });
-
-});
 
 app.post('/uploadFiles', function(req, res){
 	console.log(req.files.file.name);

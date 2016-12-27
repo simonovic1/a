@@ -1974,6 +1974,7 @@ checkIfUserDownvoted : function(req, res){
 					obj.tags = results[i]['p']['properties']['tags'];
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
+					obj.deadline = results[i]['p']['properties']['deadline'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var j = i; j < i+optionNum; j++)
@@ -2104,6 +2105,7 @@ checkIfUserDownvoted : function(req, res){
 					obj.tags = results[i]['p']['properties']['tags'];
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
+					obj.deadline = results[i]['p']['properties']['deadline'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var j = i; j < i+optionNum; j++)
@@ -2369,6 +2371,7 @@ checkIfUserDownvoted : function(req, res){
 							obj.tags = results[i]['p']['properties']['tags'];
 							obj.picture = results[i]['p']['properties']['picture'];
 							obj.username = results[i]['p']['properties']['username'];
+							obj.deadline = results[i]['p']['properties']['deadline'];
 							var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 							var options = [];
 							for(var k = i; k < i+optionNum; k++)
@@ -2662,6 +2665,7 @@ checkIfUserDownvoted : function(req, res){
 					obj.tags = results[i]['p']['properties']['tags'];
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
+					obj.deadline = results[i]['p']['properties']['deadline'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var k = i; k < i+optionNum; k++)
@@ -2854,6 +2858,7 @@ checkIfUserDownvoted : function(req, res){
 					obj.tags = results[i]['p']['properties']['tags'];
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
+					obj.deadline = results[i]['p']['properties']['deadline'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var k = i; k < i+optionNum; k++)
@@ -2993,6 +2998,7 @@ checkIfUserDownvoted : function(req, res){
 					obj.tags = results[i]['p']['properties']['tags'];
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
+					obj.deadline = results[i]['p']['properties']['deadline'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var j = i; j < i+optionNum; j++)

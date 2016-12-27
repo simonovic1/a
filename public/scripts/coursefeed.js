@@ -82,11 +82,13 @@ function getAllPolls(useremail) {
 					
 		var tagarray = "";		
 			
+
+		
 		$.each(tagList , function(i, val) { 
 		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
 		});
 		
-	    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img src=\"" + post.picture + "\"/></div><h3 class=\"panel-title\">" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
+	    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img class=\"img-circle\" width=30 height=30 src=\"users/pictures/" + post.picture + "\"/></div><h3 class=\"panel-title\"   >" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
 
 		$("#posts").append(str);	
 	}

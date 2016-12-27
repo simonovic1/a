@@ -106,7 +106,10 @@ function mapDay(dayNumber)
 function addReviews(reviews)
 {
 	if(reviews.length==0){
-		$("#about").append("<div>Trenutno nema recenzija kursa.</div>");	
+		$("#about").append("<div id=\"no_reviews\">Trenutno nema recenzija kursa.</div>");	
+	}else{
+		$("#no_reviews").remove();
+		$('.review').remove();
 	}
 	$.each(reviews , function(i, val) { 
 		addReview(reviews[i]);
@@ -226,7 +229,7 @@ function getAllDownvotes(reviewId)
 	
 function addNewReview(){
 
-//if(!reviewed){
+if(!reviewed){
 	var review = {};
 	
 	review['text'] =  $('#review-text').val();
@@ -258,9 +261,9 @@ function addNewReview(){
 		}
 	});
 	
-/*}else{
+}else{
 		alert('Već ste postavili recenziju!');
-	}*/
+	}
 	
 
 }

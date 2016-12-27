@@ -93,7 +93,7 @@ function addNewStatus(){
 	status['courseName'] = localStorage.getItem("Course");
 	status['indexNo'] = localStorage.getItem("Index");
 	status['picture'] = localStorage.getItem("imgUrl");
-	alert(JSON.stringify(status));
+	//alert(JSON.stringify(status));
 		$.ajax({
 		type: 'GET',
 		url: '/createPost',
@@ -184,6 +184,7 @@ function addNewEvent(){
 	
 	
 	event['title'] = selectizeEventType.getText();
+
 	if(event['type']==event['title']){
 		event['type']=3;
 	}
