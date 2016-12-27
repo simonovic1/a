@@ -4,6 +4,8 @@ var newDesc;
 var tags;
 
 $(document).ready(function(){
+	
+	//$('.rating').stars();
 
 	var names=["Filter1", "Filter2", "Filter3", "Filter4", "Filter5"]; //samo dodamo novo ime i dodaje se tag
 	createTags(names);

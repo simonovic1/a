@@ -24,12 +24,18 @@
 }
 
 
-.panel-date
+.rating
 {
+	font-size:17px !important;
 	display:table-cell;
 	position:absolute;
 	right:10px;
 	bottom:0;
+}
+
+.panel-date
+{
+	padding-top:5px;
 }
 
 
