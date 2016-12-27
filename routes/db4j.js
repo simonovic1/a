@@ -1022,7 +1022,7 @@ checkIfUserDownvoted : function(req, res){
 	createPost : function(req,res){
 
 	db.cypher({
-		query: 'CREATE (p:Post {picture: {picture}, username: {username}, date: {date}, time: {time}, text: {text}, tags: {tags}}) RETURN ID(p)',
+		query: 'CREATE (p:Post {picture: {picture}, username: {username}, date: {date}, time: {time}, text: {text}, tags: {tags}, rating:0, usersVoted: 0}) RETURN ID(p)',
 		params: {
 			picture : req.query.picture,
 			username : req.query.username,
@@ -1205,7 +1205,7 @@ checkIfUserDownvoted : function(req, res){
 
 		db.cypher({
 			query: 'CREATE (e:Event {picture: {picture}, username: {username}, date: {date}, time: {time}, eventDate: {eventDate},' +
-			'eventTime: {eventTime},title: {title}, text:{text}, type:{type}, courseName: {courseName}, tags: {tags}}) RETURN ID(e)',
+			'eventTime: {eventTime},title: {title}, text:{text}, type:{type}, courseName: {courseName}, tags: {tags}, rating:0, usersVoted: 0}) RETURN ID(e)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
@@ -1424,7 +1424,7 @@ checkIfUserDownvoted : function(req, res){
 	createPoll : function(req,res){
 
 		db.cypher({
-			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, deadline: {deadline}, tags: {tags}, optionNum: {optionNum}}) RETURN ID(p)',
+			query: 'CREATE (p:Poll {picture: {picture}, username: {username}, date: {date}, time: {time},text: {text}, deadline: {deadline}, tags: {tags}, optionNum: {optionNum}, rating:0, usersVoted: 0}) RETURN ID(p)',
 			params: {
 				picture : req.query.picture,
 				username : req.query.username,
@@ -2424,7 +2424,7 @@ checkIfUserDownvoted : function(req, res){
 					posts.push(results[i]['p']);
 				}
 
-				thisModule.getUsersNewsFeedEventsItems({items: posts, username: req.query.username},res);
+				thisModule.getUsersNewsFeedEventsItems({items: posts, username: req.query.username, rating: req.query.rating},res);
 			}
 		});
 	},
@@ -2456,7 +2456,7 @@ checkIfUserDownvoted : function(req, res){
 					events.push(results[i]['e']);
 				}
 
-				thisModule.getUsersNewsFeedPollsItems({items: events, username: req.username},res);
+				thisModule.getUsersNewsFeedPollsItems({items: events, username: req.username, rating: req.rating},res);
 			}
 		});
 	},
@@ -2504,15 +2504,47 @@ checkIfUserDownvoted : function(req, res){
 					polls.push(obj)
 				}
 
-
-
 				res.writeHead(200, {
 					'Content-Type': 'application/json',
 					"Access-Control-Allow-Origin":"*",
 				});
 
-				res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
-				res.end();
+				if(req.rating == "true") {
+
+					polls.sort(function (a, b) {
+						var aRatings;
+						var aUsersVoted;
+						var bRatings;
+						var bUsersVoted;
+						if (Array.isArray(a['labels'])) {
+							aRatings = a['properties']['rating'];
+							aUsersVoted = a['properties']['usersVoted'];
+						}
+						else {
+							aRatings = a.rating;
+							aUsersVoted = a.usersVoted;
+						}
+
+						if (Array.isArray(b['labels'])) {
+							bRatings = b['properties']['rating'];
+							bUsersVoted = b['properties']['usersVoted'];
+						}
+						else {
+							bRatings = b.rating;
+							bUsersVoted = b.usersVoted;
+						}
+
+						return (bUsersVoted / (bUsersVoted + 1)) * bRatings + (1 / (bUsersVoted + 1)) * 2.5 - (aUsersVoted / (aUsersVoted + 1)) * aRatings + (1 / (aUsersVoted + 1)) * 2.5;
+					});
+
+					res.write(JSON.stringify(polls, null, 4));
+					res.end();
+
+				}
+				else{
+					res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
+					res.end();
+				}
 			}
 		});
 	},
@@ -2930,7 +2962,7 @@ checkIfUserDownvoted : function(req, res){
 					posts.push(results[i]['p']);
 				}
 
-				thisModule.getAllCourseEventsItems({items: posts, name: req.query.name},res);
+				thisModule.getAllCourseEventsItems({items: posts, name: req.query.name, rating : req.query.rating},res);
 			}
 		});
 	},
@@ -2962,7 +2994,7 @@ checkIfUserDownvoted : function(req, res){
 					events.push(results[i]['e']);
 				}
 
-				thisModule.getAllCoursePollsItems({items: events, name: req.name},res);
+				thisModule.getAllCoursePollsItems({items: events, name: req.name, rating: req.rating},res);
 			}
 		});
 	},
@@ -2999,6 +3031,9 @@ checkIfUserDownvoted : function(req, res){
 					obj.picture = results[i]['p']['properties']['picture'];
 					obj.username = results[i]['p']['properties']['username'];
 					obj.deadline = results[i]['p']['properties']['deadline'];
+
+					obj.rating =  results[i]['p']['properties']['rating'];
+					obj.usersVoted =  results[i]['p']['properties']['usersVoted'];
 					var optionNum = parseInt(results[i]['p']['properties']['optionNum']);
 					var options = [];
 					for(var j = i; j < i+optionNum; j++)
@@ -3015,7 +3050,694 @@ checkIfUserDownvoted : function(req, res){
 					"Access-Control-Allow-Origin":"*",
 				});
 
-				res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
+				if(req.rating == "true") {
+
+					polls.sort(function (a, b) {
+						var aRatings;
+						var aUsersVoted;
+						var bRatings;
+						var bUsersVoted;
+						if (Array.isArray(a['labels'])) {
+							aRatings = a['properties']['rating'];
+							aUsersVoted = a['properties']['usersVoted'];
+						}
+						else {
+							aRatings = a.rating;
+							aUsersVoted = a.usersVoted;
+						}
+
+						if (Array.isArray(b['labels'])) {
+							bRatings = b['properties']['rating'];
+							bUsersVoted = b['properties']['usersVoted'];
+						}
+						else {
+							bRatings = b.rating;
+							bUsersVoted = b.usersVoted;
+						}
+
+						return (bUsersVoted / (bUsersVoted + 1)) * bRatings + (1 / (bUsersVoted + 1)) * 2.5 - (aUsersVoted / (aUsersVoted + 1)) * aRatings + (1 / (aUsersVoted + 1)) * 2.5;
+					});
+
+					res.write(JSON.stringify(polls, null, 4));
+					res.end();
+
+				}
+				else{
+					res.write(JSON.stringify(thisModule.sortByKey(polls, "_id").reverse(), null, 4));
+					res.end();
+				}
+			}
+		});
+	},
+	getEventById : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event) WHERE ID(e)={id} return e',
+			params: {
+				id: parseInt(req.query.id)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error get all event');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(results[0], null, 4));
+				res.end();
+
+			}
+		});
+	},
+
+	createFilePost : function(req,res){
+		db.cypher({
+			query: 'CREATE (p:FilePost {fileName: {fileName}, description: {description}, username: {username}, date: {date}, time: {time}, tags: {tags}}) RETURN ID(p)',
+			params: {
+				fileName : req.query.fileName,
+				description : req.query.description,
+				username : req.query.username,
+				date : req.query.date,
+				time : req.query.time,
+				tags: req.query.tags,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error creating post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var id = results[0]['ID(p)'];
+				thisModule.userPostedFilePost({indexNo: req.query.indexNo, postID : id, courseName: req.query.courseName, tags: req.query.tags},res);
+			}
+		});
+	},
+
+	userPostedFilePost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(u:User{indexNumber: {indexNo}}) WHERE ID(p)={id} CREATE (u)-[:POSTED_FILEPOST]->(p)',
+			params: {
+				indexNo : req.indexNo,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error user posted post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				thisModule.courseHasFilePost({postID : req.postID, courseName: req.courseName, tags: req.tags},res);
+			}
+		});
+	},
+	courseHasFilePost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(c:Course{name: {courseName}}) WHERE ID(p)={id} CREATE (c)-[:HAS_FILEPOST]->(p)',
+			params: {
+				courseName : req.courseName,
+				id : req.postID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error course has post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				for(var i =0; i < req.tags.length; i++)
+				{
+					thisModule.createTagForFilePost({postID : req.postID, courseName: req.courseName, tagName: req.tags[i]},res);
+				}
+				
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	createTagForFilePost : function(req,res){
+
+		db.cypher({
+			query: 'MERGE (t:Tag {name: {tagName}}) RETURN ID(t)',
+			params: {
+				tagName : req.tagName,
+			},
+		}, function (err, results) {
+			console.log("CREATE TAG" + req.tagName); //KERI ovo se ne zove, tj ne vidim log. Sta to znaci, da je puklo/nije puklo?
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error create tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				console.log("ceateTagPass");
+				var id = results[0]['ID(t)'];
+				thisModule.filePostHasTag({postID : req.postID, tagID: id},res);
+			}
+		});
+	},
+	filePostHasTag : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(t:Tag) WHERE ID(p)={postID} AND ID(t)={tagID} CREATE (p)-[h:HAS_TAG]->(t) RETURN h',
+			params: {
+				postID : req.postID,
+				tagID : req.tagID,
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				
+			}
+		});
+	},
+
+	getAllCourseFilePosts : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:FilePost),(c:Course {name: {name}}) WHERE (c)-[:HAS_FILEPOST]->(p) return p',
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('Error post has tag');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+
+				for(var i =0; i< results.length; i++)
+				{
+					posts.push(results[i]['p']);
+				}
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+
+			}
+		});
+	},
+	searchAllCourseFilePostsByTag : function(req,res){
+
+		var query = "MATCH (p:FilePost), (c:Course {name:{name}})";
+		for(var i = 0; i < req.query.tags.length; i++)
+		{
+			if(i == 0)
+			{
+				query = query + " WHERE (c)-[:HAS_FILEPOST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+			else{
+				query = query + " OR (c)-[:HAS_FILEPOST]->(p)-[:HAS_TAG]->(:Tag{name:\""+req.query.tags[i]+"\"})";
+			}
+
+			if(i+1 == req.query.tags.length)
+			{
+				query = query + " RETURN p";
+			}
+		}
+
+		db.cypher({
+			query: query,
+			params: {
+				name: req.query.name
+			},
+		}, function (err, results) {
+			if (err) throw err;
+
+			if (!results) {
+				console.log('No posts found');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+				var posts = [];
+				var tagList = req.query.tags;
+				var combinations = thisModule.combine(tagList, 1);
+				for(var j = combinations.length-1; j>=0 ; j--) {
+					for (var i = 0; i < results.length; i++) {
+						var array = results[i]['p']['properties']['tags'];
+						if(thisModule.contains(array,combinations[j])){
+							posts.push(results[i]);
+							results.splice(results.indexOf(results[i]), 1);
+						}
+					}
+				}
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(posts, null, 4));
+				res.end();
+			}
+		});
+	},
+
+	ratePost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Post) WHERE ID(p)={id} SET p.rating =  p.rating + {rating}, p.usersVoted = p.usersVoted + 1 RETURN p',
+			params: {
+				id: parseInt(req.query.id),
+				rating: parseInt(req.query.rating)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error rating post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.userRatePost({username: req.query.username, post_id:req.query.id, rating:req.query.rating},res);
+			}
+		});
+	},
+	userRatePost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Post) WHERE ID(p)={id} CREATE UNIQUE (u)-[d1:RATED_POST {rating:{rating}}]->(p) RETURN d1',
+			params: {
+				username: req.username,
+				id: parseInt(req.post_id),
+				rating : parseInt(req.rating)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	checkIfUserRatedPost : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}})-[d1:RATED_POST]->(p:Post) WHERE ID(p)={id} RETURN d1',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	getUserPostRating : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}})-[d1:RATED_POST]->(p:Post) WHERE ID(p)={id} RETURN d1',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				var rating = results[0]['d1']['properties']['rating'];
+
+				res.write(JSON.stringify(rating));
+				res.end();
+			}
+		});
+	},
+
+	rateEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (e:Event) WHERE ID(e)={id} SET e.rating =  e.rating + {rating}, e.usersVoted = e.usersVoted + 1 RETURN e',
+			params: {
+				id: parseInt(req.query.id),
+				rating: parseInt(req.query.rating)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error rating post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.userRateEvent({username: req.query.username, post_id:req.query.id, rating:req.query.rating},res);
+			}
+		});
+	},
+	userRateEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (e:Event) WHERE ID(e)={id} CREATE UNIQUE (u)-[d1:RATED_EVENT {rating:{rating}}]->(e) RETURN d1',
+			params: {
+				username: req.username,
+				id: parseInt(req.post_id),
+				rating : parseInt(req.rating)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	checkIfUserRatedEvent : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}})-[d1:RATED_EVENT]->(e:Event) WHERE ID(e)={id} RETURN d1',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	getUserEventRating : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}})-[d1:RATED_EVENT]->(e:Event) WHERE ID(e)={id} RETURN d1',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				var rating = results[0]['d1']['properties']['rating'];
+
+				res.write(JSON.stringify(rating));
+				res.end();
+			}
+		});
+	},
+
+	ratePoll : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (p:Poll) WHERE ID(p)={id} SET p.rating =  p.rating + {rating}, p.usersVoted = p.usersVoted + 1 RETURN p',
+			params: {
+				id: parseInt(req.query.id),
+				rating: parseInt(req.query.rating)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error rating post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				thisModule.userRatePoll({username: req.query.username, post_id:req.query.id, rating:req.query.rating},res);
+			}
+		});
+	},
+	userRatePoll : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}}), (p:Poll) WHERE ID(p)={id} CREATE UNIQUE (u)-[d1:RATED_POLL {rating:{rating}}]->(p) RETURN d1',
+			params: {
+				username: req.username,
+				id: parseInt(req.post_id),
+				rating : parseInt(req.rating)
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	checkIfUserRatedPoll : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}})-[d1:RATED_POLL]->(p:Poll) WHERE ID(p)={id} RETURN d1',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(true));
+				res.end();
+			}
+		});
+	},
+	getUserPollRating : function(req,res){
+
+		db.cypher({
+			query: 'MATCH (u:User {username:{username}})-[d1:RATED_POLL]->(p:Poll) WHERE ID(p)={id} RETURN d1',
+			params: {
+				username: req.query.username,
+				id: parseInt(req.query.id),
+			},
+		}, function (err, results) {
+			if (err) throw err;
+			var result = results[0];
+			if (!result) {
+				console.log('Error user rate post');
+
+				res.writeHead(200, {
+					'Content-Type': 'application/json',
+					"Access-Control-Allow-Origin":"*",
+				});
+
+				res.write(JSON.stringify(false));
+				res.end();
+			} else {
+
+				var rating = results[0]['d1']['properties']['rating'];
+
+				res.write(JSON.stringify(rating));
 				res.end();
 			}
 		});

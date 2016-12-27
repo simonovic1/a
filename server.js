@@ -82,7 +82,7 @@ app.get('/:default', function(req, res, next){
 			console.log(decoded);
 			next();
 		}
-	}) 
+	})
 });
 
 app.get('/coursePosts', index.coursePosts);
@@ -91,23 +91,13 @@ app.get('/newsFeed', index.newsFeed);
 
 app.get('/course-page', index.coursePage);
 
-app.get('/getFilesForCourse', function(req,res){
-	var course = req.query.course;
-	var files = fs.readdirSync('public/courses/'+ course);
-	console.log(files);
-	
-	res.writeHead(200, {
-		'Content-Type': 'application/json',
-		"Access-Control-Allow-Origin":"*",
-		});
-		res.write(JSON.stringify(files));
-	res.end();
-});
+app.get('/getFilesForCourse', db4j.getAllCourseFilePosts);
 
-
+//app.get('/LikeFile', db4j.LikeFile); //MISIC
 
 app.post('/uploadFiles', function(req, res){
-	console.log(req.files.file.name);
+	//DJOLE
+	db4j.createFilePost(req, res);	
 	
 	fs.readFile(req.files.file.path, function (err, data) {
 		var new_path = __dirname + "/public/courses/" + req.header('subfolder') + "/" + req.files.file.name;
@@ -198,6 +188,24 @@ app.get('/searchAllCourseItemsByTag', db4j.searchAllCourseItemsByTag );
 app.get('/searchAllNewsFeedItemsByTag', db4j.searchAllNewsFeedItemsByTag);
 app.get('/getAllCourseItems', db4j.getAllCourseItems);
 app.get('/getAllUsersNewsFeedItems', db4j.getAllUsersNewsFeedItems);
+
+app.get('/getEventById', db4j.getEventById);
+
+app.get('/createFilePost', db4j.createFilePost);
+app.get('/getAllCourseFilePosts', db4j.getAllCourseFilePosts);
+app.get('/searchAllCourseFilePostsByTag', db4j.searchAllCourseFilePostsByTag);
+
+app.get('/ratePost', db4j.ratePost);
+app.get('/checkIfUserRatedPost', db4j.checkIfUserRatedPost);
+app.get('/getUserPostRating', db4j.getUserPostRating);
+
+app.get('/rateEvent', db4j.rateEvent);
+app.get('/checkIfUserRatedEvent', db4j.checkIfUserRatedEvent);
+app.get('/getUserEventRating', db4j.getUserEventRating);
+
+app.get('/ratePoll', db4j.ratePoll);
+app.get('/checkIfUserRatedPoll', db4j.checkIfUserRatedPoll);
+app.get('/getUserPollRating', db4j.getUserPollRating);
 
 server.listen(app.get('port'), function(){
   console.log('CSBook Server listening on port ' + app.get('port'));

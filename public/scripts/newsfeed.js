@@ -1,4 +1,7 @@
 var myDropzone;
+var newName;
+var newDesc;
+var tags;
 
 $(document).ready(function(){
 
@@ -7,7 +10,7 @@ $(document).ready(function(){
 
 	vph = $(window).height();
 	$('#side').css({'height': vph + 'px'});
-
+	
 	drawPanels(1, "Panel", "Sadrzaj lalalalalalal", "home-panel");
 	drawPanels(2, "Panel", "Sadrzaj djoiaw", "home-panel");
 	drawPanels(3, "Panel", "Sadrzaj lalalaawdwfdwflalalal", "home-panel");
@@ -37,20 +40,74 @@ $(document).ready(function(){
 		   this.on('complete', function(file) {
 			   //Takodje odmah dodajemo u spisak foldera...
 			   var docTable = document.getElementById("fileItems");
-			   addFileElement(file.name, localStorage.getItem('currentCourse'), docTable, docTable.children.length);
+			   addFileElement(newName, localStorage.getItem('currentCourse'), docTable, docTable.children.length);
 			   
 			   myDropzone.removeFile(file);
 			   
 			   
 		   });
 		   //catch other events here...
+		},
+		sending: function(file, xhr, formData){
+			var today = new Date();
+			var tagsTranslated = [];
+			tagsTranslated.push(tags);
+			
+			var splitedName = file.name.split('.');
+			var extension = splitedName[splitedName.length - 1];
+			newName = newName + "." + extension;
+			
+			formData.append("fileName", newName);
+			formData.append("description", newDesc);
+			formData.append("username", localStorage.getItem("Username"));
+			formData.append("date", new Date(today.getFullYear() , today.getMonth(), today.getDate()));
+			formData.append("time", today.getHours() + ":" + today.getMinutes());
+			formData.append("tags", tagsTranslated);
+			
+			formData.append("indexNo", localStorage.getItem("Index"));
+			formData.append("courseName", localStorage.getItem('currentCourse'));
+		},
+		renameFilename: function (filename) {
+			var splitedName = filename.split('.');
+			var extension = splitedName[splitedName.length - 1];
+			//newName = newName + "." + extension;
+			return newName
+		},
+		complete: function(){
+			
+			//dodamo status
+			addFilePost();
+			
+			//brisemo sve predhodne vrednosti
+			newName =  "";
+			document.getElementById("noviNaziv").value = "";
+			newDesc = "";
+			document.getElementById("deskripcija").value = "";
+			tags = "";
+			var $select = $('#tags-file').selectize();
+			var control = $select[0].selectize;
+			control.clear();
+			
 		}
     };
 	
 });
 
 function beginUpload(){
-	myDropzone.processQueue();
+	newName = document.getElementById("noviNaziv").value;
+	newDesc = document.getElementById("deskripcija").value;
+	tags = document.getElementById("tags-file").value;
+	var table = document.getElementById("fileItems").innerHTML;
+	if(table.includes(">"+newName)){
+		alert("Ime je vec zauzeto");
+	}
+	else{		
+		if(newName == "" || newDesc == "" || tags == ""){
+			alert("Molimo popunite naziv, deskripciju i tagove!")
+		}
+		else		
+			myDropzone.processQueue();
+	}
 }
 
 function createTags(names)
@@ -181,13 +238,105 @@ function getNotifications()
 					$(div).append(button);
 					div.innerHTML
 						+= "<strong>" + data[i]["properties"].courseName + "</strong>" + ": "
-						+ data[i]["properties"].name + "<br>"
-						+ "<h6 align='right'> Datum: " + "<a href='#' class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
+						+ "<a class='not-content' href='#' data-postid='" + data[i]["properties"].eventID + "'>" + data[i]["properties"].name + "</a><br>"
+						+ "<h6 align='right'> Datum: " + "<a class='alert-link'>" + data[i]["properties"].date + "</a></h6>";
 					$(notification_pane).append(div);
+
+					$('.not-content').unbind('click');
+					$('.not-content').on('click', div, function() {
+						getSinglePost($(this).data('postid'));
+					});
 				}
 			}
 		}
     });
+}
+
+function getSinglePost(postId) {
+	var data = {
+        "_id": 464,
+        "labels": [
+            "Event"
+        ],
+        "properties": {
+            "courseName": "Algoritmi i programiranje",
+            "type": "1",
+            "eventTime": "11:51",
+            "eventDate": "24.12.2016.",
+            "title": "Kolokvijum",
+            "time": "11:51",
+            "date": "22.12.2016.",
+            "text": "dasdsa",
+            "tags": [
+                "algoritmi i programiranje",
+                "tag"
+            ],
+            "picture": "aca.jpg",
+            "username": "Stefan Simonovic"
+        }
+    };
+
+	//ajax to get post, in success show post in modal
+	$('#singlePostModalBody').empty();
+
+	if(data.labels == undefined)
+		addVotingModal(data);
+	else if(data.labels[0] == 'Event')
+		addEventModal(data);
+	else if (data.labels[0] == 'Post')
+		addPostModal(data);
+
+	$('#singlePostModal').modal('show');
+}
+
+function addVotingModal(voting){
+	var progressList = voting.options;
+	var tagList = voting.tags;
+			
+	var userEmail = localStorage.getItem("Username");
+
+	var progressArray = "";		
+	$.each(progressList , function(i, val) { 
+		progressArray += "<div id=\"" + voting._id + "\" class=\"vote-item\"><div class=\"vote-name\">" + progressList[i]["name"]+"</div><div class=\"vote-progress\"><div class=\"progress progress-striped\"><div class=\"progress-bar progress-bar-info\" style=\"width:"+progressList[i]["votes"]+"%\"></div></div></div><div class=\"vote-percent\"><span>"+progressList[i]["votes"]+"</span></div><div class=\"vote-button\"><button onclick=\"vote(\'" + voting._id + "\', \'" + progressList[i].name + "\', \'" + userEmail + "\');\">+</button></div></div>";
+	});
+	
+	var tagarray = "";		
+	$.each(tagList , function(i, val) { 
+		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+	});
+	
+	var poolStr = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ voting.text+"</h3>	<div class=\"panel-date\">"+voting.date+"</div></div></div><div class=\"panel-body\">"+"Rok za glasanje: <b>"+voting.deadline +"</b></div><div class=\"voting " + voting._id + "\">" + progressArray + "</div><div class=\"panel-footer\">"+tagarray+"</div></div>");
+	$("#singlePostModalBody").append(poolStr);	
+}
+
+function addEventModal(ev){
+	var Event = ev.properties;
+	var tagList = Event.tags;
+				
+	var tagarray = "";		
+	$.each(tagList , function(i, val) { 
+		tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+	});
+	
+	// var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3></div> </div> <div class=\"panel-body\"><div>Naziv: " + Event.courseName+ "</div><div>Datum: "+ Event.date +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+	
+	var eventStr = $("<div class=\"post\"><div class=\"panel panel-primary\"> <div class=\"panel-heading\"><div class=\"heading-table\"><h3 class=\"panel-title\">"+ Event.title +"</h3><div class=\"panel-date\">" + Event.date + "</div></div> </div> <div class=\"panel-body\"><div>Datum: <b>" + Event.eventDate + " " + Event.eventTime  + "</b></div><div>Opis: "+ Event.text +"</div> </div> <div class=\"panel-footer\">" + tagarray + "</div> </div> </div>");
+	$("#singlePostModalBody").append(eventStr);	
+}
+
+function addPost(json){
+	var post = json.properties;
+	var tagList = post.tags;
+				
+	var tagarray = "";		
+		
+	$.each(tagList , function(i, val) { 
+	tagarray += "<span class=\"label label-primary\">"+  tagList[i] +"</span>";
+	});
+	
+    var str = $("<div class=\"post\"><div class=\"panel panel-primary\"><div class=\"panel-heading\"><div class=\"heading-table\"><div class=\"panel-image\"><img src=\"" + post.picture + "\"/></div><h3 class=\"panel-title\">" + post.username + "</h3><div class=\"panel-date\">" + post.date + "</div></div></div><div class=\"panel-body\">" + post.text + "</div> <div class=\"panel-footer\">" + tagarray + "</div></div></div>");	
+
+	$("#singlePostModalBody").append(str);	
 }
 
 function appendOnClick(elem, data){
@@ -213,4 +362,41 @@ function removeNotification(id)
            }
        }
     });
+}
+
+function addFilePost(){
+	var status = {};
+	var selectize = $('#tags-file')[0].selectize;
+	var downloadStr = "courses/"+localStorage.getItem("Course")+"/"+ newName;
+
+	var tagsArray = selectize.getValue().split(',');
+	status['text'] = "Novi fajl: <a href=\""+ downloadStr + "\" download=\""+ downloadStr + "\">"+ newName+"</a> <br/> " + newDesc;
+	
+	status['tags'] = tagsArray;
+	status['tags'].unshift(localStorage.getItem("Course").toLowerCase());
+	status['date'] = moment().format('DD.M.YYYY.');
+	status['time'] = new moment().format('HH:mm');
+	
+	status['username'] = localStorage.getItem("Ime") + " " + localStorage.getItem("Prezime");
+	status['courseName'] = localStorage.getItem("Course");
+	status['indexNo'] = localStorage.getItem("Index");
+	status['picture'] = localStorage.getItem("imgUrl");
+	
+	$.ajax({
+		type: 'GET',
+		url: '/createPost',
+		dataType: 'json',
+		data: status,
+			beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		success: function(data){
+				$('#status-modal').modal('hide');
+				window.location.reload(true);
+		},
+		error:function(jqXHR, textStatus){
+				alert("Creating post unsuccessful.");
+		}
+	});
 }

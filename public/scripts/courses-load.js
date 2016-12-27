@@ -58,20 +58,42 @@ function addFileElement(item, currCourse, parent, i){
 	var td = document.createElement("td");
 	td.innerHTML = i + 1;
 	var td2 = document.createElement("td");
+	td2.style.overflow = "hidden";
+	td2.style.maxWidth = "200px";
+	
 	var a = document.createElement("a");
-	a.innerHTML = item;
-	a.href="courses/" + currCourse + "/" + item;
-	a.download="courses/" + currCourse + "/" + item;
+	a.innerHTML = item.fileName;
+	a.href="courses/" + currCourse + "/" + item.fileName;
+	a.download="courses/" + currCourse + "/" + item.fileName;
+	a.onclick = function(){
+		//MISIC
+		//LikeFile(item); --> Stavi onaj tvoj HTTP req, napravio sam ti f-ju u server, samo me mrzelo da stavljam headere (tokene).
+		alert("Liked this");
+	}
+	
+	
+	var tdOpis = document.createElement("td");
+	tdOpis.innerHTML = item.description;
+	// var tdLajkovi = document.createElement("td");
+	// tdLajkovi.innerHTML = i + 10; //to delete
+	
+	
 	td2.appendChild(a);
 	tr.appendChild(td);
 	tr.appendChild(td2);
+	tr.appendChild(tdOpis);
 	parent.appendChild(tr);
 }
 
 $(document).ready(function(){
     getAllCourses();
 	
-	//ukoliko smo u kursu nekom, setujemo to, i popunjavamo fajlove....
+	$('#tags-file').selectize({
+		persist: false,
+		createOnBlur: true,
+		create: true
+	});
+	
 	var docTable = document.getElementById("fileItems");
 	var currCourse = localStorage.getItem("currentCourse");
 	if(docTable){
@@ -83,11 +105,11 @@ $(document).ready(function(){
                 /* authorization header with token */
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
-		data: { 'course': localStorage.getItem("currentCourse")},
+		data: { 'name': localStorage.getItem("currentCourse")},
 		success: function(data){
 			if(data) {
 				for(var i = 0; i< data.length; i++){
-					addFileElement(data[i], currCourse, docTable, i);
+					addFileElement(data[i].properties, currCourse, docTable, i);
 				}
 			}
 			else
