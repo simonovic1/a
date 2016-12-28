@@ -349,7 +349,7 @@ function courseClicked(rating)
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		 success: function result(data){
-			 debugger;
+			 //debugger;
 			 if(data == null)
 				 data = 0;
 			 
@@ -378,7 +378,7 @@ function courseClicked(rating)
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		 success: function result(data){
-			 debugger;
+			 //debugger;
 			 if(data == null)
 				 data = 0;
 			 
@@ -407,7 +407,7 @@ function courseClicked(rating)
                 xhr.setRequestHeader("authorization", localStorage.getItem('token'));
 		},
 		 success: function result(data){
-			 debugger;
+			 //debugger;
 			 if(data == null)
 				 data = 0;
 			 
