@@ -333,6 +333,94 @@ function courseClicked(rating)
 		}	
 		
 	}
+	
+	
+	function getPostRating(id, clas){
+		var result;
+		 $.ajax({
+		 type: 'GET',
+		 url: '/getPostRating', 
+		   dataType: 'json',
+		   data:{
+		   'id':  id
+		  },
+		  	beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		 success: function result(data){
+			 debugger;
+			 if(data == null)
+				 data = 0;
+			 
+				$(clas).stars({ 
+				value: data,
+				click: function(i) {
+					checkIfUserRatedAndRateStatus(id, i);
+					}
+				});	
+		 }
+		 });
+	}
+	
+	
+	function getEventRating(id, clas){
+		var result;
+		 $.ajax({
+		 type: 'GET',
+		 url: '/getEventRating', 
+		   dataType: 'json',
+		   data:{
+		   'id':  id
+		  },
+		  	beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		 success: function result(data){
+			 debugger;
+			 if(data == null)
+				 data = 0;
+			 
+				$(clas).stars({ 
+				value: data,
+				click: function(i) {
+					checkIfUserRatedAndRateEvent(id, i);
+					}
+				});	
+		 }
+		 });
+	}
+	
+	
+	function getPollRating(id, clas){
+		var result;
+		 $.ajax({
+		 type: 'GET',
+		 url: '/getPollRating', 
+		   dataType: 'json',
+		   data:{
+		   'id':  id
+		  },
+		  	beforeSend: function (xhr) {
+                /* authorization header with token */
+                xhr.setRequestHeader("authorization", localStorage.getItem('token'));
+		},
+		 success: function result(data){
+			 debugger;
+			 if(data == null)
+				 data = 0;
+			 
+				$(clas).stars({ 
+				value: data,
+				click: function(i) {
+					checkIfUserRatedAndRatePoll(id, i);
+					}
+				});	
+		 }
+		 });
+	}
+
 
 	
 	function getNewsFeed(rating){
@@ -361,34 +449,18 @@ function courseClicked(rating)
 			if(data[i].labels == undefined)
 			{
 				addVoting(data[i]);
-				$(clas).stars({ 
-				//value: data[i].properties.rating,
-				click: function(i) {
-					checkIfUserRatedAndRatePoll(data[i]._id, i);
-					}
-				});
-
+				getPollRating(data[i]._id, clas);
 			}
 				
 			else if(data[i].labels[0] == 'Event')
 			{
 				addEvent(data[i]);
-				$(clas).stars({ 
-				value: data[i].properties.rating,
-				click: function(i) {
-					checkIfUserRatedAndRateEvent(data[i]._id, i);
-					}
-				});
+				getEventRating(data[i]._id, clas);
 			}
 			else if (data[i].labels[0] == 'Post')
 			{
 				addPost(data[i]);
-				$(clas).stars({ 
-				value: data[i].properties.rating,
-				click: function(i) {
-					checkIfUserRatedAndRateStatus(data[i]._id, i);
-					}
-				});	
+				getPostRating(data[i]._id, clas);
 			}
 		
 			console.log(JSON.stringify(data));
@@ -576,34 +648,18 @@ function checkIfUserRatedAndRateEvent(postId, rating){
 			if(data[i].labels == undefined)
 			{
 				addVoting(data[i]);
-				$(clas).stars({ 
-				//value: data[i].properties.rating,
-				click: function(i) {
-					checkIfUserRatedAndRatePoll(data[i]._id, i);
-					}
-				});
-
+				getPollRating(data[i]._id, clas);
 			}
 				
 			else if(data[i].labels[0] == 'Event')
 			{
 				addEvent(data[i]);
-				$(clas).stars({ 
-				value: data[i].properties.rating,
-				click: function(i) {
-					checkIfUserRatedAndRateEvent(data[i]._id, i);
-					}
-				});
+				getEventRating(data[i]._id, clas);
 			}
 			else if (data[i].labels[0] == 'Post')
 			{
 				addPost(data[i]);
-				$(clas).stars({ 
-				value: data[i].properties.rating,
-				click: function(i) {
-					checkIfUserRatedAndRateStatus(data[i]._id, i);
-					}
-				});	
+				getPostRating(data[i]._id, clas);
 			}
 					
 		});
